@@ -1,6 +1,6 @@
 const gridData = [
   {
-    imageSrc: "",
+    imageSrc: "./images/flagyard.png",
     title: "Recon101",
     details: [
       "Challenge Type: Network traffic analysis (PCAP-based)\nTools Used: Wireshark, tshark, threat intelligence resources\nTasks:\n  • Extract traffic statistics from PCAP\n  • Identify target network's IPv4 range\n  • Detect port scanning activity (e.g., on port 1433)\n  • Identify attacker’s source IP\n  • Validate malicious IP using threat intelligence\n  • Count packets between attacker and hosts using tshark\n  • Decode packet counts (decimal to ASCII) to obtain the flag",
