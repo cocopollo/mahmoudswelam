@@ -1,1 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research</title>
+	<meta property="og:description" content="Here, you'll find a curated list of my latest research projects, case studies, and technical explorations in the field of cybersecurity and digital forensics." />
+	<meta property="og:title" content="Research Highlights" />
+	<meta property="og:url" content="https://a1l4m.github.io/index.html" />
+    <meta property="og:image" content="https://a1l4m.github.io/labs/images/mainthumbnail.png">
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="627" />
+    <meta property="og:type" content="website" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <style>
+        body {
+            background-color: #1d1e20; /* Matching root index.html background */
+            color: #dadadb; /* Matching root text color */
+            font-family: "Roboto", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
+        .research-container {
+            max-width: 950px; /* Adjusted container width for moderate card size */
+            margin: 30px auto; /* Added some space at the top and bottom */
+            padding: 20px;
+        }
+
+        .research-card {
+            background-color: #282a2d; /* Card background matching root index.html */
+            margin: 20px 0; /* Moderate space between cards */
+            padding: 25px; /* Adjusted padding for slightly larger cards */
+            border-radius: 12px; /* Slightly rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .research-card:hover {
+            transform: translateY(-7px); /* Moderate lift effect on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Slightly stronger shadow on hover */
+        }
+
+        .research-card img {
+            width: 180px; /* Moderately sized image */
+            height: 130px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .research-card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .research-card-content h2 {
+            color: #ffffff; /* Matching root index.html text */
+            margin: 0 0 10px; /* Moderate space below the title */
+            font-size: 18px; /* Slightly larger font size for title */
+            font-weight: 700;
+        }
+
+        .research-card-content p {
+            color: #dcdcdc; /* Subdued light text color for description */
+            margin: 0 0 15px; /* Moderate space below the description */
+            font-size: 14px; /* Moderate font size for readability */
+        }
+
+        .meta {
+            display: flex;
+            gap: 15px; /* Moderate gap between metadata items */
+            align-items: center;
+            color: #8e8e8e;
+            font-size: 13px; /* Slightly larger font size for metadata */
+            margin-top: auto;
+        }
+
+        .meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .meta span i {
+            font-size: 14px; /* Moderate icon size for better visibility */
+        }
+		
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+            padding: 10px 20px;
+
+        }
+        .navbar .left, .navbar .right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .navbar .center {
+            flex: 0.5;
+            text-align: center;
+        }
+        .navbar a {
+            color: #dcdcdc; /* Off-white color */
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            color: #ffffff; /* Bright white on hover */
+        }
+        .navbar .right a {
+            margin-left: 40px; /* Adds space between MyLabs and Blog */
+        }
+
+.navbar .left a {
+    background-color: #4D3C2E; /* Dark brown color */
+    color: #FFA500; /* Bright orange color */
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: monospace; /* Similar font */
+    font-size: 24px;
+    font-weight: 600; /* Slightly bold to match the Premium style */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar .left a:hover {
+    background-color: #5B4736; /* Slightly lighter dark brown on hover */
+    color: #FF8C00; /* Brighter orange on hover */
+}
+
+.intro-section {
+    padding-top: 60px; /* Add padding instead of margin for consistent spacing */
+    margin: 0 auto 40px auto; /* Ensure other margins are preserved */
+    max-width: 800px;
+    color: #dadadb;
+    text-align: center;
+}
+
+
+.intro-section h1 {
+    font-size: 2.6rem; /* Similar to the header font size in the example */
+    color: #FFA500; /* Bright orange to match theme */
+    font-weight: 600; /* Bold font for emphasis */
+    text-align: center;
+    margin: 10px 0 20px 0; /* Add space around */
+}
+
+.intro-section p {
+    font-size: 1.3rem; /* Adjusted for readability */
+    line-height: 1.7; /* Improve spacing between lines */
+    color: #dcdcdc; /* Slightly subdued for text */
+    text-align: center; /* Center-align like the example */
+    max-width: 800px; /* Limit width for readability */
+    margin: 0 auto 40px auto; /* Centered and spaced below */
+}
+
+		
+.intro-section {
+    text-align: center;
+    margin: 80px auto 40px auto; /* Increased top margin to 60px for more space */
+    max-width: 800px;
+    color: #dadadb;
+}
+
+    /* Heartbeat animation */
+    #animated-header-content {
+        animation: heartbeat 10s infinite; /* Runs every 10 seconds, infinitely */
+        transform-origin: center center; /* Sets the scale transformation's origin */
+    }
+
+    @keyframes heartbeat {
+        0% {
+            transform: scale(1);
+        }
+        25% {
+            transform: scale(1.1);
+        }
+        50% {
+            transform: scale(1);
+        }
+        75% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    </style>
+</head>
+<body>
+<div class="navbar-container">
+    <!-- Navbar -->
+		<nav class="navbar">
+			<div class="left">
+				<a href="/index.html">a1l4m</a>
+			</div>
+			<div class="center"></div>
+			<div class="right">
+				<a href="/research/index.html">Research</a>
+				<a href="/labs/index.html">Labs</a>
+				<a href="https://a1l4m.medium.com" target="_blank">Blog</a>
+			</div>
+		</nav>
+</div>
+
+<div class="intro-section">
+    <h1 id="animated-header-content">Research Highlights</h1>
+    <p>
+        Here, you'll find a curated list of my latest research projects, case studies, and technical explorations in the field of cybersecurity and digital forensics.
+        <br>
+        Click on any card below to explore detailed findings and step-by-step breakdowns.
+    </p>
+</div>
+
+<div class="research-container" id="research-container">
+    <!-- Cards will be dynamically added here -->
+</div>
+
+
+<script>
+async function fetchResearchFiles() {
+    const container = document.getElementById('research-container');
+
+    // Clear the container
+    container.innerHTML = "";
+
+    // Fetch the file list dynamically using research.json
+    const response = await fetch('research.json'); // Assumes research.json is in the same directory as index.html
+    const researchFiles = await response.json();
+
+    for (const file of researchFiles) {
+        try {
+            const { title, description, thumbnail, path, date } = file;
+
+            // Fetch the content of the research file for word count
+            const fileResponse = await fetch(path);
+            const fileContent = await fileResponse.text();
+
+            // Calculate reading time based on the file content
+            const wordCount = fileContent.split(/\s+/).length;
+            const readingTime = Math.ceil(wordCount / 200); // Average reading speed: 200 WPM
+
+            // Create card
+            const card = document.createElement('div');
+            card.className = 'research-card';
+            card.onclick = () => {
+                window.location.href = path; // Navigate to the file when card is clicked
+            };
+
+            card.innerHTML = `
+                <div class="research-card-content">
+                    <h2>${title || 'Untitled'}</h2>
+                    <p>${description || 'No description available.'}</p>
+                    <div class="meta">
+                        <span><i class="fa fa-calendar"></i> ${date || 'Unknown date'}</span>
+                        <span><i class="fa fa-clock-o"></i> ${readingTime || 1} minute read</span>
+                    </div>
+                </div>
+                <img src="${thumbnail || 'default-thumbnail.png'}" alt="${title || 'No title'}">
+            `;
+            container.appendChild(card);
+        } catch (error) {
+            console.error(`Error processing file: ${file.path}`, error);
+        }
+    }
+}
+
+// Initial fetch of research files
+fetchResearchFiles();
+
+
+</script>
+</body>
+</html>

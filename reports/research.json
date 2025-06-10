@@ -1,0 +1,9 @@
+[
+    {
+        "title": "Using Emulated Linux Environments as an Anti-Forensics technique",
+        "description": "Exploring how virtualization, specifically using QEMU, can create such blind spots for existing solutions. This discussion will address both perspectives: how attackers can use virtualization to stage malware and how forensic investigators can detect and analyze these activities.",
+        "thumbnail": "thumbnails/virtual.png",
+        "path": "posts/virtual/index.html",
+        "date": "2024-12-01"
+    }
+]
