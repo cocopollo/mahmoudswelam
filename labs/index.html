@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="627" />
+    <meta property="og:type" content="website" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DNJN1PF3CS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-PK6NYWT73S');
+    </script>
+    <title>MahmoudSwelam</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="normalize.css" />
+    <style>
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
+            padding: 10px 20px;
+
+        }
+        .navbar .left, .navbar .right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .navbar .center {
+            flex: 0.5;
+            text-align: center;
+        }
+        .navbar a {
+            color: #dcdcdc; /* Off-white color */
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            color: #ffffff; /* Bright white on hover */
+        }
+        .navbar .right a {
+            margin-left: 40px; /* Adds space between MyLabs and Blog */
+        }
+
+.navbar .left a {
+    background-color: #4D3C2E; /* Dark brown color */
+    color: #FFA500; /* Bright orange color */
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: monospace; /* Similar font */
+    font-size: 24px;
+    font-weight: 600; /* Slightly bold to match the Premium style */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar .left a:hover {
+    background-color: #5B4736; /* Slightly lighter dark brown on hover */
+    color: #FF8C00; /* Brighter orange on hover */
+}
+.dfircolor {
+    color: #FFA500;
+}
+    </style>
+</head>
+<body>
+<div class="navbar-container">
+    <!-- Navbar -->
+		<nav class="navbar">
+			<div class="left">
+				<a href="/index.html">cocopollo</a>
+			</div>
+			<div class="center"></div>
+			<div class="right">
+				<a href="/research/index.html">Reports</a>
+				<a href="/labs/index.html">Labs</a>
+				<a href="https://medium.com/@mahmoud.o.swelam/" target="_blank">Blog</a>
+			</div>
+		</nav>
+</div>
+    
+<header class="girgis-header text-white text-center py-3">
+    <div id="animated-header-content" class="container header-content">
+        <div>
+            <h1 class="dfircolor" >DFIR Labs</h1>
+            <div class="girgis-list">
+                <h6>My Published Labs On:</h6>
+                <div id="subtitle">
+    			<a href="https://flagyard.com/" target="_blank" style="text-decoration: none; color: inherit; cursor: pointer;">
+        			<img src="https://flagyard.com/favicon.ico" alt="Flagyard" style="width: 25px; height: 25px; vertical-align: middle;">
+        			Flagyard
+  		        </a>
+		</div>
+		<div id="subtitle">
+   			 <a href="https://blackhatmea.com/capture-the-flag" target="_blank" style="text-decoration: none; color: inherit; cursor: pointer;">
+        			<img src="https://blackhatmea.com/themes/custom/blackhat_theme/favicon.png" alt="Blackhat" style="width: 25px; height: 25px; vertical-align: middle;">
+        			BlackHat MEA 2024
+    			</a>
+		</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <!-- Start of the cards grid  -->
+    <div class="container my-5 girgis-grid"></div>
+    <!-- End of the cards grid  -->
+
+    <!-- Start of the pagination -->
+    <div class="d-flex justify-content-center my-4 pagination">
+        <button id="prevPage" class="btn btn-primary me-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path fill="white" d="M9.857 15.962a.5.5 0 0 0 .243.68l9.402 4.193c1.496.667 3.047-.814 2.306-2.202l-3.152-5.904c-.245-.459-.245-1 0-1.458l3.152-5.904c.741-1.388-.81-2.87-2.306-2.202l-3.524 1.572a2 2 0 0 0-.975.932z"/>
+                <path fill="white" d="M8.466 15.39a.5.5 0 0 1-.65.233l-4.823-2.15c-1.324-.59-1.324-2.355 0-2.945L11.89 6.56a.5.5 0 0 1 .651.68z" opacity="0.5"/>
+            </svg>
+            <span>Back</span>
+        </button>
+        <span id="currentPage" class="mx-3">Page 1</span>
+        <button id="nextPage" class="btn btn-primary ms-2">
+            <span>Next</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path fill="white" d="M14.143 15.962a.5.5 0 0 1-.244.68l-9.402 4.193c-1.495.667-3.047-.814-2.306-2.202l3.152-5.904c.245-.459.245-1 0-1.458L2.191 5.367c-.74-1.388.81-2.87 2.306-2.202l3.525 1.572a2 2 0 0 1 .974.932z"/>
+                <path fill="white" d="M15.533 15.39a.5.5 0 0 0 .651.233l4.823-2.15c1.323-.59 1.323-2.355 0-2.945L12.109 6.56a.5.5 0 0 0-.651.68z" opacity="0.5"/>
+            </svg>
+        </button>
+    </div>
+    <!-- End of the pagination -->
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
