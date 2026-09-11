@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="normalize.css" />
+    <link rel="stylesheet" href="../pixel-art.css" />
     <style>
         /* Navbar Styles */
         .navbar {
@@ -65,9 +66,29 @@
     transition: background-color 0.3s, color 0.3s;
 }
 
+.navbar .left a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar .left a::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background-color: #FFA500;
+    display: inline-block;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
 .navbar .left a:hover {
     background-color: #5B4736; /* Slightly lighter dark brown on hover */
     color: #FF8C00; /* Brighter orange on hover */
+}
+
+.navbar .left a:hover::before {
+    background-color: #FF8C00;
 }
 .dfircolor {
     color: #FFA500;
@@ -136,6 +157,31 @@
         </button>
     </div>
     <!-- End of the pagination -->
+
+    <!-- Pixel Art Floating Element -->
+    <div class="pixel-corner">
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <!-- Shield -->
+        <rect x="6" y="6" width="4" height="4" fill="#FFA500"/>
+        <rect x="12" y="6" width="4" height="4" fill="#FFA500"/>
+        <rect x="18" y="6" width="4" height="4" fill="#FFA500"/>
+        <rect x="24" y="6" width="4" height="4" fill="#FFA500"/>
+        <!-- Middle section -->
+        <rect x="6" y="10" width="4" height="4" fill="#FFA500"/>
+        <rect x="24" y="10" width="4" height="4" fill="#FFA500"/>
+        <rect x="10" y="10" width="4" height="4" fill="#FF8C00"/>
+        <rect x="16" y="10" width="4" height="4" fill="#FF8C00"/>
+        <rect x="20" y="10" width="4" height="4" fill="#FF8C00"/>
+        <!-- Bottom -->
+        <rect x="10" y="14" width="4" height="4" fill="#FFA500"/>
+        <rect x="16" y="14" width="4" height="4" fill="#FFA500"/>
+        <rect x="20" y="14" width="4" height="4" fill="#FFA500"/>
+        <!-- Lock core -->
+        <rect x="12" y="18" width="4" height="4" fill="#FFA500"/>
+        <rect x="16" y="18" width="4" height="4" fill="#FFA500"/>
+        <rect x="14" y="22" width="4" height="4" fill="#FF8C00"/>
+      </svg>
+    </div>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="script.js"></script>
