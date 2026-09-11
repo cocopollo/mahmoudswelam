@@ -12,6 +12,38 @@
       box-sizing: border-box;
     }
 
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
       background: #ffffff;
@@ -75,6 +107,7 @@
       font-weight: 700;
       margin-bottom: 20px;
       line-height: 1.2;
+      animation: fadeInUp 0.8s ease-out;
     }
 
     .hero-content .title {
@@ -138,11 +171,30 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: #f5f5f5;
+      transition: left 0.3s;
+      z-index: -1;
     }
 
     .btn:hover {
-      background: #f5f5f5;
       border-color: #999;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover::before {
+      left: 0;
     }
 
     .btn-primary {
@@ -151,9 +203,14 @@
       border-color: #1a1a1a;
     }
 
-    .btn-primary:hover {
+    .btn-primary::before {
       background: #333;
+    }
+
+    .btn-primary:hover {
       border-color: #333;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(26, 26, 26, 0.15);
     }
 
     .hero-image {
@@ -186,12 +243,14 @@
       border: 1px solid #e5e5e5;
       border-radius: 8px;
       margin-bottom: 20px;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.6s ease-out;
     }
 
     .experience-card:hover {
-      border-color: #ddd;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-color: #1a1a1a;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      transform: translateY(-4px);
     }
 
     .experience-header {
@@ -237,18 +296,35 @@
       border: 1px solid #e5e5e5;
       border-radius: 8px;
       text-align: center;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.6s ease-out;
+      animation-fill-mode: both;
     }
 
+    .skill-item:nth-child(1) { animation-delay: 0.1s; }
+    .skill-item:nth-child(2) { animation-delay: 0.2s; }
+    .skill-item:nth-child(3) { animation-delay: 0.3s; }
+    .skill-item:nth-child(4) { animation-delay: 0.4s; }
+    .skill-item:nth-child(5) { animation-delay: 0.5s; }
+    .skill-item:nth-child(6) { animation-delay: 0.6s; }
+
     .skill-item:hover {
-      border-color: #ddd;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-color: #1a1a1a;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      transform: translateY(-8px);
     }
 
     .skill-icon {
-      font-size: 32px;
+      font-size: 40px;
       margin-bottom: 15px;
-      color: #666;
+      color: #1a1a1a;
+      animation: float 3s ease-in-out infinite;
+      transition: all 0.3s;
+    }
+
+    .skill-item:hover .skill-icon {
+      font-size: 48px;
+      animation: pulse 1s ease-in-out infinite;
     }
 
     .skill-name {
@@ -269,22 +345,54 @@
       background: white;
       border: 1px solid #e5e5e5;
       border-radius: 8px;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       text-decoration: none;
       color: inherit;
       display: flex;
       flex-direction: column;
+      animation: fadeInUp 0.6s ease-out;
+      animation-fill-mode: both;
+      position: relative;
+      overflow: hidden;
     }
 
+    .lab-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #1a1a1a, transparent);
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 0.3s;
+    }
+
+    .lab-card:nth-child(1) { animation-delay: 0.1s; }
+    .lab-card:nth-child(2) { animation-delay: 0.2s; }
+    .lab-card:nth-child(3) { animation-delay: 0.3s; }
+
     .lab-card:hover {
-      border-color: #ddd;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-      transform: translateY(-4px);
+      border-color: #1a1a1a;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      transform: translateY(-8px);
+    }
+
+    .lab-card:hover::before {
+      transform: scaleX(1);
     }
 
     .lab-icon {
-      font-size: 32px;
+      font-size: 40px;
       margin-bottom: 15px;
+      animation: float 3s ease-in-out infinite;
+      transition: all 0.3s;
+    }
+
+    .lab-card:hover .lab-icon {
+      font-size: 48px;
+      animation: pulse 1s ease-in-out infinite;
     }
 
     .lab-name {
@@ -321,18 +429,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #e5e5e5;
+      border: 2px solid #e5e5e5;
       border-radius: 4px;
       color: #666;
       font-size: 16px;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       text-decoration: none;
+      position: relative;
     }
 
     .social-links a:hover {
       border-color: #1a1a1a;
       color: #1a1a1a;
       background: #f5f5f5;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
 
     /* Footer */
@@ -416,8 +527,7 @@
         </div>
       </div>
 
-      <div class="hero-image">
-        [Profile Image]
+      <div class="hero-image" style="background: url('Main.png') center/cover no-repeat; overflow: hidden;">
       </div>
     </section>
 
