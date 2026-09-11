@@ -2,264 +2,518 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MahmoudSwelam</title>
+  <title>Mahmoud Swelam - DFIR Engineer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Fonts & CSS -->
-  <link rel="icon" href="" type="image/x-icon">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="normalize.css" />
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-.scrambled-container {
-  font-family: monospace;
-  font-size: 22px;
-  color: #fff;
-  margin-top: 30px;
-  max-width: 800px;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.6;
-  word-break: break-word;
-  white-space: normal;
-}
-
-
-.char {
-  display: inline-block;
-  width: 0.6em;         /* Equal width for every character */
-  text-align: center;
-  font-family: monospace;
-  font-variant-ligatures: none;
-  will-change: contents;
-}
-
-    body, h1 {
-      font-family: "Roboto", Arial, sans-serif;
-      background-color: #1d1e20;
-      color: #dadadb;
+    * {
       margin: 0;
       padding: 0;
-    }
-    h1 {
-      letter-spacing: 2px;
-      color: #FFA500;
-      margin-bottom: 10px;
-    }
-    .titleme {
-      color: #dcdcdc;
-      font-size: 25px;
-    }
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 50px;
-      padding: 10px 20px;
-    }
-    .navbar .left, .navbar .right {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-    }
-    .navbar .center {
-      flex: 0.5;
-      text-align: center;
-    }
-    .navbar a {
-      color: #dcdcdc;
-      text-decoration: none;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-    .navbar a:hover {
-      color: #ffffff;
-    }
-    .navbar .right a {
-      margin-left: 40px;
-    }
-    .navbar .left a {
-      background-color: #4D3C2E;
-      color: #FFA500;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-family: monospace;
-      font-size: 24px;
-      font-weight: 600;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .navbar .left a:hover {
-      background-color: #5B4736;
-      color: #FF8C00;
-    }
-    .main-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 120px);
-      padding: 20px;
-      text-align: center;
-    }
-    .profile-picture-wrapper {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .profile-picture {
-      width: 100%;
-      height: 100%;
-      background-image: url('Main.png');
-      background-size: 140%;
-      background-position: center -13px;
-      background-repeat: no-repeat;
-      transform: scale(1.2);
-      transform-origin: center center;
-    }
-    .main-content p {
-      color: #dcdcdc;
-      max-width: 800px;
-      margin: 20px 0;
-      font-size: 18px;
-    }
-    .social-icons {
-      margin-top: 20px;
-    }
-    .social-icons a {
-      color: #dcdcdc;
-      font-size: 24px;
-      margin: 0 10px;
-      transition: color 0.3s;
-    }
-    .social-icons a:hover {
-      color: #FFA500;
+      box-sizing: border-box;
     }
 
-    /* Scrambled Text Styling */
-    .scrambled-container {
-      font-family: monospace;
-      font-size: 22px;
-      color: #fff;
-      margin-top: 30px;
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
-    .char {
-      display: inline-block;
-      will-change: transform;
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    body {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      background: #0a0e27;
+      color: #e0e0e0;
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 80px;
+      animation: slideDown 0.6s ease-out;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      color: #00d9ff;
+      text-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+      margin-bottom: 40px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .logo::before {
+      content: '> ';
+      color: #ff6b6b;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #ffffff;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #00d9ff;
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+    }
+
+    .tagline {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 40px;
+      font-style: italic;
+      max-width: 600px;
+      line-height: 1.8;
+    }
+
+    /* Navigation */
+    nav {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 80px;
+      border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+      padding-bottom: 20px;
+    }
+
+    nav a {
+      color: #00d9ff;
+      text-decoration: none;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #ff6b6b;
+      transition: width 0.3s;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      margin-bottom: 100px;
+    }
+
+    .hero-content {
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 400px;
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 107, 107, 0.1));
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 14px;
+      overflow: hidden;
+      animation: fadeIn 0.8s ease-out 0.2s both;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Section */
+    section {
+      margin-bottom: 100px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #ff6b6b;
+      margin-bottom: 30px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+    }
+
+    /* Technical Cards */
+    .tech-item {
+      margin-bottom: 30px;
+      padding: 25px;
+      background: rgba(0, 217, 255, 0.03);
+      border-left: 3px solid #00d9ff;
+      border-radius: 4px;
+      transition: all 0.3s;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .tech-item:hover {
+      background: rgba(0, 217, 255, 0.08);
+      border-left-color: #ff6b6b;
+      transform: translateX(10px);
+    }
+
+    .tech-label {
+      font-size: 12px;
+      color: #00d9ff;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .tech-label::before {
+      content: '> ';
+      color: #ff6b6b;
+    }
+
+    .tech-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .tech-description {
+      font-size: 13px;
+      color: #aaa;
+      line-height: 1.8;
+    }
+
+    .tech-meta {
+      font-size: 11px;
+      color: #666;
+      margin-top: 12px;
+      letter-spacing: 1px;
+    }
+
+    /* Skills Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .skill-box {
+      padding: 20px;
+      background: rgba(255, 107, 107, 0.05);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+      border-radius: 4px;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .skill-box:hover {
+      background: rgba(255, 107, 107, 0.1);
+      border-color: rgba(255, 107, 107, 0.5);
+      transform: translateY(-4px);
+    }
+
+    .skill-exe {
+      font-size: 12px;
+      color: #ff6b6b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .skill-name {
+      font-size: 13px;
+      color: #e0e0e0;
+    }
+
+    /* Labs Section */
+    .labs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .lab-item {
+      padding: 25px;
+      background: rgba(0, 217, 255, 0.03);
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      border-radius: 4px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s;
+    }
+
+    .lab-item:hover {
+      background: rgba(0, 217, 255, 0.08);
+      border-color: #00d9ff;
+      transform: translateY(-4px);
+    }
+
+    .lab-exe {
+      font-size: 12px;
+      color: #00d9ff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .lab-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .lab-desc {
+      font-size: 12px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    /* Contact Section */
+    .contact {
+      padding: 40px;
+      background: rgba(0, 217, 255, 0.03);
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .contact-text {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 30px;
+      line-height: 1.8;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      color: #00d9ff;
+      text-decoration: none;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .contact-link::before {
+      content: '> ';
+      color: #ff6b6b;
+    }
+
+    .contact-link:hover {
+      text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+      transform: scale(1.1);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      border-top: 1px solid rgba(0, 217, 255, 0.2);
+      font-size: 11px;
+      color: #666;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .skills-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+
+      .labs-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="logo">cocopollo</div>
+      <h1>Mahmoud Swelam</h1>
+      <div class="subtitle">Digital Forensics & Incident Response Engineer</div>
+      <p class="tagline">Securing the unseen, decoding the unknown, defending the future. Specializing in high-stakes cyber investigations and advanced threat analysis at EGCERT.</p>
+    </header>
 
-<div class="navbar-container">
-  <nav class="navbar">
-    <div class="left">
-      <a href="https://cocopollo.github.io/mahmoudswelam/index.html">cocopollo</a>
-    </div>
-    <div class="center"></div>
-    <div class="right">
-      <a href="https://cocopollo.github.io/mahmoudswelam/Reports/StarkTech%20Incident%20Report%201dab727b1373804eb103cf7d2c5c8702.html">Reports</a>
-      <a href="https://cocopollo.github.io/mahmoudswelam/labs/index.html">Labs</a>
-      <a href="https://medium.com/@mahmoud.o.swelam" target="_blank">Blog</a>
-    </div>
-  </nav>
-</div>
+    <!-- Navigation -->
+    <nav>
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#labs">Labs</a>
+      <a href="#contact">Contact</a>
+    </nav>
 
-<div class="main-content">
-  <div class="profile-picture-wrapper">
-    <div class="profile-picture"></div>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <p class="tech-label">Status</p>
+        <p style="color: #00d9ff; font-size: 14px; margin-bottom: 30px;">ONLINE · AVAILABLE FOR CONSULTING</p>
+      </div>
+      <div class="hero-image">
+        <img src="Main.png" alt="Profile" />
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+      <h2 class="section-title">About</h2>
+      <div class="tech-item">
+        <div class="tech-label">role: dfir_engineer.exe</div>
+        <div class="tech-title">Digital Forensics & Incident Response</div>
+        <div class="tech-description">
+          Leading high-stakes cyber investigations and forensic analysis at EGCERT. Specializing in malware analysis, threat intelligence, and incident response. Engineering cutting-edge forensic tools and collaborating with international partners on advanced threat analysis.
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience">
+      <h2 class="section-title">Experience</h2>
+
+      <div class="tech-item">
+        <div class="tech-label">current_role.exe</div>
+        <div class="tech-title">Digital Forensics & Incident Response Engineer</div>
+        <div class="tech-meta">EGCERT · Cairo, Egypt</div>
+        <div class="tech-description">
+          Leading cyber investigations, forensic analysis, and tool development. Responding to sophisticated threats and collaborating on international threat intelligence operations.
+        </div>
+      </div>
+
+      <div class="tech-item">
+        <div class="tech-label">previous_role.exe</div>
+        <div class="tech-title">Cyber Security Researcher</div>
+        <div class="tech-meta">Security Research Laboratory · 2022-2024</div>
+        <div class="tech-description">
+          Conducted advanced malware analysis and reverse engineering. Published security research on threat actors and attack methodologies. Developed detection signatures.
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section>
+      <h2 class="section-title">Core Competencies</h2>
+      <div class="skills-grid">
+        <div class="skill-box">
+          <div class="skill-exe">forensic_analysis.exe</div>
+          <div class="skill-name">Digital Forensics</div>
+        </div>
+        <div class="skill-box">
+          <div class="skill-exe">incident_response.exe</div>
+          <div class="skill-name">Incident Response</div>
+        </div>
+        <div class="skill-box">
+          <div class="skill-exe">malware_analysis.exe</div>
+          <div class="skill-name">Malware Analysis</div>
+        </div>
+        <div class="skill-box">
+          <div class="skill-exe">reverse_engineering.exe</div>
+          <div class="skill-name">Reverse Engineering</div>
+        </div>
+        <div class="skill-box">
+          <div class="skill-exe">threat_intel.exe</div>
+          <div class="skill-name">Threat Intelligence</div>
+        </div>
+        <div class="skill-box">
+          <div class="skill-exe">network_analysis.exe</div>
+          <div class="skill-name">Network Analysis</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Labs -->
+    <section id="labs">
+      <h2 class="section-title">Published Labs</h2>
+      <div class="labs-grid">
+        <a href="https://flagyard.com/" target="_blank" class="lab-item">
+          <span class="lab-exe">flagyard.exe</span>
+          <div class="lab-name">Flagyard</div>
+          <div class="lab-desc">Competitive CTF platform with forensic analysis challenges</div>
+        </a>
+        <a href="https://blackhatmea.com/capture-the-flag" target="_blank" class="lab-item">
+          <span class="lab-exe">blackhat_mea.exe</span>
+          <div class="lab-name">BlackHat MEA</div>
+          <div class="lab-desc">2024, 2025 · International cybersecurity conference CTF</div>
+        </a>
+        <a href="https://medium.com/@mahmoud.o.swelam/" target="_blank" class="lab-item">
+          <span class="lab-exe">research_articles.exe</span>
+          <div class="lab-name">Medium</div>
+          <div class="lab-desc">Published security research and technical writeups</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="contact">
+        <p class="contact-text">Interested in collaboration, consulting, or discussing cybersecurity challenges? Reach out anytime.</p>
+        <div class="contact-links">
+          <a href="mailto:mahmoud.o.swelam@gmail.com" class="contact-link">Email</a>
+          <a href="https://www.linkedin.com/in/mahmoud-swelam" class="contact-link">LinkedIn</a>
+          <a href="https://github.com/cocopollo" class="contact-link">GitHub</a>
+          <a href="https://medium.com/@mahmoud.o.swelam/" class="contact-link">Medium</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2025 Mahmoud Swelam · DFIR Engineer</p>
+    </footer>
   </div>
-
-  <h1>Mahmoud Swelam</h1>
-  <h1 class="titleme">Cyber Security Engineer</h1>
-  
-<p class="scrambled-container" id="scramble-text-main">
-  Digital Forensics and Incident Response (DFIR) Engineer at EGCERT,       I spearhead high-stakes cyber investigations, engineer cutting-edge      forensic tools, and fortify defenses against sophisticated threats. My     work ensures organizations stay resilient in the face of evolving        attacks.
-</p>
-
-<p class="scrambled-container" id="scramble-text-secondary">
-  Securing the unseen, decoding the unknown, defending the future.
-</p>
-
-
-<div class="social-icons">
-  <a href="https://medium.com/@mahmoud.o.swelam/" target="_blank"><i class="fab fa-medium"></i></a>
-  <a href="mailto:mahmoud.o.swelam@gmail.com" target="_blank"><i class="fas fa-envelope"></i></a>
-  <a href="https://www.linkedin.com/in/mahmoud-swelam" target="_blank"><i class="fab fa-linkedin"></i></a>
-  <a href="https://github.com/cocopollo" target="_blank"><i class="fab fa-github"></i></a>
-</div>
-
-
-<!-- Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script>
-  const scrambleChars = "0x1";
-  const scrambleDelay = 60;
-  const scrambleRange = 2;
-  const delayBeforeRestore = 1000;
-
-  const activeIntervals = new Map();
-  const pendingTimeouts = new Map();
-
-  document.querySelectorAll(".scrambled-container").forEach(container => {
-    const chars = container.textContent.split("");
-    container.innerHTML = chars.map(char =>
-      `<span class="char" data-original="${char}">${char}</span>`
-    ).join("");
-
-    const spans = container.querySelectorAll(".char");
-
-    function startScrambling(index) {
-      for (let i = index - scrambleRange; i <= index + scrambleRange; i++) {
-        if (i < 0 || i >= spans.length) continue;
-        const span = spans[i];
-        if (pendingTimeouts.has(span)) {
-          clearTimeout(pendingTimeouts.get(span));
-          pendingTimeouts.delete(span);
-        }
-        if (activeIntervals.has(span)) continue;
-
-        const interval = setInterval(() => {
-          span.textContent = scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
-        }, scrambleDelay);
-
-        activeIntervals.set(span, interval);
-      }
-    }
-
-    function stopScrambling(index) {
-      for (let i = index - scrambleRange; i <= index + scrambleRange; i++) {
-        if (i < 0 || i >= spans.length) continue;
-        const span = spans[i];
-        if (pendingTimeouts.has(span)) continue;
-
-        const timeout = setTimeout(() => {
-          if (activeIntervals.has(span)) {
-            clearInterval(activeIntervals.get(span));
-            span.textContent = span.dataset.original;
-            activeIntervals.delete(span);
-          }
-          pendingTimeouts.delete(span);
-        }, delayBeforeRestore);
-
-        pendingTimeouts.set(span, timeout);
-      }
-    }
-
-    spans.forEach((span, i) => {
-      span.addEventListener("mouseenter", () => startScrambling(i));
-      span.addEventListener("mouseleave", () => stopScrambling(i));
-    });
-  });
-</script>
-
-
 </body>
 </html>
