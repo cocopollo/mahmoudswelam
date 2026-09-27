@@ -45,6 +45,23 @@
       margin: 0;
       padding: 0;
     }
+    /* Animated cyberpunk background (fixed layer, works on iOS too) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: url('assets/bg.gif') center / cover no-repeat;
+    }
+    /* Dark overlay so text stays readable */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: rgba(10, 10, 14, 0.55);
+    }
+    h1 { background-color: transparent; }
     h1 {
       letter-spacing: 2px;
       color: #FFA500;
