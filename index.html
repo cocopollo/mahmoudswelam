@@ -45,14 +45,24 @@
       margin: 0;
       padding: 0;
     }
-    /* Animated cyberpunk background (fixed layer, works on iOS too) */
+    /* Poster fallback behind the video */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       z-index: -2;
-      background: url('assets/bg.gif') center / cover no-repeat;
+      background: url('assets/bg-poster.jpg') center / cover no-repeat;
     }
+    .bg-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      pointer-events: none;
+    }
+    @media (prefers-reduced-motion: reduce) { .bg-video { display: none; } }
     /* Dark overlay so text stays readable */
     body::after {
       content: "";
@@ -174,6 +184,10 @@
   </style>
 </head>
 <body>
+<video class="bg-video" autoplay muted loop playsinline preload="auto" poster="assets/bg-poster.jpg" aria-hidden="true">
+  <source src="assets/bg.webm" type="video/webm">
+  <source src="assets/bg.mp4" type="video/mp4">
+</video>
 
 <div class="navbar-container">
   <nav class="navbar">
