@@ -100,14 +100,20 @@
   <section>
     <div class="panel">
       <h2>Detection engineering</h2>
-      <p>Turning artifacts into a sequence, and the sequence into Sigma rules.</p>
+      <p>Every artifact goes on the board with the log that proves it.</p>
     </div>
   </section>
   <section>
     <div class="panel">
-      <h2>Threat intelligence</h2>
-      <p>Pivoting from one indicator to the infrastructure behind it, documented as a hunt-loop playbook. CTF and TryHackMe rooms built around real attack chains.</p>
+      <h2>Pulling the thread</h2>
+      <p>One indicator leads to the next. Adversary infrastructure hunting, documented as a hunt-loop playbook, plus CTF and TryHackMe rooms built around real attack chains.</p>
       <a class="more" href="labs/index.html">Browse the DFIR labs</a>
+    </div>
+  </section>
+  <section>
+    <div class="panel">
+      <h2>Caught</h2>
+      <p>Every thread ends somewhere. The job is to follow each one until there is nowhere left to hide.</p>
     </div>
   </section>
   <section id="contact">
@@ -126,13 +132,13 @@
 </main>
 
 <div class="counter" aria-hidden="true"><span id="num">01</span><span id="name">Enclosure</span></div>
-<div class="rail" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<div class="rail" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (() => {
-  const NAMES = ['Enclosure', 'Top cover', 'Platters', 'Surface', 'Raw bytes', 'Timeline', 'Infrastructure', 'Contact'];
-  const PAPER = '#f2f2ee', DIM = '#8f8f89';
+  const NAMES = ['Enclosure', 'Top cover', 'Platters', 'Surface', 'Raw bytes', 'Evidence board', 'Pulling the thread', 'Caught', 'Contact'];
+  const PAPER = '#f2f2ee', DIM = '#8f8f89', RED = '#d8402f';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const numEl = document.getElementById('num'), nameEl = document.getElementById('name');
   const ticks = [...document.querySelectorAll('.rail span')];
@@ -153,7 +159,7 @@
   addEventListener('scroll', () => { s = scrollIndex(); }, { passive: true });
 
   function updateUI(v) {
-    const i = Math.max(0, Math.min(7, Math.round(v)));
+    const i = Math.max(0, Math.min(8, Math.round(v)));
     numEl.textContent = String(i + 1).padStart(2, '0');
     nameEl.textContent = NAMES[i];
     ticks.forEach((t, k) => t.classList.toggle('on', k === i));
@@ -231,63 +237,156 @@
     ix.globalAlpha = 1;
   }
 
-  function drawTimeline(a, p) {
-    const R = region(), x = R.x + 14, top = R.y + 10, bot = R.y + R.h - 30;
-    const fs = mobile ? 13 : 16;
-    ix.globalAlpha = a; ix.strokeStyle = PAPER; ix.fillStyle = PAPER;
-    inkPath(ix, [[x, top], [x, bot]], smooth(0, 0.5, p), 1.4);
-    const ev = [
-      ['File created', 'Sysmon Event ID 11'],
-      ['Process created', 'Sysmon Event ID 1, Security 4688'],
-      ['Network connection', 'Sysmon Event ID 3']
-    ];
-    ev.forEach(([t, sub], i) => {
-      const e = smooth(0.2 + i * 0.22, 0.4 + i * 0.22, p);
-      if (e <= 0) return;
-      const y = lerp(top, bot, 0.15 + i * 0.33);
-      ix.globalAlpha = a; inkPath(ix, circlePts(x, y, 7), e, 1, true);
-      inkPath(ix, [[x + 12, y], [x + 34, y]], e, 0.8);
-      ix.globalAlpha = a * e;
-      ix.font = `650 ${fs + 4}px Archivo, sans-serif`; ix.textBaseline = 'middle'; ix.fillStyle = PAPER;
-      ix.fillText(t, x + 44, y - fs * 0.45);
-      ix.font = `${fs - 2}px Archivo, sans-serif`; ix.fillStyle = DIM;
-      ix.fillText(sub, x + 44, y + fs * 0.75);
-      if (i > 0) {
-        ix.fillStyle = PAPER; ix.font = `600 ${fs - 3}px Archivo, sans-serif`;
-        const tx = x + 44, ty = y + fs * 2, tw = ix.measureText('Sigma rule match').width;
-        ix.fillText('Sigma rule match', tx + 6, ty);
-        ix.strokeStyle = PAPER; inkPath(ix, [[tx, ty - 9], [tx + tw + 12, ty - 9], [tx + tw + 12, ty + 9], [tx, ty + 9]], e, 0.9, true);
-      }
-    });
-    ix.globalAlpha = a * smooth(0.8, 1, p); ix.fillStyle = DIM; ix.font = `${fs - 4}px Archivo, sans-serif`;
-    ix.fillText('Illustrative sequence', x + 44, bot + 22);
-    ix.globalAlpha = 1;
+  // Evidence board: a spider (the investigator) walks pivot to pivot, spinning thread
+  const EVIDENCE = [
+    ['Dropped file', 'Sysmon Event ID 11', 0.06, 0.10],
+    ['Process tree', 'Sysmon Event ID 1, Security 4688', 0.40, 0.04],
+    ['Scheduled task', 'Security 4698', 0.86, 0.08],
+    ['Outbound beacon', 'Sysmon Event ID 3', 0.05, 0.52],
+    ['DNS query', 'Sysmon Event ID 22', 0.20, 0.95],
+    ['C2 server', 'Network telemetry', 0.68, 0.97],
+    ['TLS certificate', 'Certificate pivot', 0.96, 0.55]
+  ];
+  const WALK = [0, 1, 2, 1, 3, 4, 5, 6, 'X'];
+  const RADIALS = [0, 2, 3, 4, 5];
+  const CENTER = [0.52, 0.52];
+
+  function boardRegion() {
+    return mobile ? { x: W * 0.09, y: H * 0.11, w: W * 0.82, h: H * 0.34 }
+                  : { x: W * 0.46, y: H * 0.15, w: W * 0.46, h: H * 0.64 };
   }
 
-  const NODES = [
-    ['Beacon', 0.08, 0.55], ['Redirector', 0.34, 0.3], ['C2 server', 0.56, 0.58],
-    ['TLS certificate', 0.8, 0.32], ['Sibling server', 0.92, 0.7], ['Sibling server', 0.62, 0.92]
-  ];
-  const EDGES = [[0, 1], [1, 2], [2, 3], [3, 4], [3, 5]];
-  function drawGraph(a, p) {
-    const R = region(), fs = mobile ? 11 : 14;
-    const pos = NODES.map(([, u, v]) => [R.x + u * R.w * 0.86, R.y + v * R.h * 0.86]);
-    ix.strokeStyle = PAPER; ix.fillStyle = PAPER;
-    EDGES.forEach(([i, j], k) => {
-      const e = smooth(0.12 + k * 0.15, 0.3 + k * 0.15, p);
-      ix.globalAlpha = a * (i >= 3 || j >= 3 ? 0.75 : 1);
-      inkPath(ix, [pos[i], pos[j]], e, 1.5);
+  function drawSpider(ctx, x, y, ang, phase, sz) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.scale(sz, sz);
+    ctx.strokeStyle = PAPER; ctx.lineWidth = 1.3 / sz; ctx.lineCap = 'round';
+    for (const side of [-1, 1]) for (let i = 0; i < 4; i++) {
+      const sw = Math.sin(phase + i * Math.PI / 2 + (side > 0 ? Math.PI : 0)) * 3;
+      const hx = 3 - i * 2.6, spread = 1.5 - i;
+      ctx.beginPath();
+      ctx.moveTo(hx, side * 2);
+      ctx.lineTo(hx + spread * 6 + sw, side * 11);
+      ctx.lineTo(hx + spread * 11 + sw * 1.6, side * 19);
+      ctx.stroke();
+    }
+    ctx.fillStyle = '#000';
+    ctx.beginPath(); ctx.ellipse(-8, 0, 9, 7, 0, 0, 6.283); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(5, 0, 5, 4, 0, 0, 6.283); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-12, -2.5); ctx.lineTo(-5, 0); ctx.lineTo(-12, 2.5); ctx.stroke(); // hourglass mark
+    ctx.restore();
+  }
+
+  function drawAttacker(cx, cy, sc, a) {
+    const P = [[-34, 40], [-31, 12], [-22, -6], [-15, -27], [0, -38], [15, -27], [22, -6], [31, 12], [34, 40]].map(([x, y]) => [cx + x * sc, cy + y * sc]);
+    ix.globalAlpha = a; ix.fillStyle = '#000';
+    ix.beginPath(); P.forEach(([x, y], i) => i ? ix.lineTo(x, y) : ix.moveTo(x, y)); ix.closePath(); ix.fill();
+    ix.strokeStyle = PAPER;
+    inkPath(ix, P, a, 1.1);
+    const face = Array.from({ length: 30 }, (_, i) => [cx + Math.cos(i / 30 * 6.283) * 9 * sc, cy - 13 * sc + Math.sin(i / 30 * 6.283) * 12 * sc]);
+    inkPath(ix, face, a, 0.8, true);
+  }
+
+  function drawBoard(alpha, sv) {
+    const R = boardRegion(), fs = mobile ? 10 : 13, cw = mobile ? 88 : 150, chh = mobile ? 22 : 42;
+    const tighten = smooth(6.7, 7.2, sv) * 0.12;
+    const X = [R.x + CENTER[0] * R.w, R.y + CENTER[1] * R.h];
+    const pos = EVIDENCE.map(([, , u, v]) => { const x = R.x + u * R.w, y = R.y + v * R.h; return [lerp(x, X[0], tighten), lerp(y, X[1], tighten)]; });
+    const sc = mobile ? 0.75 : 1.25, R0 = Math.min(R.w, R.h) * (mobile ? 0.3 : 0.26), spiderTop = [X[0], X[1] - R0 * 1.02];
+    const pt = k => k === 'X' ? spiderTop : pos[k];
+    ix.lineCap = 'round';
+
+    // red radials from evidence to the attacker
+    const radP = smooth(6.4, 6.9, sv);
+    ix.strokeStyle = RED;
+    RADIALS.forEach((k, i) => { ix.globalAlpha = alpha; inkPath(ix, [pos[k], X], smooth(i * 0.12, 0.5 + i * 0.12, radP), 1.2); });
+
+    // the web closing around the attacker
+    const webP = smooth(6.7, 7.15, sv), SP = 12;
+    if (webP > 0) {
+      ix.strokeStyle = PAPER; ix.globalAlpha = alpha * 0.7;
+      for (let k = 0; k < SP; k++) {
+        const ang = k / SP * 6.283 + 0.2;
+        inkPath(ix, [X, [X[0] + Math.cos(ang) * R0, X[1] + Math.sin(ang) * R0]], smooth(0, 0.4, webP), 0.8);
+      }
+      for (let j = 0; j < 6; j++) {
+        const rp = smooth(0.3 + j * 0.1, 0.42 + j * 0.1, webP); if (rp <= 0) continue;
+        const rr = R0 * (1 - j * 0.14);
+        const ring = Array.from({ length: SP }, (_, k) => { const ang = k / SP * 6.283 + 0.2; return [X[0] + Math.cos(ang) * rr, X[1] + Math.sin(ang) * rr]; });
+        inkPath(ix, ring, rp, 0.7, true);
+      }
+    }
+
+    // walk: the spider lays thread as you scroll
+    const walkP = smooth(5.1, 6.55, sv);
+    const segs = []; let total = 0;
+    for (let i = 0; i < WALK.length - 1; i++) {
+      const A = pt(WALK[i]), B = pt(WALK[i + 1]), L = Math.hypot(B[0] - A[0], B[1] - A[1]);
+      segs.push({ A, B, L, red: WALK[i + 1] === 'X' }); total += L;
+    }
+    let d = walkP * total, spider = segs[0].A, ang = 0;
+    segs.forEach(sg => {
+      if (d <= 0) return;
+      const f = Math.min(1, d / sg.L);
+      ix.globalAlpha = alpha; ix.strokeStyle = sg.red ? RED : PAPER;
+      inkPath(ix, [sg.A, sg.B], f, 1.1);
+      spider = [lerp(sg.A[0], sg.B[0], f), lerp(sg.A[1], sg.B[1], f)];
+      ang = Math.atan2(sg.B[1] - sg.A[1], sg.B[0] - sg.A[0]);
+      d -= sg.L;
     });
-    NODES.forEach(([label], i) => {
-      const e = smooth(i * 0.14, 0.1 + i * 0.14, p);
-      if (e <= 0) return;
-      const [x, y] = pos[i];
-      ix.globalAlpha = a; inkPath(ix, circlePts(x, y, i === 2 ? 14 : 9), e, 1.1, true);
-      ix.globalAlpha = a * e; ix.font = `600 ${fs}px Archivo, sans-serif`; ix.textBaseline = 'middle';
-      ix.fillStyle = PAPER; ix.fillText(label, x - ix.measureText(label).width / 2, y + (i === 2 ? 30 : 24));
+
+    // evidence cards, pinned
+    const cardsP = smooth(4.7, 5.25, sv);
+    EVIDENCE.forEach(([title, sub], k) => {
+      const e = smooth(k * 0.1, 0.35 + k * 0.1, cardsP); if (e <= 0) return;
+      const [x, y] = pos[k], x0 = x - cw / 2, y0 = y + 5;
+      ix.globalAlpha = alpha; ix.fillStyle = '#000'; ix.fillRect(x0, y0, cw, chh);
+      ix.strokeStyle = PAPER; inkPath(ix, [[x0, y0], [x0 + cw, y0], [x0 + cw, y0 + chh], [x0, y0 + chh]], e, 1, true);
+      ix.fillStyle = PAPER; ix.beginPath(); ix.arc(x, y + 2, mobile ? 3 : 4, 0, 6.283); ix.fill();
+      ix.globalAlpha = alpha * e; ix.textBaseline = 'middle';
+      ix.font = `650 ${fs}px Archivo, sans-serif`; ix.fillText(title, x0 + 8, y0 + (mobile ? chh / 2 : 14));
+      if (!mobile) { ix.fillStyle = DIM; ix.font = `${fs - 2.5}px Archivo, sans-serif`; ix.fillText(sub, x0 + 8, y0 + 30); }
     });
-    ix.globalAlpha = a * smooth(0.85, 1, p); ix.fillStyle = DIM; ix.font = `${fs - 2}px Archivo, sans-serif`;
-    ix.fillText('Illustrative pivot path', R.x, R.y + R.h + 10);
+
+    // the attacker, wrapped and stamped
+    const catchP = smooth(6.95, 7.3, sv);
+    if (catchP > 0) {
+      ix.globalAlpha = alpha * catchP; ix.fillStyle = '#000';
+      ix.beginPath(); ix.arc(X[0], X[1] + 10 * sc, 56 * sc, 0, 6.283); ix.fill();
+      ix.strokeStyle = PAPER; ix.globalAlpha = alpha * catchP * 0.6; inkPath(ix, circlePts(X[0], X[1] + 10 * sc, 56 * sc, 40), 1, 0.8, true);
+      drawAttacker(X[0], X[1] + 6 * sc, sc, alpha * catchP);
+      const wrapP = smooth(7.1, 7.5, sv);
+      ix.strokeStyle = PAPER;
+      for (let k = 0; k < 7; k++) {
+        const wp = smooth(k * 0.12, 0.25 + k * 0.12, wrapP); if (wp <= 0) continue;
+        const cy = X[1] + (-26 + k * 10) * sc, tilt = (k % 2 ? 0.25 : -0.25);
+        const loop = Array.from({ length: 28 }, (_, i) => { const t = i / 28 * 6.283; const ex = Math.cos(t) * 40 * sc, ey = Math.sin(t) * 9 * sc; return [X[0] + ex * Math.cos(tilt) - ey * Math.sin(tilt), cy + ex * Math.sin(tilt) + ey * Math.cos(tilt)]; });
+        ix.globalAlpha = alpha * 0.85; inkPath(ix, loop, wp, 0.7, true);
+      }
+      ix.globalAlpha = alpha * catchP; ix.fillStyle = PAPER; ix.textBaseline = 'middle';
+      ix.font = `700 ${mobile ? 12 : 15}px Archivo, sans-serif`;
+      const nm = 'NIGHTJAR', nw = ix.measureText(nm).width;
+      ix.fillText(nm, X[0] - nw / 2, X[1] + 62 * sc);
+      ix.fillStyle = DIM; ix.font = `${mobile ? 9 : 11}px Archivo, sans-serif`;
+      const fc = 'Fictional actor', fw = ix.measureText(fc).width;
+      ix.fillText(fc, X[0] - fw / 2, X[1] + 62 * sc + (mobile ? 13 : 17));
+    }
+    const stampP = smooth(7.3, 7.55, sv);
+    if (stampP > 0) {
+      ix.save(); ix.translate(X[0], X[1] + R0 + (mobile ? 18 : 30)); ix.rotate(-0.08);
+      const big = 1 + (1 - stampP) * 0.6; ix.scale(big, big);
+      ix.globalAlpha = alpha * stampP; ix.strokeStyle = RED; ix.fillStyle = RED;
+      ix.font = `800 ${mobile ? 18 : 26}px Archivo, sans-serif`; ix.textBaseline = 'middle';
+      const tw = ix.measureText('Caught').width, ph = mobile ? 14 : 20;
+      ix.save(); ix.fillStyle = '#000'; ix.fillRect(-tw / 2 - 10, -ph, tw + 20, ph * 2); ix.restore();
+      ix.fillText('Caught', -tw / 2, 1);
+      inkPath(ix, [[-tw / 2 - 10, -ph], [tw / 2 + 10, -ph], [tw / 2 + 10, ph], [-tw / 2 - 10, ph]], 1, 1.3, true);
+      ix.restore();
+    }
+
+    // spider on top
+    if (walkP > 0 && walkP < 1.01) drawSpider(ix, spider[0], spider[1], walkP >= 1 ? -Math.PI / 2 : ang, walkP * total * 0.09, mobile ? 1 : 1.3);
+
+    ix.globalAlpha = alpha * smooth(0.3, 1, cardsP); ix.fillStyle = DIM; ix.font = `${mobile ? 9 : 11}px Archivo, sans-serif`;
+    ix.fillText('Fictional case. Event IDs are real; names and evidence are illustrative.', R.x, R.y + R.h + (mobile ? 40 : 62));
     ix.globalAlpha = 1;
   }
 
@@ -296,10 +395,8 @@
     ix.clearRect(0, 0, W, H);
     const hexA = smooth(3.2, 3.9, sView) * (1 - smooth(4.6, 5.0, sView));
     if (hexA > 0) drawHex(hexA, smooth(3.2, 4.0, sView), smooth(3.95, 4.4, sView));
-    const tlA = smooth(4.6, 5.0, sView) * (1 - smooth(5.6, 5.95, sView));
-    if (tlA > 0) drawTimeline(tlA, smooth(4.55, 5.1, sView));
-    const grA = smooth(5.6, 5.95, sView) * lerp(1, 0.3, smooth(6.5, 7, sView));
-    if (grA > 0) drawGraph(grA, smooth(5.55, 6.05, sView));
+    const bA = smooth(4.6, 5.0, sView) * lerp(1, 0.25, smooth(7.6, 8.0, sView));
+    if (bA > 0) drawBoard(bA, sView);
   }
 
   // Loupe: shows raw bytes under the drawing
