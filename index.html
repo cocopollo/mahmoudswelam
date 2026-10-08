@@ -138,7 +138,7 @@
   </section>
   <section>
     <div class="panel">
-      <h2>Caught</h2>
+      <h2>Solved</h2>
       <p>Every thread ends somewhere. The job is to follow each one until there is nowhere left to hide.</p>
     </div>
   </section>
@@ -164,7 +164,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (() => {
-  const NAMES = ['Cold open', 'Exhibit A', 'Top cover', 'Platters', 'Surface', 'Raw bytes', 'Evidence board', 'Pulling the thread', 'Caught', 'Contact'];
+  const NAMES = ['Cold open', 'Exhibit A', 'Top cover', 'Platters', 'Surface', 'Raw bytes', 'Evidence board', 'Pulling the thread', 'Solved', 'Contact'];
   const OFF = 1;   // the drive scenes start one section in, after the cold open
   const PAPER = '#f2f2ee', DIM = '#8f8f89', RED = '#d8402f';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -176,6 +176,7 @@
   const heroName = document.querySelector('.hero h1');
   const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
   const lerp = (a, b, t) => a + (b - a) * t;
+  const smoother = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * t * (t * (t * 6 - 15) + 10); };
 
   // Continuous section index: 0 at the cold open, last at contact
   function scrollIndex() {
@@ -408,9 +409,9 @@
       const big = 1 + (1 - stampP) * 0.6; ix.scale(big, big);
       ix.globalAlpha = alpha * stampP; ix.strokeStyle = RED; ix.fillStyle = RED;
       ix.font = `800 ${mobile ? 18 : 26}px Archivo, sans-serif`; ix.textBaseline = 'middle';
-      const tw = ix.measureText('Caught').width, ph = mobile ? 14 : 20;
+      const tw = ix.measureText('Solved').width, ph = mobile ? 14 : 20;
       ix.save(); ix.fillStyle = '#000'; ix.fillRect(-tw / 2 - 10, -ph, tw + 20, ph * 2); ix.restore();
-      ix.fillText('Caught', -tw / 2, 1);
+      ix.fillText('Solved', -tw / 2, 1);
       inkPath(ix, [[-tw / 2 - 10, -ph], [tw / 2 + 10, -ph], [tw / 2 + 10, ph], [-tw / 2 - 10, ph]], 1, 1.3, true);
       ix.restore();
     }
@@ -632,7 +633,7 @@
     function makePart(opts) {
       const g = new THREE.Group(), op = { value: 1 };
       g.userData = Object.assign({}, opts, { op, explode: new THREE.Vector3(...opts.explode),
-        mats: [inkMat(op, 0.022, 0), inkMat(op, 0.022, 7.3)], rmats: [inkMat(op, 0.004, 0), inkMat(op, 0.004, 3.1)] });
+        mats: [inkMat(op, 0.016, 0), inkMat(op, 0.016, 7.3)], rmats: [inkMat(op, 0.004, 0), inkMat(op, 0.004, 3.1)] });
       drive.add(g); parts.push(g); return g;
     }
     const ud = o => o.userData.mats ? o.userData : o.parent.userData;
@@ -694,16 +695,16 @@
 
     return {
       resize() { renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); },
-      frame(t) {
+      frame(t, dt) {
         const sv = sView - OFF;
-        uTime.value = boil;
-        const active = Math.round(sv), dive = smooth(2.3, 3.35, sv);
+        uTime.value = reduced ? 0 : t * 0.8;   // continuous drift: the 8 fps boil made the whole drive shake
+        const active = Math.round(sv), dive = smoother(2.3, 3.35, sv), fadeK = reduced ? 1 : 1 - Math.exp(-dt * 6);
         parts.forEach(p => {
           const u = p.userData;
-          p.position.copy(u.explode).multiplyScalar(smooth(u.k[0], u.k[1], sv));
+          p.position.copy(u.explode).multiplyScalar(smoother(u.k[0], u.k[1], sv));
           let o = (active === 0 || u.lit === active || (active >= 3 && u.top)) ? 1 : 0.2;
           if (!u.top) o *= 1 - dive;
-          u.op.value += (o - u.op.value) * (reduced ? 1 : 0.1);
+          u.op.value += (o - u.op.value) * fadeK;
         });
         if (!reduced) {
           spinners.forEach(sp => sp.rotation.y = t * 0.5);
@@ -742,13 +743,14 @@
   let lastBoil = -1;
 
   const t0 = performance.now();
+  let tPrev = 0;
   function frame() {
-    const t = (performance.now() - t0) / 1000;
+    const t = (performance.now() - t0) / 1000, dt = Math.min(0.05, t - tPrev); tPrev = t;
     boil = reduced ? 0 : Math.floor(t * 8) / 8;   // lines redraw ~8 times a second, like hand-drawn animation
-    sView = reduced ? s : sView + (s - sView) * 0.08;
+    sView = reduced ? s : sView + (s - sView) * (1 - Math.exp(-dt * 4.2));   // eased by time, not by frame
     updateUI(sView);
     if (boil !== lastBoil) { lastBoil = boil; grain.style.backgroundPosition = `${byteAt(boil * 8, 1) % 160}px ${byteAt(boil * 8, 2) % 160}px`; }
-    if (three) three.frame(t);
+    if (three) three.frame(t, dt);
     draw2D();
     drawLoupe();
     requestAnimationFrame(frame);
