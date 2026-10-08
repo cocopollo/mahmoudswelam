@@ -1,189 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="627" />
-    <meta property="og:type" content="website" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DNJN1PF3CS"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta property="og:type" content="website">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DNJN1PF3CS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-PK6NYWT73S');
+</script>
+<title>DFIR Labs | Mahmoud Swelam</title>
+<meta name="description" content="Forensics challenges by Mahmoud Swelam, published on Flagyard and for the BlackHat MEA CTF.">
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&display=swap" rel="stylesheet">
+<style>
+  :root { --black:#000; --paper:#f2f2ee; --dim:#8f8f89; --rule:#3a3a37; }
+  html { background:var(--black); color:var(--paper); font-family:Archivo, system-ui, sans-serif; }
+  body { margin:0; }
+  a { color:var(--paper); }
+  a:focus-visible, summary:focus-visible { outline:1px solid var(--paper); outline-offset:4px; }
 
-        gtag('config', 'G-PK6NYWT73S');
-    </script>
-    <title>MahmoudSwelam</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="normalize.css" />
-    <link rel="stylesheet" href="../pixel-art.css" />
-    <style>
-        /* Navbar Styles */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 50px;
-            padding: 10px 20px;
+  header { position:sticky; top:0; z-index:3; display:flex; justify-content:space-between; align-items:baseline; padding:22px 28px; font-size:.9rem; background:linear-gradient(#000 70%, transparent); }
+  header strong a { font-stretch:80%; font-weight:700; text-decoration:none; }
+  header nav a { text-decoration:none; margin-left:24px; }
+  header nav a:hover, header nav a[aria-current] { text-decoration:underline; text-underline-offset:4px; }
 
-        }
-        .navbar .left, .navbar .right {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
-        .navbar .center {
-            flex: 0.5;
-            text-align: center;
-        }
-        .navbar a {
-            color: #dcdcdc; /* Off-white color */
-            text-decoration: none;
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .navbar a:hover {
-            color: #ffffff; /* Bright white on hover */
-        }
-        .navbar .right a {
-            margin-left: 40px; /* Adds space between MyLabs and Blog */
-        }
+  main { max-width:68rem; margin:0 auto; padding:0 28px 6rem; }
+  .intro { padding:14vh 0 8vh; max-width:34rem; }
+  h1 { font-size:clamp(3.2rem, 9vw, 7.6rem); font-stretch:62%; font-weight:800; line-height:.86; margin:0 0 1.6rem; }
+  p { font-size:1.05rem; line-height:1.55; max-width:40ch; margin:0 0 1rem; }
+  .platforms a { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; font-size:1.4rem; font-stretch:80%; font-weight:600; text-decoration:none; padding:.35rem 0; border-bottom:1px solid var(--rule); max-width:22rem; }
+  .platforms a span { color:var(--dim); font-size:.85rem; font-weight:400; font-stretch:100%; }
+  .platforms a:hover { border-color:var(--paper); }
 
-.navbar .left a {
-    background-color: #4D3C2E; /* Dark brown color */
-    color: #FFA500; /* Bright orange color */
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-family: monospace; /* Similar font */
-    font-size: 24px;
-    font-weight: 600; /* Slightly bold to match the Premium style */
-    transition: background-color 0.3s, color 0.3s;
-}
+  .labs { list-style:none; margin:0; padding:0; counter-reset:lab; }
+  .lab { display:grid; grid-template-columns:5.5rem 1fr; gap:0 2rem; padding:2.2rem 0; border-top:1px solid var(--rule); }
+  .lab:last-child { border-bottom:1px solid var(--rule); }
+  .idx { font-stretch:62%; font-weight:700; font-size:1.6rem; font-variant-numeric:tabular-nums; color:var(--dim); line-height:1; padding-top:.35rem; }
+  .lab h2 { font-size:clamp(2.2rem, 4.6vw, 3.6rem); font-stretch:66%; font-weight:750; line-height:.92; margin:0 0 .9rem; }
+  .meta { display:flex; flex-wrap:wrap; gap:.6rem 1.6rem; align-items:center; font-size:.85rem; color:var(--dim); margin-bottom:1.1rem; }
+  .diff { display:inline-flex; align-items:center; gap:10px; color:var(--paper); }
+  .diff i { display:inline-flex; gap:4px; }
+  .diff b { width:14px; height:2px; background:var(--rule); }
+  .diff b.on { background:var(--paper); width:22px; }
+  .row { display:grid; grid-template-columns:7.5rem 1fr; gap:1rem; font-size:1rem; line-height:1.5; margin:0 0 .5rem; max-width:none; }
+  .row span:first-child { color:var(--dim); font-size:.85rem; padding-top:.15rem; }
+  details { margin-top:.9rem; max-width:48rem; }
+  summary { cursor:pointer; font-stretch:80%; font-weight:600; width:max-content; border-bottom:1px solid var(--rule); padding-bottom:2px; list-style:none; }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { content:' +'; color:var(--dim); }
+  details[open] summary::after { content:' −'; }
+  summary:hover { border-color:var(--paper); }
+  details ul { margin:1rem 0 0; padding:0; list-style:none; }
+  details li { position:relative; padding:.3rem 0 .3rem 1.4rem; line-height:1.5; }
+  details li::before { content:''; position:absolute; left:0; top:.95rem; width:.7rem; height:1px; background:var(--dim); }
+  details li.sub { padding-left:2.8rem; color:var(--dim); }
+  details li.sub::before { left:1.4rem; width:.5rem; }
+  .play { display:inline-block; margin-top:1rem; font-stretch:80%; font-weight:600; text-decoration:none; border-bottom:1px solid var(--rule); }
+  .play:hover { border-color:var(--paper); }
 
-.navbar .left a {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+  footer { max-width:68rem; margin:0 auto; padding:0 28px 3rem; font-size:.85rem; color:var(--dim); }
+  footer a { text-decoration:none; border-bottom:1px solid var(--rule); }
 
-.navbar .left a::before {
-    content: '';
-    width: 12px;
-    height: 12px;
-    background-color: #FFA500;
-    display: inline-block;
-    animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.navbar .left a:hover {
-    background-color: #5B4736; /* Slightly lighter dark brown on hover */
-    color: #FF8C00; /* Brighter orange on hover */
-}
-
-.navbar .left a:hover::before {
-    background-color: #FF8C00;
-}
-.dfircolor {
-    color: #FFA500;
-}
-    </style>
+  @media (max-width:720px) {
+    header { padding:16px 18px; }
+    header nav a { margin-left:14px; }
+    main, footer { padding-left:18px; padding-right:18px; }
+    .intro { padding:10vh 0 6vh; }
+    .lab { grid-template-columns:1fr; }
+    .idx { padding:0 0 .6rem; }
+    .row { grid-template-columns:1fr; gap:.1rem; }
+  }
+  @media (max-width:400px) { header strong a { font-size:.82rem; } header nav a { margin-left:11px; } }
+</style>
 </head>
 <body>
-<div class="navbar-container">
-    <!-- Navbar -->
-		<nav class="navbar">
-			<div class="left">
-				<a href="https://cocopollo.github.io/mahmoudswelam/index.html">cocopollo</a>
-			</div>
-			<div class="center"></div>
-			<div class="right">
-				<a href="https://cocopollo.github.io/mahmoudswelam/Reports/StarkTech%20Incident%20Report%201dab727b1373804eb103cf7d2c5c8702.html">Reports</a>
-				<a href="https://cocopollo.github.io/mahmoudswelam/labs/index.html">Labs</a>
-				<a href="https://medium.com/@mahmoud.o.swelam/" target="_blank">Blog</a>
-			</div>
-		</nav>
-</div>
-    
-<header class="girgis-header text-white text-center py-3">
-    <div id="animated-header-content" class="container header-content">
-        <div>
-            <h1 class="dfircolor" >DFIR Labs</h1>
-            <div class="girgis-list">
-                <h6>My Published Labs On:</h6>
-                <div id="subtitle">
-    			<a href="https://flagyard.com/" target="_blank" style="text-decoration: none; color: inherit; cursor: pointer;">
-        			<img src="https://flagyard.com/favicon.ico" alt="Flagyard" style="width: 25px; height: 25px; vertical-align: middle;">
-        			Flagyard
-  		        </a>
-		</div>
-		<div id="subtitle">
-   			 <a href="https://blackhatmea.com/capture-the-flag" target="_blank" style="text-decoration: none; color: inherit; cursor: pointer;">
-        			<img src="https://blackhatmea.com/themes/custom/blackhat_theme/favicon.png" alt="Blackhat" style="width: 25px; height: 25px; vertical-align: middle;">
-        			BlackHat MEA 2024, 2025
-    			</a>
-		</div>
-            </div>
-        </div>
-    </div>
+<header>
+  <strong><a href="../index.html">Mahmoud Swelam</a></strong>
+  <nav><a href="../index.html#work">Work</a><a href="index.html" aria-current="page">Labs</a><a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog</a><a href="../index.html#contact">Contact</a></nav>
 </header>
 
-    <!-- Start of the cards grid  -->
-    <div class="container my-5 girgis-grid"></div>
-    <!-- End of the cards grid  -->
-
-    <!-- Start of the pagination -->
-    <div class="d-flex justify-content-center my-4 pagination">
-        <button id="prevPage" class="btn btn-primary me-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                <path fill="white" d="M9.857 15.962a.5.5 0 0 0 .243.68l9.402 4.193c1.496.667 3.047-.814 2.306-2.202l-3.152-5.904c-.245-.459-.245-1 0-1.458l3.152-5.904c.741-1.388-.81-2.87-2.306-2.202l-3.524 1.572a2 2 0 0 0-.975.932z"/>
-                <path fill="white" d="M8.466 15.39a.5.5 0 0 1-.65.233l-4.823-2.15c-1.324-.59-1.324-2.355 0-2.945L11.89 6.56a.5.5 0 0 1 .651.68z" opacity="0.5"/>
-            </svg>
-            <span>Back</span>
-        </button>
-        <span id="currentPage" class="mx-3">Page 1</span>
-        <button id="nextPage" class="btn btn-primary ms-2">
-            <span>Next</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                <path fill="white" d="M14.143 15.962a.5.5 0 0 1-.244.68l-9.402 4.193c-1.495.667-3.047-.814-2.306-2.202l3.152-5.904c.245-.459.245-1 0-1.458L2.191 5.367c-.74-1.388.81-2.87 2.306-2.202l3.525 1.572a2 2 0 0 1 .974.932z"/>
-                <path fill="white" d="M15.533 15.39a.5.5 0 0 0 .651.233l4.823-2.15c1.323-.59 1.323-2.355 0-2.945L12.109 6.56a.5.5 0 0 0-.651.68z" opacity="0.5"/>
-            </svg>
-        </button>
+<main>
+  <section class="intro">
+    <h1>DFIR Labs</h1>
+    <p>Forensics challenges I built and published, each one worked from a real investigation technique.</p>
+    <div class="platforms">
+      <a href="https://flagyard.com/" target="_blank" rel="noopener">Flagyard</a>
+      <a href="https://blackhatmea.com/capture-the-flag" target="_blank" rel="noopener">BlackHat MEA CTF <span>2024, 2025</span></a>
     </div>
-    <!-- End of the pagination -->
+  </section>
 
-    <!-- Pixel Art Floating Element -->
-    <div class="pixel-corner">
-      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-        <!-- Shield -->
-        <rect x="6" y="6" width="4" height="4" fill="#FFA500"/>
-        <rect x="12" y="6" width="4" height="4" fill="#FFA500"/>
-        <rect x="18" y="6" width="4" height="4" fill="#FFA500"/>
-        <rect x="24" y="6" width="4" height="4" fill="#FFA500"/>
-        <!-- Middle section -->
-        <rect x="6" y="10" width="4" height="4" fill="#FFA500"/>
-        <rect x="24" y="10" width="4" height="4" fill="#FFA500"/>
-        <rect x="10" y="10" width="4" height="4" fill="#FF8C00"/>
-        <rect x="16" y="10" width="4" height="4" fill="#FF8C00"/>
-        <rect x="20" y="10" width="4" height="4" fill="#FF8C00"/>
-        <!-- Bottom -->
-        <rect x="10" y="14" width="4" height="4" fill="#FFA500"/>
-        <rect x="16" y="14" width="4" height="4" fill="#FFA500"/>
-        <rect x="20" y="14" width="4" height="4" fill="#FFA500"/>
-        <!-- Lock core -->
-        <rect x="12" y="18" width="4" height="4" fill="#FFA500"/>
-        <rect x="16" y="18" width="4" height="4" fill="#FFA500"/>
-        <rect x="14" y="22" width="4" height="4" fill="#FF8C00"/>
-      </svg>
-    </div>
+  <ol class="labs" id="labs"></ol>
+  <noscript><p>The lab list needs JavaScript to render.</p></noscript>
+</main>
 
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="script.js"></script>
+<footer><a href="../index.html">Back to the drive</a></footer>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>

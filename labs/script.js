@@ -106,82 +106,66 @@ const gridData = [
   // ... continue for the remaining challenges with the same pattern ...
 ];
 
-const gridContainer = document.querySelector(".girgis-grid");
-const prevPageBtn = document.getElementById("prevPage");
-const nextPageBtn = document.getElementById("nextPage");
-const currentPageIndicator = document.getElementById("currentPage");
+const DIFFICULTY = ["Easy", "Medium", "Hard", "Insane"];
+const list = document.getElementById("labs");
 
-let currentPage = 1;
-const itemsPerPage = 6;
-
-function renderGridItems(page) {
-  gridContainer.innerHTML = ""; // Clear existing grid items
-
-  const startIndex = (page - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-
-  gridData.slice(startIndex, endIndex).forEach((item) => {
-    const card = document.createElement("a");
-    card.setAttribute("href", item.buttonLink);
-    card.setAttribute("target", "_blank");
-    card.classList.add("girgis-card");
-
-    if (item.isVIP) {
-      card.classList.add("vip");
-    }
-
-    const image = document.createElement("img");
-    image.setAttribute("src", item.imageSrc);
-    image.setAttribute("alt", "");
-
-    const title = document.createElement("h6");
-    title.textContent = item.title;
-
-    const detailsList = document.createElement("ul");
-    item.details.forEach((detail) => {
-      const listItem = document.createElement("li");
-      if (detail.startsWith("Difficulty:")) {
-        const parts = detail.split(":");
-        const level = parts[1].trim();
-        listItem.innerHTML = `${parts[0]}: <span class=\"${getDifficultyClass(level)}\">${level}</span>`;
-      } else {
-        listItem.textContent = detail;
-      }
-      detailsList.appendChild(listItem);
+// details[0] is one block of "Label: value" lines followed by "Tasks:" and bullet lines;
+// the remaining entries are optional extras such as "Difficulty: Hard".
+function parseLab(item) {
+  const lab = { type: "", tools: "", tasks: [], difficulty: "" };
+  item.details.filter(Boolean).forEach((block) => {
+    let inTasks = false;
+    block.split("\n").forEach((line) => {
+      const text = line.trim();
+      if (!text) return;
+      if (inTasks && text.startsWith("•")) {
+        const indent = line.length - line.trimStart().length;
+        lab.tasks.push({ text: text.replace(/^•\s*/, ""), sub: indent > 2 });
+      } else if (text.startsWith("Challenge Type:")) lab.type = text.slice(15).trim();
+      else if (text.startsWith("Tools Used:")) lab.tools = text.slice(11).trim();
+      else if (text.startsWith("Difficulty:")) lab.difficulty = text.slice(11).trim();
+      else if (text === "Tasks:") inTasks = true;
     });
-
-    // Published date
-    const dateItem = document.createElement("li");
-    dateItem.textContent = `Released on: ${item.publishedDate}`;
-    dateItem.classList.add("published-date");
-    detailsList.appendChild(dateItem);
-
-    const button = document.createElement("button");
-    button.textContent = item.buttonText;
-
-    card.append(image, title, detailsList, button);
-    gridContainer.appendChild(card);
   });
-
-  currentPageIndicator.textContent = `Page ${currentPage}`;
+  return lab;
 }
 
-function getDifficultyClass(d) {
-  return {
-    Easy: 'difficulty-easy',
-    Medium: 'difficulty-medium',
-    Hard: 'difficulty-hard',
-    Insane: 'difficulty-insane'
-  }[d] || '';
+function el(tag, props = {}, children = []) {
+  const node = Object.assign(document.createElement(tag), props);
+  node.append(...children);
+  return node;
 }
 
-prevPageBtn.addEventListener("click", () => {
-  if (currentPage > 1) { currentPage--; renderGridItems(currentPage); }
-});
+function row(label, value) {
+  return el("p", { className: "row" }, [el("span", { textContent: label }), el("span", { textContent: value })]);
+}
 
-nextPageBtn.addEventListener("click", () => {
-  const total = Math.ceil(gridData.length / itemsPerPage);
-  if (currentPage < total) { currentPage++; renderGridItems(currentPage); }
-});
+gridData.forEach((item, i) => {
+  const lab = parseLab(item);
+  const level = DIFFICULTY.indexOf(lab.difficulty) + 1;
+  const ticks = DIFFICULTY.map((_, k) => el("b", { className: k < level ? "on" : "" }));
 
-renderGridItems(currentPage);
+  const body = [
+    el("h2", { textContent: item.title }),
+    el("div", { className: "meta" }, [
+      el("span", { className: "diff" }, [el("i", { ariaHidden: "true" }, ticks), lab.difficulty]),
+      el("span", { textContent: `Released ${item.publishedDate}` }),
+    ]),
+  ];
+  if (lab.type) body.push(row("Challenge", lab.type));
+  if (lab.tools) body.push(row("Tools", lab.tools));
+  if (lab.tasks.length) {
+    body.push(el("details", {}, [
+      el("summary", { textContent: "Tasks" }),
+      el("ul", {}, lab.tasks.map((t) => el("li", { className: t.sub ? "sub" : "", textContent: t.text }))),
+    ]));
+  }
+  if (item.buttonLink && item.buttonLink !== "#") {
+    body.push(el("a", { className: "play", href: item.buttonLink, target: "_blank", rel: "noopener", textContent: item.buttonText }));
+  }
+
+  list.append(el("li", { className: "lab" }, [
+    el("span", { className: "idx", textContent: String(i + 1).padStart(2, "0") }),
+    el("div", {}, body),
+  ]));
+});

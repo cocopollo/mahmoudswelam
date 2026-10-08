@@ -1,296 +1,491 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>MahmoudSwelam</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mahmoud Swelam | DFIR</title>
+<meta name="description" content="Mahmoud Swelam, DFIR and blue-team specialist in Cairo: incident response, forensics, detection engineering and threat intelligence.">
+<link rel="icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&display=swap" rel="stylesheet">
+<style>
+  :root { --black:#000; --paper:#f2f2ee; --dim:#8f8f89; --rule:#3a3a37; }
+  html { background:var(--black); color:var(--paper); font-family:Archivo, system-ui, sans-serif; scroll-behavior:smooth; }
+  body { margin:0; }
+  canvas.layer { position:fixed; inset:0; width:100%; height:100%; display:block; pointer-events:none; }
+  #scene { z-index:0; } #ink { z-index:1; } #loupe { z-index:4; }
 
-  <!-- Fonts & CSS -->
-  <link rel="icon" href="" type="image/x-icon">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="normalize.css" />
-  
-  <style>
-.scrambled-container {
-  font-family: monospace;
-  font-size: 22px;
-  color: #fff;
-  margin-top: 30px;
-  max-width: 800px;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.6;
-  word-break: break-word;
-  white-space: normal;
-}
+  header { position:fixed; top:0; left:0; right:0; z-index:3; display:flex; justify-content:space-between; align-items:baseline; padding:22px 28px; font-size:.9rem; }
+  header strong { font-stretch:80%; font-weight:700; }
+  header nav a { color:var(--paper); text-decoration:none; margin-left:24px; }
+  header nav a:hover { text-decoration:underline; text-underline-offset:4px; }
+  a:focus-visible { outline:1px solid var(--paper); outline-offset:4px; }
 
+  main { position:relative; z-index:2; }
+  section { min-height:100vh; box-sizing:border-box; display:flex; align-items:center; padding:0 28px; }
+  .panel { max-width:30rem; }
+  h1 { font-size:clamp(3.2rem, 9vw, 7.6rem); font-stretch:62%; font-weight:800; line-height:.86; margin:0 0 1.6rem; }
+  h2 { font-size:clamp(2.4rem, 5.4vw, 4.4rem); font-stretch:66%; font-weight:750; line-height:.92; margin:0 0 1.2rem; }
+  p { font-size:1.05rem; line-height:1.55; max-width:36ch; margin:0 0 1rem; }
+  p.sub { color:var(--dim); }
+  a.more { display:inline-block; color:var(--paper); font-stretch:80%; font-weight:600; text-decoration:none; border-bottom:1px solid var(--rule); padding-bottom:2px; margin-top:.4rem; }
+  a.more:hover { border-color:var(--paper); }
+  .links a { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; color:var(--paper); font-size:1.4rem; font-stretch:80%; font-weight:600; text-decoration:none; padding:.35rem 0; border-bottom:1px solid var(--rule); max-width:22rem; }
+  .links a span { color:var(--dim); font-size:.85rem; font-weight:400; font-stretch:100%; }
+  .links a:hover { border-color:var(--paper); }
 
-.char {
-  display: inline-block;
-  width: 0.6em;         /* Equal width for every character */
-  text-align: center;
-  font-family: monospace;
-  font-variant-ligatures: none;
-  will-change: contents;
-}
+  .counter { position:fixed; left:28px; bottom:22px; z-index:3; font-size:.85rem; display:flex; gap:14px; align-items:baseline; }
+  .counter #num { font-stretch:62%; font-weight:700; font-size:1.6rem; font-variant-numeric:tabular-nums; }
+  .counter #name { color:var(--dim); }
+  .rail { position:fixed; right:28px; top:50%; transform:translateY(-50%); z-index:3; display:flex; flex-direction:column; gap:10px; }
+  .rail span { width:14px; height:2px; background:var(--rule); transition:background .3s, width .3s; }
+  .rail span.on { background:var(--paper); width:22px; }
 
-    body, h1 {
-      font-family: "Roboto", Arial, sans-serif;
-      background-color: #1d1e20;
-      color: #dadadb;
-      margin: 0;
-      padding: 0;
-    }
-    /* Poster fallback behind the video */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background: url('assets/bg-poster.jpg') center / cover no-repeat;
-    }
-    .bg-video {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -2;
-      pointer-events: none;
-    }
-    @media (prefers-reduced-motion: reduce) { .bg-video { display: none; } }
-    /* Dark overlay so text stays readable */
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: rgba(10, 10, 14, 0.55);
-    }
-    h1 { background-color: transparent; }
-    h1 {
-      letter-spacing: 2px;
-      color: #FFA500;
-      margin-bottom: 10px;
-    }
-    .titleme {
-      color: #dcdcdc;
-      font-size: 25px;
-    }
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 50px;
-      padding: 10px 20px;
-    }
-    .navbar .left, .navbar .right {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-    }
-    .navbar .center {
-      flex: 0.5;
-      text-align: center;
-    }
-    .navbar a {
-      color: #dcdcdc;
-      text-decoration: none;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-    .navbar a:hover {
-      color: #ffffff;
-    }
-    .navbar .right a {
-      margin-left: 40px;
-    }
-    .navbar .left a {
-      background-color: #4D3C2E;
-      color: #FFA500;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-family: monospace;
-      font-size: 24px;
-      font-weight: 600;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .navbar .left a:hover {
-      background-color: #5B4736;
-      color: #FF8C00;
-    }
-    .main-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 120px);
-      padding: 20px;
-      text-align: center;
-    }
-    .profile-picture-wrapper {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .profile-picture {
-      width: 100%;
-      height: 100%;
-      background-image: url('Main.png');
-      background-size: 140%;
-      background-position: center -13px;
-      background-repeat: no-repeat;
-      transform: scale(1.2);
-      transform-origin: center center;
-    }
-    .main-content p {
-      color: #dcdcdc;
-      max-width: 800px;
-      margin: 20px 0;
-      font-size: 18px;
-    }
-    .social-icons {
-      margin-top: 20px;
-    }
-    .social-icons a {
-      color: #dcdcdc;
-      font-size: 24px;
-      margin: 0 10px;
-      transition: color 0.3s;
-    }
-    .social-icons a:hover {
-      color: #FFA500;
-    }
-
-    /* Scrambled Text Styling */
-    .scrambled-container {
-      font-family: monospace;
-      font-size: 22px;
-      color: #fff;
-      margin-top: 30px;
-    }
-    .char {
-      display: inline-block;
-      will-change: transform;
-    }
-  </style>
+  @media (max-width:720px) {
+    header { padding:16px 18px; }
+    header nav a { margin-left:14px; }
+    section { align-items:flex-end; padding:0 18px 14vh; }
+    .panel { background:linear-gradient(to bottom, transparent, #000 2.5rem); padding-top:3rem; }
+    .counter { left:18px; }
+    .rail { right:10px; }
+  }
+  @media (max-width:400px) { header strong { font-size:.82rem; } header nav a { margin-left:11px; } }
+  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .rail span { transition:none; } }
+</style>
 </head>
 <body>
-<video class="bg-video" autoplay muted loop playsinline preload="auto" poster="assets/bg-poster.jpg" aria-hidden="true">
-  <source src="assets/bg.webm" type="video/webm">
-  <source src="assets/bg.mp4" type="video/mp4">
-</video>
+<canvas id="scene" class="layer" aria-hidden="true"></canvas>
+<canvas id="ink" class="layer" aria-hidden="true"></canvas>
+<canvas id="loupe" class="layer" aria-hidden="true"></canvas>
 
-<div class="navbar-container">
-  <nav class="navbar">
-    <div class="left">
-      <a href="https://cocopollo.github.io/mahmoudswelam/index.html">cocopollo</a>
+<header>
+  <strong>Mahmoud Swelam</strong>
+  <nav><a href="#work">Work</a><a href="labs/index.html">Labs</a><a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog</a><a href="#contact">Contact</a></nav>
+</header>
+
+<main>
+  <section>
+    <div class="panel">
+      <h1>Mahmoud Swelam</h1>
+      <p>DFIR and blue-team specialist in Cairo. I take systems apart to find out what happened inside them.</p>
+      <p class="sub">Scroll to open the drive. Move your cursor to look underneath.</p>
     </div>
-    <div class="center"></div>
-    <div class="right">
-      <a href="https://cocopollo.github.io/mahmoudswelam/Reports/StarkTech%20Incident%20Report%201dab727b1373804eb103cf7d2c5c8702.html">Reports</a>
-      <a href="https://cocopollo.github.io/mahmoudswelam/labs/index.html">Labs</a>
-      <a href="https://medium.com/@mahmoud.o.swelam" target="_blank">Blog</a>
+  </section>
+  <section id="work">
+    <div class="panel">
+      <h2>Incident response</h2>
+      <p>Compromise assessments and incident response: hunting across endpoints for what an attacker left behind, and proving it.</p>
+      <a class="more" href="Reports/StarkTech%20Incident%20Report%201dab727b1373804eb103cf7d2c5c8702.html">Read the StarkTech incident report</a>
     </div>
-  </nav>
-</div>
+  </section>
+  <section>
+    <div class="panel">
+      <h2>Forensics</h2>
+      <p>Windows, macOS and memory forensics. Biome Timeline parses Apple Biome SEGB streams into a timeline an investigator can read.</p>
+    </div>
+  </section>
+  <section>
+    <div class="panel">
+      <h2>Down to the surface</h2>
+      <p>Deleted rarely means gone. The answer is usually still written somewhere on the platter.</p>
+    </div>
+  </section>
+  <section>
+    <div class="panel">
+      <h2>Raw bytes</h2>
+      <p>Parsing artifacts straight from disk and memory images instead of trusting what a live system reports.</p>
+    </div>
+  </section>
+  <section>
+    <div class="panel">
+      <h2>Detection engineering</h2>
+      <p>Turning artifacts into a sequence, and the sequence into Sigma rules. Contributor to SigmaHQ. FRAIM v2, in development, analyses and visualises Sigma rule sets.</p>
+    </div>
+  </section>
+  <section>
+    <div class="panel">
+      <h2>Threat intelligence</h2>
+      <p>Pivoting from one indicator to the infrastructure behind it, documented as a hunt-loop playbook. CTF and TryHackMe rooms built around real attack chains.</p>
+      <a class="more" href="labs/index.html">Browse the DFIR labs</a>
+    </div>
+  </section>
+  <section id="contact">
+    <div class="panel">
+      <h2>Get in touch</h2>
+      <div class="links">
+        <a href="mailto:mahmoud.o.swelam@gmail.com">Email <span>mahmoud.o.swelam@gmail.com</span></a>
+        <a href="https://www.linkedin.com/in/mahmoud-swelam" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/cocopollo" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog <span>Medium</span></a>
+        <a href="labs/index.html">Labs <span>Flagyard, BlackHat MEA</span></a>
+        <a href="Reports/StarkTech%20Incident%20Report%201dab727b1373804eb103cf7d2c5c8702.html">Incident report <span>StarkTech</span></a>
+      </div>
+    </div>
+  </section>
+</main>
 
-<div class="main-content">
-  <div class="profile-picture-wrapper">
-    <div class="profile-picture"></div>
-  </div>
+<div class="counter" aria-hidden="true"><span id="num">01</span><span id="name">Enclosure</span></div>
+<div class="rail" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 
-  <h1>Mahmoud Swelam</h1>
-  <h1 class="titleme">Cyber Security Engineer</h1>
-  
-<p class="scrambled-container" id="scramble-text-main">
-  Digital Forensics and Incident Response (DFIR) Engineer at EGCERT,       I spearhead high-stakes cyber investigations, engineer cutting-edge      forensic tools, and fortify defenses against sophisticated threats. My     work ensures organizations stay resilient in the face of evolving        attacks.
-</p>
-
-<p class="scrambled-container" id="scramble-text-secondary">
-  Securing the unseen, decoding the unknown, defending the future.
-</p>
-
-
-<div class="social-icons">
-  <a href="https://medium.com/@mahmoud.o.swelam/" target="_blank"><i class="fab fa-medium"></i></a>
-  <a href="mailto:mahmoud.o.swelam@gmail.com" target="_blank"><i class="fas fa-envelope"></i></a>
-  <a href="https://www.linkedin.com/in/mahmoud-swelam" target="_blank"><i class="fab fa-linkedin"></i></a>
-  <a href="https://github.com/cocopollo" target="_blank"><i class="fab fa-github"></i></a>
-</div>
-
-
-<!-- Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-  const scrambleChars = "0x1";
-  const scrambleDelay = 60;
-  const scrambleRange = 2;
-  const delayBeforeRestore = 1000;
+(() => {
+  const NAMES = ['Enclosure', 'Top cover', 'Platters', 'Surface', 'Raw bytes', 'Timeline', 'Infrastructure', 'Contact'];
+  const PAPER = '#f2f2ee', DIM = '#8f8f89';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const numEl = document.getElementById('num'), nameEl = document.getElementById('name');
+  const ticks = [...document.querySelectorAll('.rail span')];
+  const sections = [...document.querySelectorAll('section')];
+  const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
 
-  const activeIntervals = new Map();
-  const pendingTimeouts = new Map();
-
-  document.querySelectorAll(".scrambled-container").forEach(container => {
-    const chars = container.textContent.split("");
-    container.innerHTML = chars.map(char =>
-      `<span class="char" data-original="${char}">${char}</span>`
-    ).join("");
-
-    const spans = container.querySelectorAll(".char");
-
-    function startScrambling(index) {
-      for (let i = index - scrambleRange; i <= index + scrambleRange; i++) {
-        if (i < 0 || i >= spans.length) continue;
-        const span = spans[i];
-        if (pendingTimeouts.has(span)) {
-          clearTimeout(pendingTimeouts.get(span));
-          pendingTimeouts.delete(span);
-        }
-        if (activeIntervals.has(span)) continue;
-
-        const interval = setInterval(() => {
-          span.textContent = scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
-        }, scrambleDelay);
-
-        activeIntervals.set(span, interval);
-      }
+  // Continuous section index: 0 at the hero, 7 at contact
+  function scrollIndex() {
+    const mid = scrollY + innerHeight * 0.5;
+    for (let i = 0; i < sections.length; i++) {
+      const top = sections[i].offsetTop, h = sections[i].offsetHeight;
+      if (mid < top + h) return i + Math.max(0, Math.min(1, (mid - top) / h)) - 0.5;
     }
+    return sections.length - 1;
+  }
+  let s = scrollIndex(), sView = s, W = innerWidth, H = innerHeight, mobile = W <= 720, boil = 0;
+  addEventListener('scroll', () => { s = scrollIndex(); }, { passive: true });
 
-    function stopScrambling(index) {
-      for (let i = index - scrambleRange; i <= index + scrambleRange; i++) {
-        if (i < 0 || i >= spans.length) continue;
-        const span = spans[i];
-        if (pendingTimeouts.has(span)) continue;
+  function updateUI(v) {
+    const i = Math.max(0, Math.min(7, Math.round(v)));
+    numEl.textContent = String(i + 1).padStart(2, '0');
+    nameEl.textContent = NAMES[i];
+    ticks.forEach((t, k) => t.classList.toggle('on', k === i));
+  }
 
-        const timeout = setTimeout(() => {
-          if (activeIntervals.has(span)) {
-            clearInterval(activeIntervals.get(span));
-            span.textContent = span.dataset.original;
-            activeIntervals.delete(span);
-          }
-          pendingTimeouts.delete(span);
-        }, delayBeforeRestore);
+  /* ---------------- 2D ink layer ---------------- */
+  const ink = document.getElementById('ink'), ix = ink.getContext('2d');
+  const loupe = document.getElementById('loupe'), lx = loupe.getContext('2d');
+  const DPR = Math.min(devicePixelRatio || 1, 2);
 
-        pendingTimeouts.set(span, timeout);
-      }
+  function n2(x, y, seed) {
+    return Math.sin(x * 0.045 + y * 0.031 + boil * 2.1 + seed) * 0.6 + Math.sin(x * 0.11 - y * 0.07 + boil * 3.3 + seed * 1.7) * 0.4;
+  }
+  // Polyline drawn as two wobbly pen strokes, revealed up to `prog`
+  function inkPath(ctx, pts, prog = 1, amp = 1.6, closed = false) {
+    if (prog <= 0) return;
+    const P = closed ? pts.concat([pts[0]]) : pts;
+    const dense = [];
+    for (let i = 0; i < P.length - 1; i++) {
+      const [x1, y1] = P[i], [x2, y2] = P[i + 1];
+      const n = Math.max(1, Math.ceil(Math.hypot(x2 - x1, y2 - y1) / 7));
+      for (let j = 0; j < n; j++) dense.push([lerp(x1, x2, j / n), lerp(y1, y2, j / n)]);
     }
-
-    spans.forEach((span, i) => {
-      span.addEventListener("mouseenter", () => startScrambling(i));
-      span.addEventListener("mouseleave", () => stopScrambling(i));
+    dense.push(P[P.length - 1]);
+    const end = Math.max(2, Math.floor(dense.length * Math.min(1, prog)));
+    [[0, 1.25], [4.1, 0.6]].forEach(([seed, w]) => {
+      ctx.beginPath(); ctx.lineWidth = w;
+      for (let i = 0; i < end; i++) {
+        const [x, y] = dense[i];
+        const px = x + n2(x, y, seed) * amp, py = y + n2(y, x, seed + 2) * amp;
+        i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+      }
+      ctx.stroke();
     });
-  });
+  }
+  const circlePts = (cx, cy, r, n = 40) => Array.from({ length: n }, (_, i) => [cx + Math.cos(i / n * 6.283) * r, cy + Math.sin(i / n * 6.283) * r]);
+
+  // Deterministic byte source
+  const byteAt = (c, r) => (Math.imul((c * 73856093) ^ (r * 19349663), 2654435761) >>> 24) & 255;
+  const hx = b => b.toString(16).toUpperCase().padStart(2, '0');
+  const MZ = [0x4D, 0x5A, 0x90, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00]; // PE/DOS header start
+
+  function region() {
+    return mobile ? { x: W * 0.07, y: H * 0.1, w: W * 0.86, h: H * 0.42 }
+                  : { x: W * 0.47, y: H * 0.16, w: W * 0.45, h: H * 0.68 };
+  }
+
+  function drawHex(a, reveal, hl) {
+    const R = region(), fs = mobile ? 10 : 13, lh = fs * 1.75, cols = mobile ? 8 : 16;
+    const rows = Math.floor(R.h / lh), hlRow = Math.floor(rows * 0.42);
+    ix.font = `${fs}px ui-monospace, Menlo, monospace`;
+    ix.textBaseline = 'middle';
+    const cw = ix.measureText('00 ').width;
+    for (let r = 0; r < rows; r++) {
+      const rowReveal = Math.max(0, Math.min(1, reveal * rows * 1.3 - r * 0.3));
+      if (rowReveal <= 0) continue;
+      const y = R.y + r * lh, isHl = r === hlRow;
+      ix.globalAlpha = a * rowReveal * (isHl ? lerp(0.55, 1, hl) : lerp(0.55, 0.22, hl));
+      ix.fillStyle = DIM;
+      ix.fillText((0x1F400 + r * cols).toString(16).toUpperCase().padStart(8, '0'), R.x, y);
+      ix.fillStyle = isHl && hl > 0 ? PAPER : DIM;
+      const shown = Math.floor(cols * rowReveal);
+      let line = '';
+      for (let c = 0; c < shown; c++) line += hx(isHl ? MZ[c % 16] : byteAt(c, r + 40)) + ' ';
+      ix.fillText(line, R.x + cw * 3.6, y);
+    }
+    if (hl > 0) {
+      const y = R.y + hlRow * lh, x0 = R.x + cw * 3.3, x1 = x0 + cw * cols + 4;
+      ix.globalAlpha = a; ix.strokeStyle = PAPER;
+      inkPath(ix, [[x0, y - lh * 0.55], [x1, y - lh * 0.55], [x1, y + lh * 0.55], [x0, y + lh * 0.55]], hl, 1.2, true);
+      ix.globalAlpha = a * hl; ix.fillStyle = PAPER;
+      ix.font = `600 ${fs + 1}px Archivo, sans-serif`;
+      ix.fillText('MZ: start of a Windows executable', x0, y + lh * 1.4);
+    }
+    ix.globalAlpha = 1;
+  }
+
+  function drawTimeline(a, p) {
+    const R = region(), x = R.x + 14, top = R.y + 10, bot = R.y + R.h - 30;
+    const fs = mobile ? 13 : 16;
+    ix.globalAlpha = a; ix.strokeStyle = PAPER; ix.fillStyle = PAPER;
+    inkPath(ix, [[x, top], [x, bot]], smooth(0, 0.5, p), 1.4);
+    const ev = [
+      ['File created', 'Sysmon Event ID 11'],
+      ['Process created', 'Sysmon Event ID 1, Security 4688'],
+      ['Network connection', 'Sysmon Event ID 3']
+    ];
+    ev.forEach(([t, sub], i) => {
+      const e = smooth(0.2 + i * 0.22, 0.4 + i * 0.22, p);
+      if (e <= 0) return;
+      const y = lerp(top, bot, 0.15 + i * 0.33);
+      ix.globalAlpha = a; inkPath(ix, circlePts(x, y, 7), e, 1, true);
+      inkPath(ix, [[x + 12, y], [x + 34, y]], e, 0.8);
+      ix.globalAlpha = a * e;
+      ix.font = `650 ${fs + 4}px Archivo, sans-serif`; ix.textBaseline = 'middle'; ix.fillStyle = PAPER;
+      ix.fillText(t, x + 44, y - fs * 0.45);
+      ix.font = `${fs - 2}px Archivo, sans-serif`; ix.fillStyle = DIM;
+      ix.fillText(sub, x + 44, y + fs * 0.75);
+      if (i > 0) {
+        ix.fillStyle = PAPER; ix.font = `600 ${fs - 3}px Archivo, sans-serif`;
+        const tx = x + 44, ty = y + fs * 2, tw = ix.measureText('Sigma rule match').width;
+        ix.fillText('Sigma rule match', tx + 6, ty);
+        ix.strokeStyle = PAPER; inkPath(ix, [[tx, ty - 9], [tx + tw + 12, ty - 9], [tx + tw + 12, ty + 9], [tx, ty + 9]], e, 0.9, true);
+      }
+    });
+    ix.globalAlpha = a * smooth(0.8, 1, p); ix.fillStyle = DIM; ix.font = `${fs - 4}px Archivo, sans-serif`;
+    ix.fillText('Illustrative sequence', x + 44, bot + 22);
+    ix.globalAlpha = 1;
+  }
+
+  const NODES = [
+    ['Beacon', 0.08, 0.55], ['Redirector', 0.34, 0.3], ['C2 server', 0.56, 0.58],
+    ['TLS certificate', 0.8, 0.32], ['Sibling server', 0.92, 0.7], ['Sibling server', 0.62, 0.92]
+  ];
+  const EDGES = [[0, 1], [1, 2], [2, 3], [3, 4], [3, 5]];
+  function drawGraph(a, p) {
+    const R = region(), fs = mobile ? 11 : 14;
+    const pos = NODES.map(([, u, v]) => [R.x + u * R.w * 0.86, R.y + v * R.h * 0.86]);
+    ix.strokeStyle = PAPER; ix.fillStyle = PAPER;
+    EDGES.forEach(([i, j], k) => {
+      const e = smooth(0.12 + k * 0.15, 0.3 + k * 0.15, p);
+      ix.globalAlpha = a * (i >= 3 || j >= 3 ? 0.75 : 1);
+      inkPath(ix, [pos[i], pos[j]], e, 1.5);
+    });
+    NODES.forEach(([label], i) => {
+      const e = smooth(i * 0.14, 0.1 + i * 0.14, p);
+      if (e <= 0) return;
+      const [x, y] = pos[i];
+      ix.globalAlpha = a; inkPath(ix, circlePts(x, y, i === 2 ? 14 : 9), e, 1.1, true);
+      ix.globalAlpha = a * e; ix.font = `600 ${fs}px Archivo, sans-serif`; ix.textBaseline = 'middle';
+      ix.fillStyle = PAPER; ix.fillText(label, x - ix.measureText(label).width / 2, y + (i === 2 ? 30 : 24));
+    });
+    ix.globalAlpha = a * smooth(0.85, 1, p); ix.fillStyle = DIM; ix.font = `${fs - 2}px Archivo, sans-serif`;
+    ix.fillText('Illustrative pivot path', R.x, R.y + R.h + 10);
+    ix.globalAlpha = 1;
+  }
+
+  function draw2D() {
+    ix.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ix.clearRect(0, 0, W, H);
+    const hexA = smooth(3.2, 3.9, sView) * (1 - smooth(4.6, 5.0, sView));
+    if (hexA > 0) drawHex(hexA, smooth(3.2, 4.0, sView), smooth(3.95, 4.4, sView));
+    const tlA = smooth(4.6, 5.0, sView) * (1 - smooth(5.6, 5.95, sView));
+    if (tlA > 0) drawTimeline(tlA, smooth(4.55, 5.1, sView));
+    const grA = smooth(5.6, 5.95, sView) * lerp(1, 0.3, smooth(6.5, 7, sView));
+    if (grA > 0) drawGraph(grA, smooth(5.55, 6.05, sView));
+  }
+
+  // Loupe: shows raw bytes under the drawing
+  const pointer = { x: -999, y: -999, on: false, last: 0 };
+  addEventListener('pointermove', e => { pointer.x = e.clientX; pointer.y = e.clientY; pointer.on = true; pointer.last = performance.now(); }, { passive: true });
+  addEventListener('pointerdown', e => { pointer.x = e.clientX; pointer.y = e.clientY; pointer.on = true; pointer.last = performance.now(); }, { passive: true });
+  addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') pointer.on = false; });
+  document.addEventListener('pointerleave', () => { pointer.on = false; });
+
+  function drawLoupe() {
+    lx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    lx.clearRect(0, 0, W, H);
+    if (!pointer.on || performance.now() - pointer.last > 2500) return;
+    const r = mobile ? 58 : 74, { x, y } = pointer, cw = 22, ch = 16;
+    lx.save();
+    lx.beginPath(); lx.arc(x, y, r, 0, 6.283); lx.fillStyle = '#000'; lx.fill(); lx.clip();
+    lx.font = '11px ui-monospace, Menlo, monospace'; lx.textBaseline = 'middle';
+    const c0 = Math.floor((x - r) / cw), c1 = Math.ceil((x + r) / cw), r0 = Math.floor((y - r) / ch), r1 = Math.ceil((y + r) / ch);
+    const rowShift = Math.floor(scrollY / ch);
+    for (let c = c0; c <= c1; c++) for (let q = r0; q <= r1; q++) {
+      const d = Math.hypot(c * cw + cw / 2 - x, q * ch + ch / 2 - y) / r;
+      lx.globalAlpha = Math.max(0, 1 - d * 0.9);
+      lx.fillStyle = d < 0.45 ? PAPER : DIM;
+      lx.fillText(hx(byteAt(c, q + rowShift)), c * cw + 3, q * ch + ch / 2);
+    }
+    lx.restore();
+    lx.strokeStyle = PAPER; lx.globalAlpha = 1;
+    inkPath(lx, circlePts(x, y, r, 48), 1, 1.2, true);
+    inkPath(lx, [[x + r * 0.72, y + r * 0.72], [x + r * 1.15, y + r * 1.15]], 1, 1.2);
+  }
+
+  /* ---------------- 3D ink drive ---------------- */
+  const sceneCanvas = document.getElementById('scene');
+  let three = null;
+  if (window.THREE) {
+    try { three = buildDrive(); } catch (e) { sceneCanvas.remove(); three = null; }
+  } else sceneCanvas.remove();
+
+  function buildDrive() {
+    const renderer = new THREE.WebGLRenderer({ canvas: sceneCanvas, antialias: true });
+    renderer.setPixelRatio(DPR); renderer.setClearColor(0x000000, 1);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, 1, 0.02, 100);
+    const drive = new THREE.Group(); scene.add(drive);
+    const uTime = { value: 0 };
+
+    const VS = `uniform float uTime; uniform float uSeed; uniform float uAmp;
+      void main(){
+        vec3 p = position; float t = uTime + uSeed;
+        vec3 n = vec3(sin(p.x*5.1+p.y*3.7+p.z*4.3+t*2.1), sin(p.x*4.3+p.y*6.1+p.z*2.9+t*1.7+1.3), sin(p.x*3.3+p.y*4.9+p.z*5.7+t*2.6+2.1));
+        n += 0.22*vec3(sin(p.z*13.0+t*3.0), sin(p.x*11.0+t*2.4), sin(p.y*12.0+t*3.3));
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(p + n*uAmp, 1.0);
+      }`;
+    const FS = `uniform float uOpacity; void main(){ gl_FragColor = vec4(0.949, 0.949, 0.933, uOpacity); }`;
+    const inkMat = (opacity, amp, seed) => new THREE.ShaderMaterial({
+      uniforms: { uTime, uOpacity: opacity, uAmp: { value: amp }, uSeed: { value: seed } },
+      vertexShader: VS, fragmentShader: FS, transparent: true, depthWrite: false
+    });
+    const fill = new THREE.MeshBasicMaterial({ color: 0x000000, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 2 });
+    const parts = [], spinners = [];
+
+    function inkify(src, step, over) {
+      const out = [], A = new THREE.Vector3(), B = new THREE.Vector3(), D = new THREE.Vector3();
+      for (let i = 0; i < src.length; i += 6) {
+        A.set(src[i], src[i + 1], src[i + 2]); B.set(src[i + 3], src[i + 4], src[i + 5]);
+        const len = A.distanceTo(B); if (len < 1e-5) continue;
+        D.subVectors(B, A).normalize().multiplyScalar(Math.min(0.07, len * over));
+        A.sub(D); B.add(D);
+        const n = Math.max(1, Math.ceil(len / step));
+        for (let j = 0; j < n; j++) {
+          const p = A.clone().lerp(B, j / n), q = A.clone().lerp(B, (j + 1) / n);
+          out.push(p.x, p.y, p.z, q.x, q.y, q.z);
+        }
+      }
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(out, 3)); return g;
+    }
+    function makePart(opts) {
+      const g = new THREE.Group(), op = { value: 1 };
+      g.userData = Object.assign({}, opts, { op, explode: new THREE.Vector3(...opts.explode),
+        mats: [inkMat(op, 0.022, 0), inkMat(op, 0.022, 7.3)], rmats: [inkMat(op, 0.004, 0), inkMat(op, 0.004, 3.1)] });
+      drive.add(g); parts.push(g); return g;
+    }
+    const ud = o => o.userData.mats ? o.userData : o.parent.userData;
+    function solid(geo, parent, x, y, z) {
+      const o = new THREE.Group(), u = ud(parent);
+      o.add(new THREE.Mesh(geo, fill));
+      const lg = inkify(new THREE.EdgesGeometry(geo, 20).attributes.position.array, 0.12, 0.04);
+      u.mats.forEach(m => o.add(new THREE.LineSegments(lg, m)));
+      o.position.set(x, y, z); parent.add(o); return o;
+    }
+    function ring(r, parent, x, y, z) {
+      const a = [], u = ud(parent), n = 120;
+      for (let i = 0; i < n; i++) {
+        const t0 = i / n * 6.283, t1 = (i + 1) / n * 6.283;
+        a.push(Math.cos(t0) * r, 0, Math.sin(t0) * r, Math.cos(t1) * r, 0, Math.sin(t1) * r);
+      }
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(a, 3));
+      u.rmats.forEach(m => { const l = new THREE.LineSegments(g, m); l.position.set(x, y, z); parent.add(l); });
+    }
+
+    const base = makePart({ explode: [0, 0, 0], k: [99, 99], lit: 0 });
+    solid(new THREE.BoxGeometry(4, 0.45, 5.8), base, 0, 0, 0);
+    solid(new THREE.BoxGeometry(1.6, 0.25, 0.15), base, -0.8, -0.05, 2.95);
+
+    const cover = makePart({ explode: [0, 3.8, 0], k: [0.15, 1.0], lit: 1 });
+    solid(new THREE.BoxGeometry(4, 0.06, 5.8), cover, 0, 0.95, 0);
+    ring(1.85, cover, 0, 0.985, -0.9);
+    [[-1.75, -2.65], [1.75, -2.65], [-1.75, 2.65], [1.75, 2.65]].forEach(([x, z]) => ring(0.08, cover, x, 0.985, z));
+
+    function platter(y, lift, top) {
+      const p = makePart({ explode: [0, lift, 0], k: [1.1, 1.95], lit: 2, top });
+      const sp = new THREE.Group(); sp.position.set(0, y, -0.9); sp.userData = p.userData; p.add(sp); spinners.push(sp);
+      solid(new THREE.CylinderGeometry(1.75, 1.75, 0.04, 72), sp, 0, 0, 0);
+      solid(new THREE.CylinderGeometry(0.45, 0.45, 0.07, 40), sp, 0, 0.03, 0);
+      const step = top ? 0.04 : 0.25;
+      for (let r = 0.6; r < 1.72; r += step) ring(r, sp, 0, 0.022, 0);
+      return p;
+    }
+    platter(0.38, 1.9, false);
+    const topPlatter = platter(0.62, 2.7, true);
+    const spindle = makePart({ explode: [0, 1.2, 0], k: [1.1, 1.95], lit: 2 });
+    solid(new THREE.CylinderGeometry(0.42, 0.42, 0.55, 40), spindle, 0, 0.5, -0.9);
+
+    const act = makePart({ explode: [1.3, 1.1, 0.7], k: [1.25, 2.0], lit: 2 });
+    const pivot = new THREE.Group(); pivot.position.set(1.45, 0.5, 1.9); pivot.userData = act.userData; act.add(pivot);
+    solid(new THREE.CylinderGeometry(0.32, 0.32, 0.5, 36), pivot, 0, 0, 0);
+    solid(new THREE.BoxGeometry(0.22, 0.05, 2.6), pivot, 0, 0.05, -1.3);
+    solid(new THREE.BoxGeometry(0.14, 0.08, 0.22), pivot, 0, 0.02, -2.6);
+    solid(new THREE.BoxGeometry(0.7, 0.12, 0.6), pivot, 0, 0.05, 0.5);
+    const ARM = Math.atan2(1.15, 2.4); pivot.rotation.y = ARM;
+
+    const pcb = makePart({ explode: [0, -2.4, 0], k: [1.3, 2.05], lit: 2 });
+    solid(new THREE.BoxGeometry(3.6, 0.04, 4.2), pcb, 0, -0.31, 0.6);
+    [[-0.7, 0.3, 0.9, 0.9], [0.7, 1.4, 0.5, 0.7], [0.9, -0.6, 0.4, 0.4], [-0.9, 1.8, 0.25, 0.25]]
+      .forEach(([x, z, w, d]) => solid(new THREE.BoxGeometry(w, 0.04, d), pcb, x, -0.27, z));
+
+    const orbitPos = new THREE.Vector3(), orbitTgt = new THREE.Vector3();
+    const diveTgt = new THREE.Vector3(1.2, 3.34, -0.9), divePos = new THREE.Vector3(1.2, 3.62, -0.42);
+
+    return {
+      resize() { renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); },
+      frame(t) {
+        uTime.value = boil;
+        const active = Math.round(sView), dive = smooth(2.3, 3.35, sView);
+        parts.forEach(p => {
+          const u = p.userData;
+          p.position.copy(u.explode).multiplyScalar(smooth(u.k[0], u.k[1], sView));
+          let o = (active === 0 || u.lit === active || (active >= 3 && u.top)) ? 1 : 0.2;
+          if (!u.top) o *= 1 - dive;
+          u.op.value += (o - u.op.value) * (reduced ? 1 : 0.1);
+        });
+        if (!reduced) {
+          spinners.forEach(sp => sp.rotation.y = t * 0.5);
+          pivot.rotation.y = ARM + Math.sin(t * 1.4) * 0.1;
+        }
+        const r = mobile ? 30 : 18.5, th = 0.8 - sView * 0.3, el = 0.6 - sView * 0.05;
+        orbitTgt.set(mobile ? 0.6 : -3.4, mobile ? -3.4 : 0.9, 0);
+        orbitPos.set(orbitTgt.x + r * Math.cos(el) * Math.sin(th), orbitTgt.y + r * Math.sin(el) + 0.8, r * Math.cos(el) * Math.cos(th));
+        camera.position.lerpVectors(orbitPos, divePos, dive);
+        camera.lookAt(orbitTgt.clone().lerp(diveTgt, dive));
+        sceneCanvas.style.opacity = 1 - smooth(3.45, 4.1, sView);
+        if (sView < 4.2) renderer.render(scene, camera);
+      }
+    };
+  }
+
+  function resize() {
+    W = innerWidth; H = innerHeight; mobile = W <= 720;
+    [ink, loupe].forEach(c => { c.width = W * DPR; c.height = H * DPR; });
+    if (three) three.resize();
+  }
+  addEventListener('resize', resize); resize();
+
+  const t0 = performance.now();
+  function frame() {
+    const t = (performance.now() - t0) / 1000;
+    boil = reduced ? 0 : Math.floor(t * 8) / 8;   // lines redraw ~8 times a second, like hand-drawn animation
+    sView = reduced ? s : sView + (s - sView) * 0.08;
+    updateUI(sView);
+    if (three) three.frame(t);
+    draw2D();
+    drawLoupe();
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
 </script>
-
-
 </body>
 </html>
