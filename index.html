@@ -8,37 +8,48 @@
 <link rel="icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Special+Elite&display=swap" rel="stylesheet">
 <style>
-  :root { --black:#000; --paper:#f2f2ee; --dim:#8f8f89; --rule:#3a3a37; }
+  :root { --black:#000; --paper:#f2f2ee; --dim:#8f8f89; --rule:#3a3a37; --display:Archivo, system-ui, sans-serif; }
   html { background:var(--black); color:var(--paper); font-family:Archivo, system-ui, sans-serif; scroll-behavior:smooth; }
   body { margin:0; }
   canvas.layer { position:fixed; inset:0; width:100%; height:100%; display:block; pointer-events:none; }
-  #scene { z-index:0; } #ink { z-index:1; } #loupe { z-index:4; }
+  #scene { z-index:0; } #ink { z-index:1; } #loupe { z-index:5; }
+  .film { position:fixed; inset:0; z-index:2; pointer-events:none; }
+  #grain { opacity:.11; mix-blend-mode:screen; }
+  #vignette { background:radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,.65) 100%); }
 
-  header { position:fixed; top:0; left:0; right:0; z-index:3; display:flex; justify-content:space-between; align-items:baseline; padding:22px 28px; font-size:.9rem; }
+  header { position:fixed; top:0; left:0; right:0; z-index:4; display:flex; justify-content:space-between; align-items:baseline; padding:22px 28px; font-size:.9rem; }
   header strong { font-stretch:80%; font-weight:700; }
   header nav a { color:var(--paper); text-decoration:none; margin-left:24px; }
   header nav a:hover { text-decoration:underline; text-underline-offset:4px; }
   a:focus-visible { outline:1px solid var(--paper); outline-offset:4px; }
 
-  main { position:relative; z-index:2; }
+  main { position:relative; z-index:3; }
   section { min-height:100vh; box-sizing:border-box; display:flex; align-items:center; padding:0 28px; }
   .panel { max-width:30rem; }
+  h1, h2, .counter #num, .links a, a.more { font-family:var(--display); }
   h1 { font-size:clamp(3.2rem, 9vw, 7.6rem); font-stretch:62%; font-weight:800; line-height:.86; margin:0 0 1.6rem; }
   h2 { font-size:clamp(2.4rem, 5.4vw, 4.4rem); font-stretch:66%; font-weight:750; line-height:.92; margin:0 0 1.2rem; }
   p { font-size:1.05rem; line-height:1.55; max-width:36ch; margin:0 0 1rem; }
   p.sub { color:var(--dim); }
+  .case { font-family:'Special Elite', ui-monospace, monospace; font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin:0 0 1rem; }
+  section.hero { align-items:stretch; }
+  .hero .panel { max-width:none; width:100%; position:relative; }
+  .hero .case { position:absolute; top:14vh; left:0; }
+  .hero h1 { position:absolute; left:0; top:24vh; margin:0; font-size:clamp(3.2rem, 9.5vw, 9.5rem); will-change:transform, opacity; }
+  .hero h1 span { display:block; }
+  .hero .brief { position:absolute; left:0; bottom:13vh; max-width:30rem; }
   a.more { display:inline-block; color:var(--paper); font-stretch:80%; font-weight:600; text-decoration:none; border-bottom:1px solid var(--rule); padding-bottom:2px; margin-top:.4rem; }
   a.more:hover { border-color:var(--paper); }
   .links a { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; color:var(--paper); font-size:1.4rem; font-stretch:80%; font-weight:600; text-decoration:none; padding:.35rem 0; border-bottom:1px solid var(--rule); max-width:22rem; }
   .links a span { color:var(--dim); font-size:.85rem; font-weight:400; font-stretch:100%; }
   .links a:hover { border-color:var(--paper); }
 
-  .counter { position:fixed; left:28px; bottom:22px; z-index:3; font-size:.85rem; display:flex; gap:14px; align-items:baseline; }
+  .counter { position:fixed; left:28px; bottom:22px; z-index:4; font-size:.85rem; display:flex; gap:14px; align-items:baseline; }
   .counter #num { font-stretch:62%; font-weight:700; font-size:1.6rem; font-variant-numeric:tabular-nums; }
-  .counter #name { color:var(--dim); }
-  .rail { position:fixed; right:28px; top:50%; transform:translateY(-50%); z-index:3; display:flex; flex-direction:column; gap:10px; }
+  .counter #name { color:var(--dim); font-family:'Special Elite', ui-monospace, monospace; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; }
+  .rail { position:fixed; right:28px; top:50%; transform:translateY(-50%); z-index:4; display:flex; flex-direction:column; gap:10px; }
   .rail span { width:14px; height:2px; background:var(--rule); transition:background .3s, width .3s; }
   .rail span.on { background:var(--paper); width:22px; }
 
@@ -49,6 +60,9 @@
     .panel { background:linear-gradient(to bottom, transparent, #000 2.5rem); padding-top:3rem; }
     .counter { left:18px; }
     .rail { right:10px; }
+    section.hero { align-items:flex-end; }
+    .hero .case, .hero h1, .hero .brief { position:static; }
+    .hero h1 { font-size:clamp(3.2rem, 15vw, 5rem); margin-bottom:1.2rem; }
   }
   @media (max-width:400px) { header strong { font-size:.82rem; } header nav a { margin-left:11px; } }
   @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .rail span { transition:none; } }
@@ -58,6 +72,8 @@
 <canvas id="scene" class="layer" aria-hidden="true"></canvas>
 <canvas id="ink" class="layer" aria-hidden="true"></canvas>
 <canvas id="loupe" class="layer" aria-hidden="true"></canvas>
+<div id="grain" class="film" aria-hidden="true"></div>
+<div id="vignette" class="film" aria-hidden="true"></div>
 
 <header>
   <strong>Mahmoud Swelam</strong>
@@ -65,11 +81,21 @@
 </header>
 
 <main>
+  <section class="hero">
+    <div class="panel">
+      <p class="case">Case file No. 0x4D5A &middot; Cairo</p>
+      <h1><span>Mahmoud</span> <span>Swelam</span></h1>
+      <div class="brief">
+        <p>DFIR and blue-team specialist in Cairo. I take systems apart to find out what happened inside them.</p>
+        <p class="sub">Scroll to open the case. Move your cursor to look closer.</p>
+      </div>
+    </div>
+  </section>
   <section>
     <div class="panel">
-      <h1>Mahmoud Swelam</h1>
-      <p>DFIR and blue-team specialist in Cairo. I take systems apart to find out what happened inside them.</p>
-      <p class="sub">Scroll to open the drive. Move your cursor to look underneath.</p>
+      <p class="case">Evidence item 001</p>
+      <h2>Exhibit A</h2>
+      <p>One hard drive, pulled from a compromised machine. Whatever happened on it is still in there.</p>
     </div>
   </section>
   <section id="work">
@@ -118,6 +144,7 @@
   </section>
   <section id="contact">
     <div class="panel">
+      <p class="case">Open a new case</p>
       <h2>Get in touch</h2>
       <div class="links">
         <a href="mailto:mahmoud.o.swelam@gmail.com">Email <span>mahmoud.o.swelam@gmail.com</span></a>
@@ -131,22 +158,26 @@
   </section>
 </main>
 
-<div class="counter" aria-hidden="true"><span id="num">01</span><span id="name">Enclosure</span></div>
-<div class="rail" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<div class="counter" aria-hidden="true"><span id="num">01</span><span id="name">Cold open</span></div>
+<div class="rail" aria-hidden="true"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (() => {
-  const NAMES = ['Enclosure', 'Top cover', 'Platters', 'Surface', 'Raw bytes', 'Evidence board', 'Pulling the thread', 'Caught', 'Contact'];
+  const NAMES = ['Cold open', 'Exhibit A', 'Top cover', 'Platters', 'Surface', 'Raw bytes', 'Evidence board', 'Pulling the thread', 'Caught', 'Contact'];
+  const OFF = 1;   // the drive scenes start one section in, after the cold open
   const PAPER = '#f2f2ee', DIM = '#8f8f89', RED = '#d8402f';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const numEl = document.getElementById('num'), nameEl = document.getElementById('name');
-  const ticks = [...document.querySelectorAll('.rail span')];
   const sections = [...document.querySelectorAll('section')];
+  const rail = document.querySelector('.rail');
+  rail.innerHTML = sections.map(() => '<span></span>').join('');
+  const ticks = [...rail.children];
+  const heroName = document.querySelector('.hero h1');
   const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
   const lerp = (a, b, t) => a + (b - a) * t;
 
-  // Continuous section index: 0 at the hero, 7 at contact
+  // Continuous section index: 0 at the cold open, last at contact
   function scrollIndex() {
     const mid = scrollY + innerHeight * 0.5;
     for (let i = 0; i < sections.length; i++) {
@@ -159,10 +190,12 @@
   addEventListener('scroll', () => { s = scrollIndex(); }, { passive: true });
 
   function updateUI(v) {
-    const i = Math.max(0, Math.min(8, Math.round(v)));
+    const i = Math.max(0, Math.min(NAMES.length - 1, Math.round(v)));
     numEl.textContent = String(i + 1).padStart(2, '0');
     nameEl.textContent = NAMES[i];
     ticks.forEach((t, k) => t.classList.toggle('on', k === i));
+    const lift = mobile ? 0 : smooth(0.04, 0.45, v);   // the name drifts up and out as the camera pushes in
+    heroName.style.transform = `translateY(${-lift * 10}vh)`; heroName.style.opacity = 1 - lift;
   }
 
   /* ---------------- 2D ink layer ---------------- */
@@ -390,13 +423,133 @@
     ix.globalAlpha = 1;
   }
 
+  /* ---------------- Cold open: the detective under the streetlamp ---------------- */
+  // Figure in units of its own height: feet at y = 0, hat crown at y = -1
+  const COAT = [
+    [-0.09, 0], [-0.015, 0], [-0.02, -0.22], [0.02, -0.22], [0.015, 0], [0.09, 0],
+    [0.065, -0.02], [0.07, -0.21], [0.155, -0.23], [0.13, -0.45], [0.115, -0.62], [0.135, -0.74],
+    [0.12, -0.795], [0.06, -0.815], [0.055, -0.86], [0.04, -0.882], [0.13, -0.888], [0.145, -0.9], [0.115, -0.912],
+    [0.058, -0.918], [0.052, -0.968], [0.03, -0.985], [0.0, -0.976], [-0.03, -0.99], [-0.052, -0.978], [-0.058, -0.918],
+    [-0.118, -0.91], [-0.148, -0.9], [-0.132, -0.886], [-0.04, -0.882], [-0.05, -0.855], [-0.06, -0.815], [-0.12, -0.795], [-0.14, -0.74],
+    [-0.12, -0.62], [-0.135, -0.45], [-0.165, -0.23], [-0.07, -0.21], [-0.065, -0.02]
+  ];
+  const COAT_LINES = [
+    [[-0.05, -0.82], [0.0, -0.66], [0.05, -0.82]],      // lapels
+    [[-0.118, -0.6], [0.0, -0.585], [0.113, -0.6]],     // belt
+    [[0.0, -0.66], [0.012, -0.23]],                      // coat opening
+    [[-0.122, -0.76], [-0.1, -0.5], [-0.068, -0.48]],   // left arm, hand in pocket
+    [[0.118, -0.76], [0.098, -0.5], [0.066, -0.48]]     // right arm
+  ];
+  const LAMP = { pole: 0.36, top: -1.3, head: 0.17 };
+  const DROPS = Array.from({ length: 150 }, (_, i) => [byteAt(i, 3) / 255, byteAt(i, 7) / 255, 0.6 + byteAt(i, 11) / 255 * 0.8]);
+
+  function stage() {
+    return mobile ? { cx: W * 0.5, gy: H * 0.46, fh: H * 0.28 }
+                  : { cx: W * 0.66, gy: H * 0.86, fh: H * 0.56 };
+  }
+
+  function drawColdOpen(a, sv) {
+    const { cx, gy, fh } = stage();
+    const P = ([u, v]) => [cx + u * fh, gy + v * fh];
+    const lamp = P([LAMP.head, LAMP.top + 0.04]), groundC = P([0.03, 0]), poolR = fh * 0.46;
+    const coneL = P([LAMP.head - 0.04, LAMP.top + 0.06]), coneR = P([LAMP.head + 0.04, LAMP.top + 0.06]);
+
+    // camera pushes into the coat until the frame goes black
+    const push = smooth(0.1, 0.72, sv), z = 1 + 7 * push * push, focus = P([0.0, -0.6]);
+    ix.save();
+    ix.translate(focus[0], focus[1]); ix.scale(z, z); ix.translate(-focus[0], -focus[1]);
+    ix.lineCap = 'round';
+
+    // light: cone, hatched rays, pool on the wet street
+    ix.globalAlpha = a * 0.06; ix.fillStyle = PAPER;
+    ix.beginPath(); ix.moveTo(...coneL); ix.lineTo(...coneR); ix.lineTo(groundC[0] + poolR, gy); ix.lineTo(groundC[0] - poolR, gy); ix.closePath(); ix.fill();
+    ix.strokeStyle = PAPER;
+    for (let k = 0; k <= 16; k++) {
+      const f = k / 16, top = [lerp(coneL[0], coneR[0], f), coneL[1]], bot = [groundC[0] - poolR + f * poolR * 2, gy];
+      ix.globalAlpha = a * (0.1 + 0.12 * Math.sin(f * Math.PI)); inkPath(ix, [top, bot], 1, 0.9);
+    }
+    ix.globalAlpha = a * 0.08; ix.beginPath(); ix.ellipse(groundC[0], gy, poolR * 1.05, fh * 0.035, 0, 0, 6.283); ix.fill();
+    ix.globalAlpha = a * 0.5; inkPath(ix, circlePts(groundC[0], gy, poolR, 48).map(([x, y]) => [x, gy + (y - gy) * 0.075]), 1, 0.8, true);
+    for (let k = 0; k < 7; k++) {   // street sheen
+      const y = gy + fh * (0.03 + k * 0.022), w = poolR * (0.9 - k * 0.1);
+      ix.globalAlpha = a * (0.28 - k * 0.03); inkPath(ix, [[groundC[0] - w, y], [groundC[0] + w * 0.8, y]], 1, 0.7);
+    }
+
+    // streetlamp
+    ix.globalAlpha = a; ix.strokeStyle = PAPER;
+    inkPath(ix, [P([LAMP.pole, 0.01]), P([LAMP.pole, LAMP.top + 0.08])], 1, 1.1);
+    inkPath(ix, [P([LAMP.pole + 0.02, 0.01]), P([LAMP.pole + 0.02, LAMP.top + 0.1])], 1, 0.8);
+    inkPath(ix, [P([LAMP.pole, LAMP.top + 0.08]), P([LAMP.pole - 0.04, LAMP.top - 0.01]), P([LAMP.head + 0.06, LAMP.top - 0.01]), P([LAMP.head, LAMP.top + 0.02])], 1, 1);
+    inkPath(ix, [coneL, P([LAMP.head - 0.02, LAMP.top]), P([LAMP.head + 0.02, LAMP.top]), coneR], 1, 0.8, true);
+    ix.globalAlpha = a * 0.9; ix.fillStyle = PAPER; ix.beginPath(); ix.arc(lamp[0], lamp[1], fh * 0.012, 0, 6.283); ix.fill();
+
+    // the detective
+    const body = COAT.map(P);
+    ix.globalAlpha = a; ix.fillStyle = '#000';
+    ix.beginPath(); body.forEach(([x, y], i) => i ? ix.lineTo(x, y) : ix.moveTo(x, y)); ix.closePath(); ix.fill();
+    ix.strokeStyle = PAPER; inkPath(ix, body, 1, 1.1, true);
+    ix.globalAlpha = a * 0.75; COAT_LINES.forEach(l => inkPath(ix, l.map(P), 1, 0.8));
+    ix.globalAlpha = a * 0.35; ix.fillStyle = '#000';   // long shadow across the pool
+    const sh = [P([-0.09, 0]), P([0.09, 0]), P([-0.2, 0.06]), P([-0.4, 0.07])];
+    ix.beginPath(); sh.forEach(([x, y], i) => i ? ix.lineTo(x, y) : ix.moveTo(x, y)); ix.closePath(); ix.fill();
+
+    // cigarette ember and smoke
+    const ember = P([0.062, -0.853]);
+    ix.globalAlpha = a; ix.fillStyle = RED; ix.beginPath(); ix.arc(ember[0], ember[1], Math.max(1.5, fh * 0.004), 0, 6.283); ix.fill();
+    const smoke = Array.from({ length: 22 }, (_, i) => {
+      const f = i / 21;
+      return [ember[0] + Math.sin(f * 7 + boil * 1.7) * fh * 0.025 * f + f * fh * 0.06, ember[1] - f * fh * 0.32];
+    });
+    ix.strokeStyle = PAPER; ix.globalAlpha = a * 0.4; inkPath(ix, smoke, 1, 1.4);
+    ix.restore();
+
+    // rain, brighter where it crosses the lamp light
+    const coneHalf = y => lerp(fh * 0.04, poolR, Math.max(0, Math.min(1, (y - coneL[1]) / (gy - coneL[1]))));
+    ix.lineWidth = 1;
+    DROPS.forEach(([fx, fy, sp]) => {
+      const len = 16 * sp, x = fx * (W + 60) - 30, y = ((fy * (H + 40) + boil * sp * H * 0.9) % (H + 40)) - 20;
+      const lit = y > coneL[1] && y < gy && Math.abs(x - (lamp[0] + (groundC[0] - lamp[0]) * (y - coneL[1]) / (gy - coneL[1]))) < coneHalf(y);
+      ix.globalAlpha = a * (lit ? 0.75 : 0.28) * (1 - push * 0.5); ix.strokeStyle = lit ? PAPER : DIM;
+      ix.beginPath(); ix.moveTo(x, y); ix.lineTo(x - len * 0.22, y + len); ix.stroke();
+    });
+    ix.globalAlpha = 1;
+  }
+
+  // Shipping tag hung off the drive in the Exhibit A scene
+  function drawTag(a, [ax, ay]) {
+    const k = mobile ? 0.8 : 1, w = 204 * k, h = 76 * k, rot = 0.1 + Math.sin(boil * 1.3) * 0.025;
+    const tx = Math.max(12, Math.min(W - w - 12, ax - w * (mobile ? 0.55 : 0.8))), ty = ay + 58 * k;
+    ix.save(); ix.globalAlpha = a; ix.lineCap = 'round';
+    ix.translate(tx, ty); ix.rotate(rot);
+    const n = 12 * k, T = [[n, 0], [w, 0], [w, h], [n, h], [0, h - n], [0, n]];
+    ix.fillStyle = '#000'; ix.beginPath(); T.forEach(([x, y], i) => i ? ix.lineTo(x, y) : ix.moveTo(x, y)); ix.closePath(); ix.fill();
+    ix.strokeStyle = PAPER; inkPath(ix, T, 1, 1, true);
+    inkPath(ix, circlePts(16 * k, h / 2, 5 * k, 16), 1, 0.5, true);
+    ix.fillStyle = PAPER; ix.textBaseline = 'middle';
+    ix.font = `${17 * k}px 'Special Elite', ui-monospace, monospace`; ix.fillText('EXHIBIT A', 32 * k, 21 * k);
+    ix.fillStyle = DIM; ix.font = `${11 * k}px 'Special Elite', ui-monospace, monospace`;
+    ix.fillText('Item 001 · 3.5in HDD', 32 * k, 43 * k);
+    ix.fillText('Write-block before imaging', 32 * k, 59 * k);
+    ix.restore();
+    const hole = [tx + 16 * k * Math.cos(rot) - h / 2 * Math.sin(rot), ty + 16 * k * Math.sin(rot) + h / 2 * Math.cos(rot)];
+    ix.globalAlpha = a; ix.strokeStyle = PAPER;
+    inkPath(ix, [[ax, ay], [lerp(ax, hole[0], 0.5), Math.max(ay, hole[1]) + 12], hole], 1, 0.8);
+    ix.fillStyle = PAPER; ix.beginPath(); ix.arc(ax, ay, 2.5, 0, 6.283); ix.fill();
+    ix.globalAlpha = 1;
+  }
+
   function draw2D() {
     ix.setTransform(DPR, 0, 0, DPR, 0, 0);
     ix.clearRect(0, 0, W, H);
-    const hexA = smooth(3.2, 3.9, sView) * (1 - smooth(4.6, 5.0, sView));
-    if (hexA > 0) drawHex(hexA, smooth(3.2, 4.0, sView), smooth(3.95, 4.4, sView));
-    const bA = smooth(4.6, 5.0, sView) * lerp(1, 0.25, smooth(7.6, 8.0, sView));
-    if (bA > 0) drawBoard(bA, sView);
+    const sv = sView - OFF;
+    const heroA = 1 - smooth(0.42, 0.72, sView);   // push in, cut to black, then the drive
+    if (heroA > 0) drawColdOpen(heroA, sView);
+    const tagA = three && three.tag ? smooth(0.68, 0.98, sView) * (1 - smooth(0.3, 0.75, sv)) : 0;
+    if (tagA > 0) drawTag(tagA, three.tag);
+    const hexA = smooth(3.2, 3.9, sv) * (1 - smooth(4.6, 5.0, sv));
+    if (hexA > 0) drawHex(hexA, smooth(3.2, 4.0, sv), smooth(3.95, 4.4, sv));
+    const bA = smooth(4.6, 5.0, sv) * lerp(1, 0.25, smooth(7.6, 8.0, sv));
+    if (bA > 0) drawBoard(bA, sv);
   }
 
   // Loupe: shows raw bytes under the drawing
@@ -425,7 +578,10 @@
     lx.restore();
     lx.strokeStyle = PAPER; lx.globalAlpha = 1;
     inkPath(lx, circlePts(x, y, r, 48), 1, 1.2, true);
-    inkPath(lx, [[x + r * 0.72, y + r * 0.72], [x + r * 1.15, y + r * 1.15]], 1, 1.2);
+    const h0 = [x + r * 0.73, y + r * 0.73], h1 = [x + r * 1.3, y + r * 1.3], o = 5 / Math.SQRT2;
+    const handle = [[h0[0] - o, h0[1] + o], [h1[0] - o, h1[1] + o], [h1[0] + o, h1[1] - o], [h0[0] + o, h0[1] - o]];
+    lx.fillStyle = '#000'; lx.beginPath(); handle.forEach(([hx_, hy_], i) => i ? lx.lineTo(hx_, hy_) : lx.moveTo(hx_, hy_)); lx.fill();
+    inkPath(lx, handle, 1, 1, true);
   }
 
   /* ---------------- 3D ink drive ---------------- */
@@ -533,17 +689,18 @@
     [[-0.7, 0.3, 0.9, 0.9], [0.7, 1.4, 0.5, 0.7], [0.9, -0.6, 0.4, 0.4], [-0.9, 1.8, 0.25, 0.25]]
       .forEach(([x, z, w, d]) => solid(new THREE.BoxGeometry(w, 0.04, d), pcb, x, -0.27, z));
 
-    const orbitPos = new THREE.Vector3(), orbitTgt = new THREE.Vector3();
+    const orbitPos = new THREE.Vector3(), orbitTgt = new THREE.Vector3(), tagPt = new THREE.Vector3();
     const diveTgt = new THREE.Vector3(1.2, 3.34, -0.9), divePos = new THREE.Vector3(1.2, 3.62, -0.42);
 
     return {
       resize() { renderer.setSize(W, H, false); camera.aspect = W / H; camera.updateProjectionMatrix(); },
       frame(t) {
+        const sv = sView - OFF;
         uTime.value = boil;
-        const active = Math.round(sView), dive = smooth(2.3, 3.35, sView);
+        const active = Math.round(sv), dive = smooth(2.3, 3.35, sv);
         parts.forEach(p => {
           const u = p.userData;
-          p.position.copy(u.explode).multiplyScalar(smooth(u.k[0], u.k[1], sView));
+          p.position.copy(u.explode).multiplyScalar(smooth(u.k[0], u.k[1], sv));
           let o = (active === 0 || u.lit === active || (active >= 3 && u.top)) ? 1 : 0.2;
           if (!u.top) o *= 1 - dive;
           u.op.value += (o - u.op.value) * (reduced ? 1 : 0.1);
@@ -552,13 +709,18 @@
           spinners.forEach(sp => sp.rotation.y = t * 0.5);
           pivot.rotation.y = ARM + Math.sin(t * 1.4) * 0.1;
         }
-        const r = mobile ? 30 : 18.5, th = 0.8 - sView * 0.3, el = 0.6 - sView * 0.05;
+        const r = mobile ? 30 : 18.5, th = 0.8 - sv * 0.3, el = 0.6 - sv * 0.05;
         orbitTgt.set(mobile ? 0.6 : -3.4, mobile ? -3.4 : 0.9, 0);
         orbitPos.set(orbitTgt.x + r * Math.cos(el) * Math.sin(th), orbitTgt.y + r * Math.sin(el) + 0.8, r * Math.cos(el) * Math.cos(th));
         camera.position.lerpVectors(orbitPos, divePos, dive);
         camera.lookAt(orbitTgt.clone().lerp(diveTgt, dive));
-        sceneCanvas.style.opacity = 1 - smooth(3.45, 4.1, sView);
-        if (sView < 4.2) renderer.render(scene, camera);
+        camera.updateMatrixWorld();
+        if (mobile) tagPt.set(1.7, 0.23, 2.9); else tagPt.set(-2, 0.225, 2.9);
+        tagPt.project(camera);
+        this.tag = tagPt.z < 1 ? [(tagPt.x + 1) / 2 * W, (1 - tagPt.y) / 2 * H] : null;
+        const fade = smooth(0.68, 0.98, sView) * (1 - smooth(3.45, 4.1, sv));
+        sceneCanvas.style.opacity = fade;
+        if (fade > 0.001) renderer.render(scene, camera);
       }
     };
   }
@@ -570,12 +732,22 @@
   }
   addEventListener('resize', resize); resize();
 
+  const grain = document.getElementById('grain');
+  (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 160;
+    const g = c.getContext('2d'), im = g.createImageData(160, 160);
+    for (let i = 0; i < im.data.length; i += 4) { const v = Math.random(); im.data[i] = im.data[i + 1] = im.data[i + 2] = 255; im.data[i + 3] = v > 0.82 ? (v - 0.82) * 1400 : 0; }
+    g.putImageData(im, 0, 0); grain.style.backgroundImage = `url(${c.toDataURL()})`;
+  })();
+  let lastBoil = -1;
+
   const t0 = performance.now();
   function frame() {
     const t = (performance.now() - t0) / 1000;
     boil = reduced ? 0 : Math.floor(t * 8) / 8;   // lines redraw ~8 times a second, like hand-drawn animation
     sView = reduced ? s : sView + (s - sView) * 0.08;
     updateUI(sView);
+    if (boil !== lastBoil) { lastBoil = boil; grain.style.backgroundPosition = `${byteAt(boil * 8, 1) % 160}px ${byteAt(boil * 8, 2) % 160}px`; }
     if (three) three.frame(t);
     draw2D();
     drawLoupe();
