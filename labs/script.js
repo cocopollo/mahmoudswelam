@@ -283,18 +283,25 @@ function drawActive(t) {
   ix.globalAlpha = 1;
 }
 
-// Loupe over the intro: raw bytes under the page, as on the main page
-const pointer = { x: -999, y: -999, on: false, last: 0 };
-const track = (e) => { pointer.x = e.clientX; pointer.y = e.clientY; pointer.on = true; pointer.last = performance.now(); };
+// Loupe over the intro: raw bytes under the page, as on the main page; steps aside over links, buttons and text
+const UI = "a, button, summary, input, textarea, select, label, header, h1, h2, p, li";
+const pointer = { x: -999, y: -999, on: false, last: 0, overUI: false };
+const overUI = (el) => !!(el instanceof Element && el.closest(UI));
+const track = (e) => { pointer.x = e.clientX; pointer.y = e.clientY; pointer.on = true; pointer.last = performance.now(); pointer.overUI = overUI(e.target); };
 addEventListener("pointermove", track, { passive: true });
 addEventListener("pointerdown", track, { passive: true });
 addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") pointer.on = false; });
 document.addEventListener("pointerleave", () => { pointer.on = false; });
+addEventListener("scroll", () => { if (pointer.on) pointer.overUI = overUI(document.elementFromPoint(pointer.x, pointer.y)); }, { passive: true });
+let loupeA = 0;
 function drawLoupe() {
   lx.setTransform(DPR, 0, 0, DPR, 0, 0);
   lx.clearRect(0, 0, W, H);
   const ir = intro.getBoundingClientRect();
-  if (!pointer.on || performance.now() - pointer.last > 2500 || pointer.y < ir.top || pointer.y > ir.bottom) return;
+  const want = pointer.on && !pointer.overUI && performance.now() - pointer.last <= 2500 && pointer.y >= ir.top && pointer.y <= ir.bottom ? 1 : 0;
+  loupeA += (want - loupeA) * (reduced ? 1 : 0.3);
+  if (loupeA < 0.02) return;
+  loupe.style.opacity = loupeA;
   const r = mobile ? 58 : 74, { x, y } = pointer, cw = 22, ch = 16;
   lx.save();
   lx.beginPath(); lx.arc(x, y, r, 0, 6.283); lx.fillStyle = "#000"; lx.fill(); lx.clip();
