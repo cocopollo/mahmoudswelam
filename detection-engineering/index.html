@@ -29,7 +29,7 @@
   header.top { position:sticky; top:0; z-index:4; display:flex; justify-content:space-between; align-items:baseline; padding:22px 28px; font-size:.9rem; background:linear-gradient(#000 70%, transparent); }
   header.top strong a { font-stretch:80%; font-weight:700; text-decoration:none; }
   header.top nav a { text-decoration:none; margin-left:24px; }
-  header.top nav a:hover { text-decoration:underline; text-underline-offset:4px; }
+  header.top nav a:hover, header.top nav a[aria-current] { text-decoration:underline; text-underline-offset:4px; }
 
   main { max-width:68rem; margin:0 auto; padding:0 28px 6rem; }
   .case { font-family:'Special Elite', ui-monospace, monospace; font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin:0 0 1rem; }
@@ -165,7 +165,7 @@
 <body>
 <header class="top">
   <strong><a href="../index.html">Mahmoud Swelam</a></strong>
-  <nav><a href="../index.html#work">Work</a><a href="../labs/index.html">Labs</a><a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog</a><a href="../index.html#contact">Contact</a></nav>
+  <nav><a href="../index.html#work">Work</a><a href="../labs/index.html">Labs</a><a href="index.html" aria-current="page">Guide</a><a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog</a><a href="../index.html#contact">Contact</a></nav>
 </header>
 
 <main>
