@@ -122,12 +122,28 @@
     .page { min-height:auto; }
     .art { padding-bottom:0; }
   }
+
+  /* Site menu: Research and Learning open as small panels */
+  .menu { position:relative; display:inline-block; margin:0 0 0 24px; border:0; }
+  .menu summary { list-style:none; cursor:pointer; white-space:nowrap; padding:0; font:inherit; }
+  .menu summary::-webkit-details-marker { display:none; }
+  .menu summary::after { content:"\25BE"; font-size:.72em; margin-left:.35em; opacity:.7; }
+  .menu summary:hover, .menu[open] summary, .menu.on summary { text-decoration:underline; text-underline-offset:4px; }
+  .menu summary:focus-visible { outline:1px solid currentColor; outline-offset:4px; }
+  header nav .menu-panel { position:absolute; right:0; top:calc(100% + 14px); min-width:15rem; padding:.45rem 0; background:#000; border:1px solid #3a3a37; box-shadow:0 14px 34px rgba(0,0,0,.7); text-align:left; z-index:10; }
+  header nav .menu-panel a { display:block; margin:0; padding:.48rem 1rem; white-space:nowrap; text-decoration:none; }
+  header nav .menu-panel a:hover, header nav .menu-panel a[aria-current] { text-decoration:underline; text-underline-offset:4px; }
+  .menu-panel p { margin:.55rem 1rem .15rem; font-family:'Special Elite', ui-monospace, monospace; font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:#8f8f89; }
+  /* on a phone the panel hangs from the whole header, and Blog stays in the contact list */
+  @media (max-width:720px) { .menu { position:static; margin-left:14px; } header nav .menu-panel { left:18px; right:18px; top:calc(100% - 4px); min-width:0; } }
+  @media (max-width:480px) { .site-nav > a[href*="medium.com"] { display:none; } }
+  @media (max-width:400px) { .menu { margin-left:11px; } }
 </style>
 </head>
 <body>
 <header>
   <strong><a href="../index.html" aria-label="Mahmoud Swelam, home">Mahmoud Swelam</a></strong>
-  <nav><a href="../index.html#work">Work</a><a href="../labs/index.html">Labs</a><a href="../detection-engineering/index.html">Guide</a><a href="index.html" aria-current="page">War Ground</a><a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog</a><a href="../index.html#contact">Contact</a></nav>
+  <nav class="site-nav" aria-label="Site"><details class="menu on"><summary>Research</summary><div class="menu-panel"><p>Reports</p><a href="../Reports/romulus-loader-c2/index.html">Hunting Romulus Loader C2</a><a href="../Reports/StarkTech%20Incident%20Report%201dab727b1373804eb103cf7d2c5c8702.html">StarkTech incident report</a><p>Field notes</p><a href="../war-ground/index.html" aria-current="page">War Ground</a></div></details><details class="menu"><summary>Learning</summary><div class="menu-panel"><a href="../detection-engineering/index.html">Detection engineering guide</a><a href="../labs/index.html">DFIR labs</a></div></details><a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog</a><a href="../index.html#contact">Contact</a></nav>
 </header>
 <main>
   <section class="intro">
@@ -895,6 +911,15 @@
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', onScroll);
   update();
+})();
+</script>
+<script>
+(() => {
+  // one menu open at a time; a tap outside or Escape closes it
+  const menus = [...document.querySelectorAll('.site-nav .menu')];
+  menus.forEach(m => m.addEventListener('toggle', () => { if (m.open) menus.forEach(o => { if (o !== m) o.open = false; }); }));
+  document.addEventListener('click', e => menus.forEach(m => { if (!m.contains(e.target)) m.open = false; }));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') menus.forEach(m => { m.open = false; }); });
 })();
 </script>
 </body>
