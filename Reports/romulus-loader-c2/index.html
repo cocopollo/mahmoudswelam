@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hunting Romulus Loader C2 | Mahmoud Swelam</title>
+<meta name="description" content="One login-page hash links seventeen hosts serving the Romulus Loader C2 panel. Infrastructure analysis from public data, with IOCs.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hunting Romulus Loader C2">
+<meta property="og:description" content="One login-page hash links seventeen hosts serving the Romulus Loader C2 panel. Infrastructure analysis from public data, with IOCs.">
+<meta property="og:url" content="https://cocopollo.github.io/mahmoudswelam/Reports/romulus-loader-c2/">
+<meta property="og:image" content="https://cocopollo.github.io/mahmoudswelam/Reports/romulus-loader-c2/img/02-urlscan-results.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root { --black:#000; --paper:#f2f2ee; --dim:#8f8f89; --rule:#3a3a37; --red:#d8402f; --display:Archivo, system-ui, sans-serif; --type:'Special Elite', ui-monospace, monospace; --mono:ui-monospace, Menlo, Consolas, monospace; }
+  html { background:var(--black); color:var(--paper); font-family:Archivo, system-ui, sans-serif; scroll-behavior:smooth; color-scheme:dark; }
+  body { margin:0; background:var(--black); }
+  canvas.layer { position:fixed; inset:0; width:100%; height:100%; display:block; pointer-events:none; }
+  #ink { z-index:1; } #loupe { z-index:5; }
+  .film { position:fixed; inset:0; z-index:2; pointer-events:none; }
+  #grain { opacity:.11; mix-blend-mode:screen; }
+  #vignette { background:radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,.65) 100%); }
+
+  header { position:fixed; top:0; left:0; right:0; z-index:4; display:flex; justify-content:space-between; align-items:baseline; padding:22px 28px 30px; font-size:.9rem; background:linear-gradient(to bottom, #000 45%, transparent); }
+  header strong { font-stretch:80%; font-weight:700; }
+  header strong a { color:var(--paper); text-decoration:none; }
+  header nav a { color:var(--paper); text-decoration:none; margin-left:24px; white-space:nowrap; display:inline-block; }
+  header nav { text-align:right; }
+  header nav a:hover { text-decoration:underline; text-underline-offset:4px; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline:1px solid var(--paper); outline-offset:4px; }
+
+  main { position:relative; z-index:3; }
+  h1, h2, h3, .counter #num, a.more { font-family:var(--display); }
+  .case { font-family:var(--type); font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin:0 0 1rem; }
+  .ioc, code { font-family:var(--mono); font-size:.86em; overflow-wrap:anywhere; }
+
+  /* The story: one screen per finding, the drawing on the right */
+  section.story { min-height:100vh; box-sizing:border-box; display:flex; align-items:center; padding:0 28px; }
+  .story .panel { max-width:min(30rem, 40vw); }
+  .story h1 { font-size:clamp(3.2rem, 8.6vw, 8.6rem); font-stretch:62%; font-weight:800; line-height:.86; margin:0 0 1.6rem; }
+  .story h2 { font-size:clamp(2.4rem, 5.4vw, 4.4rem); font-stretch:66%; font-weight:750; line-height:.92; margin:0 0 1.2rem; text-wrap:balance; }
+  .story p { font-size:1.05rem; line-height:1.55; max-width:36ch; margin:0 0 1rem; }
+  .story p.sub { color:var(--dim); }
+  .story p.sub a { color:var(--paper); text-underline-offset:3px; }
+  section.hero { align-items:stretch; }
+  .hero .panel { max-width:none; width:100%; position:relative; }
+  .hero .case { position:absolute; top:14vh; left:0; }
+  .hero h1 { position:absolute; left:0; top:24vh; margin:0; will-change:transform, opacity; }
+  .hero h1 span { display:block; }
+  .hero .brief { position:absolute; left:0; bottom:13vh; max-width:min(30rem, 40vw); }
+  a.more { display:inline-block; color:var(--paper); font-stretch:80%; font-weight:600; text-decoration:none; border-bottom:1px solid var(--rule); padding-bottom:2px; margin-top:.4rem; }
+  a.more:hover { border-color:var(--paper); }
+
+  .counter { position:fixed; left:28px; bottom:22px; z-index:4; font-size:.85rem; display:flex; gap:14px; align-items:baseline; transition:opacity .4s; }
+  .counter #num { font-stretch:62%; font-weight:700; font-size:1.6rem; font-variant-numeric:tabular-nums; }
+  .counter #name { color:var(--dim); font-family:var(--type); font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; }
+  .rail { position:fixed; right:28px; top:50%; transform:translateY(-50%); z-index:4; display:flex; flex-direction:column; gap:10px; transition:opacity .4s; }
+  .rail span { width:14px; height:2px; background:var(--rule); transition:background .3s, width .3s; }
+  .rail span.on { background:var(--paper); width:22px; }
+  body.reading .counter, body.reading .rail { opacity:0; }
+
+  /* The report: a readable document */
+  section.file { display:grid; grid-template-columns:12rem minmax(0, 52rem); gap:0 4rem; padding:24vh 28px 18vh; }
+  .toc { position:sticky; top:104px; align-self:start; display:flex; flex-direction:column; }
+  .toc a { color:var(--dim); text-decoration:none; font-size:.88rem; padding:.42rem 0; border-bottom:1px solid var(--rule); transition:color .2s; }
+  .toc a:hover, .toc a.on { color:var(--paper); }
+  .toc .case { margin-bottom:.6rem; }
+  .doc { min-width:0; }
+  .doc > h2 { font-size:clamp(2.4rem, 5vw, 4.2rem); font-stretch:64%; font-weight:780; line-height:.92; margin:0 0 1.4rem; text-wrap:balance; }
+  .doc h3 { font-size:clamp(1.7rem, 3.4vw, 2.5rem); font-stretch:68%; font-weight:740; line-height:.98; margin:5rem 0 1rem; text-wrap:balance; scroll-margin-top:100px; }
+  .doc h3 .n { font-family:var(--type); font-weight:400; font-size:.8rem; letter-spacing:.14em; color:var(--dim); display:block; margin-bottom:.6rem; font-stretch:100%; }
+  .doc p, .doc li { font-size:1.02rem; line-height:1.62; max-width:64ch; }
+  .doc p { margin:0 0 1rem; }
+  .doc ul { padding-left:1.1rem; margin:0 0 1.2rem; display:grid; gap:.55rem; }
+  .doc li::marker { color:var(--red); }
+  .doc strong { font-weight:650; }
+  .meta { color:var(--dim); font-size:.95rem; line-height:1.6; max-width:64ch; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:.9rem 0; margin:0 0 2.6rem; }
+  .meta b { color:var(--paper); font-weight:600; }
+  .lead { font-size:1.16rem !important; line-height:1.58 !important; }
+
+  .scroll { overflow-x:auto; margin:1.4rem 0 .6rem; border-top:1px solid var(--paper); }
+  table { border-collapse:collapse; width:100%; font-size:.84rem; font-variant-numeric:tabular-nums; }
+  th { text-align:left; font-family:var(--type); font-weight:400; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); padding:.75rem .9rem .55rem 0; border-bottom:1px solid var(--rule); white-space:nowrap; vertical-align:bottom; }
+  td { padding:.6rem .9rem .6rem 0; border-bottom:1px solid var(--rule); vertical-align:top; line-height:1.42; }
+  td.i { font-family:var(--mono); font-size:.8rem; white-space:nowrap; }
+  td.w { white-space:nowrap; }
+  td .d { color:var(--dim); font-family:Archivo, system-ui, sans-serif; font-size:.78rem; display:block; }
+  table.wide { min-width:64rem; }
+  table.wide td { font-size:.8rem; }
+  .note { color:var(--dim); font-size:.86rem; margin:.2rem 0 2rem !important; }
+
+  figure.fig { margin:2.2rem 0 2.6rem; }
+  .fig button { display:block; width:100%; padding:0; border:1px solid var(--rule); background:#000; cursor:zoom-in; }
+  .fig img { display:block; width:100%; height:auto; filter:grayscale(1) contrast(1.04) brightness(.9); transition:filter .45s; }
+  .fig button:hover img, .fig button:focus-visible img { filter:none; }
+  .figs { display:grid; grid-template-columns:repeat(auto-fit, minmax(15rem, 1fr)); gap:1.2rem; margin:2.2rem 0 2.6rem; }
+  .figs figure.fig { margin:0; }
+  figcaption { margin-top:.7rem; color:var(--dim); font-size:.88rem; line-height:1.45; }
+  figcaption b { color:var(--paper); font-weight:600; }
+
+  .teasers { display:grid; grid-template-columns:1fr 1.45fr; gap:1.2rem; align-items:start; margin:2rem 0 2.4rem; }
+  .teasers figure.fig { margin:0; }
+  .teasers .tall { grid-row:span 2; }
+  .teasers .fig button { position:relative; }
+  .teasers .fig button::after { content:'Private build'; position:absolute; top:.6rem; right:.6rem; font-family:var(--type); font-size:.64rem; letter-spacing:.12em; text-transform:uppercase; color:var(--red); background:#000; border:1px solid var(--red); padding:.15rem .45rem; }
+  .ask { border-left:2px solid var(--red); padding-left:1rem; }
+  .ask a { color:var(--paper); text-underline-offset:3px; }
+
+  .fp { border:1px solid var(--rule); padding:1rem 1.1rem; margin:1.4rem 0; display:grid; gap:.6rem; }
+  .fp .case { margin:0; }
+  .fp code { display:block; font-size:.88rem; color:var(--paper); line-height:1.5; }
+  .row { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; justify-content:space-between; }
+  .row .note { margin:0 !important; }
+  button.copy { font-family:var(--type); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; background:none; color:var(--paper); border:1px solid var(--paper); padding:.4rem .75rem; cursor:pointer; }
+  button.copy:hover { background:var(--paper); color:#000; }
+
+  details { border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); margin:1.4rem 0; }
+  summary { cursor:pointer; padding:1rem 0; font-family:var(--display); font-stretch:80%; font-weight:650; font-size:1.15rem; }
+  summary span { color:var(--dim); font-weight:400; font-size:.9rem; }
+
+  footer.end { border-top:1px solid var(--paper); margin-top:5rem; padding-top:1.4rem; display:grid; gap:.8rem; }
+  footer.end p { color:var(--dim); font-size:.92rem; margin:0; }
+  footer.end a { color:var(--paper); }
+
+  dialog.lightbox { border:0; padding:0; background:transparent; max-width:96vw; max-height:94vh; cursor:zoom-out; }
+  dialog.lightbox::backdrop { background:rgba(0,0,0,.92); }
+  dialog.lightbox img { display:block; max-width:96vw; max-height:90vh; height:auto; }
+
+  @media (max-width:960px) {
+    section.file { grid-template-columns:minmax(0, 1fr); padding-top:18vh; }
+    .toc { display:none; }
+  }
+  @media (max-width:720px) {
+    header { padding:16px 18px 24px; }
+    header nav a { margin-left:14px; }
+    section.story { align-items:flex-end; padding:0 18px 14vh; }
+    .story .panel { max-width:none; background:linear-gradient(to bottom, transparent, #000 2.5rem); padding-top:3rem; }
+    .counter { left:18px; }
+    .rail { right:10px; }
+    section.hero { align-items:flex-end; }
+    .hero .case, .hero h1, .hero .brief { position:static; }
+    .hero .brief { max-width:none; }
+    .story h1 { font-size:clamp(3.2rem, 15vw, 5rem); margin-bottom:1.2rem; }
+    section.file { padding:16vh 18px 14vh; }
+    .teasers { grid-template-columns:minmax(0, 1fr); }
+    .teasers .tall { grid-row:auto; }
+  }
+  @media (max-width:400px) { header strong { font-size:.82rem; } header nav a { margin-left:11px; } }
+  @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .rail span, .fig img { transition:none; } }
+</style>
+</head>
+<body>
+<canvas id="ink" class="layer" aria-hidden="true"></canvas>
+<canvas id="loupe" class="layer" aria-hidden="true"></canvas>
+<div id="grain" class="film" aria-hidden="true"></div>
+<div id="vignette" class="film" aria-hidden="true"></div>
+
+<header>
+  <strong><a href="../../index.html" aria-label="Mahmoud Swelam, back to the portfolio">Mahmoud Swelam</a></strong>
+  <nav><a href="#file">Report</a><a href="#iocs">IOCs</a><a href="../../index.html">Portfolio</a></nav>
+</header>
+
+<main>
+  <section class="story hero">
+    <div class="panel">
+      <p class="case">Threat intelligence</p>
+      <h1><span>Romulus</span> <span>Loader C2</span></h1>
+      <div class="brief">
+        <p>One login-page hash links seventeen hosts serving the Romulus Loader C2 panel.</p>
+        <p class="sub">Mahmoud Swelam · 16 November 2026. Scroll to follow the infrastructure, or <a href="#iocs">skip to the IOCs</a>.</p>
+      </div>
+    </div>
+  </section>
+  <section class="story">
+    <div class="panel">
+      <p class="case">01 · Initial lead</p>
+      <h2>The initial lead</h2>
+      <p>On 31 October 2026, Unit 42 reported Romulus Loader spreading through ClickFix. A fake prompt gets the victim to run a PowerShell command that pulls an MSI, and its VBScript stages decode a PE loader.</p>
+      <p class="sub">The report named a C2 panel and the SHA-256 of its login page. A second C2 address was written as a decimal number.</p>
+    </div>
+  </section>
+  <section class="story">
+    <div class="panel">
+      <p class="case">02 · Fingerprint</p>
+      <h2>The login page fingerprint</h2>
+      <p>The panel at 151[.]240[.]151[.]223 runs at DEDIK SERVICES (AS207043) with ports 22, 80 and 443 open. Every deployment of the panel serves the same login page, so its SHA-256 identifies the kit wherever it is hosted.</p>
+    </div>
+  </section>
+  <section class="story">
+    <div class="panel">
+      <p class="case">03 · Infrastructure</p>
+      <h2>One hash, seventeen hosts</h2>
+      <p>The login-page hash appears on 17 hosts that served the identical Romulus panel between 17 October and 11 November 2026: twelve IP addresses and five domains.</p>
+      <p class="sub">Thirteen sit at DEDIK SERVICES. The rest are at MillenialHost or behind Cloudflare.</p>
+    </div>
+  </section>
+  <section class="story">
+    <div class="panel">
+      <p class="case">04 · Activity</p>
+      <h2>Active after the takedown</h2>
+      <p>cocu[.]cc was still serving the panel on 11 November, after the infrastructure was reported down. Behind Cloudflare it resolves to 167.148.201[.]67 at MillenialHost, the same provider as 167.148.201[.]191.</p>
+    </div>
+  </section>
+  <section class="story">
+    <div class="panel">
+      <p class="case">05 · Host profile</p>
+      <h2>Built server by server</h2>
+      <p>The servers do not share SSH host keys, and one runs a different OS build. They are not cloned from one image. The panel kit is the element they have in common.</p>
+      <p class="sub">Two domains appear as hostnames on cluster IPs: connectiux[.]com and connectserverix[.]com.</p>
+    </div>
+  </section>
+  <section class="story">
+    <div class="panel">
+      <p class="case">06 · Second fingerprint</p>
+      <h2>The page title</h2>
+      <p>Every panel host carries the page title &ldquo;Romulus&rdquo;. On the same providers and on /login pages, that title surfaces two more hosts.</p>
+      <p class="sub">One of them, microsoft-winupdate[.]com, was registered on 5 November 2026.</p>
+    </div>
+  </section>
+  <section class="story">
+    <div class="panel">
+      <p class="case">07 · Summary</p>
+      <h2>The full cluster</h2>
+      <p>23 indicators across DEDIK SERVICES, MillenialHost and Cloudflare, active from 17 October to 11 November 2026.</p>
+      <p class="sub">Mapped in OSINT Pivot Launcher, my own pivoting tool.</p>
+      <a class="more" href="#file">Read the report</a>
+    </div>
+  </section>
+
+  <section class="file" id="file">
+    <nav class="toc" aria-label="Report sections">
+      <p class="case">Contents</p>
+      <a href="#overview">Overview</a>
+      <a href="#findings">Key findings</a>
+      <a href="#s1">Initial lead</a>
+      <a href="#s2">Login page fingerprint</a>
+      <a href="#s3">Panel infrastructure</a>
+      <a href="#s4">cocu[.]cc</a>
+      <a href="#s5">Host profile</a>
+      <a href="#s6">Page title</a>
+      <a href="#conclusion">Conclusion</a>
+      <a href="#tool">Behind the hunt</a>
+      <a href="#iocs">IOCs</a>
+      <a href="#appendix">Appendix</a>
+    </nav>
+    <article class="doc">
+      <p class="case">Threat intelligence</p>
+      <h2>Hunting Romulus Loader C2 infrastructure</h2>
+      <p class="meta"><b>Mahmoud Swelam</b> · 16 November 2026<br>Data: urlscan.io, Shodan, Shodan InternetDB, RIPEstat, RDAP, crt.sh, AlienVault OTX, GreyNoise.</p>
+
+      <h3 id="overview"><span class="n">Overview</span>One panel, one hash, one cluster</h3>
+      <p class="lead">On 31 October 2026, Unit 42 reported a ClickFix campaign delivering Romulus Loader and published one of its C2 panels together with the SHA-256 of the panel&rsquo;s login page. Starting from that panel, this report maps the wider infrastructure serving the same Romulus panel.</p>
+
+      <h3 id="findings"><span class="n">Key findings</span>What the infrastructure shows</h3>
+      <ul>
+        <li>The SHA-256 of the Romulus login page links <strong>17 hosts</strong> that served the identical panel between 17 October and 11 November 2026.</li>
+        <li>The cluster is concentrated at <strong>DEDIK SERVICES (AS207043)</strong>, with more hosts at MillenialHost (AS135392) and two Cloudflare-fronted domains.</li>
+        <li><span class="ioc">cocu[.]cc</span> was still serving the panel on 11 November 2026, after the infrastructure was reported down. Its origin behind Cloudflare is <span class="ioc">167.148.201[.]67</span>.</li>
+        <li>The servers do not share SSH host keys. Each is built separately, and the panel kit is the common element.</li>
+        <li>Several domains imitate trusted brands: <span class="ioc">cloubflare[.]net</span>, <span class="ioc">cloubflare[.]top</span>, <span class="ioc">havelbeenpwned[.]net</span> and <span class="ioc">microsoft-winupdate[.]com</span>.</li>
+        <li>The page title &ldquo;Romulus&rdquo; surfaces two more hosts, including <span class="ioc">microsoft-winupdate[.]com</span>, registered on 5 November 2026.</li>
+      </ul>
+
+      <h3 id="s1"><span class="n">01</span>Initial lead</h3>
+      <p>Unit 42&rsquo;s Timely Threat Intel post on X (31 October 2026) describes Romulus Loader delivered through the ClickFix technique. A fake prompt convinces the victim to run a PowerShell command that downloads an MSI package, and VBScript stages inside it decode a PE loader. The post lists the C2 panel at <span class="ioc">151[.]240[.]151[.]223</span> and the SHA-256 of its login page.</p>
+      <p>One C2 address in the post is written as a decimal integer (<span class="ioc">hxxp[:]//2549127012/&hellip;</span>), a form that slips past rules matching dotted IP addresses. 2549127012 is <span class="ioc">0x97F09764</span>, which decodes to <span class="ioc">151.240.151[.]100</span>, in the same /24 as the panel.</p>
+
+      <h3 id="s2"><span class="n">02</span>The login page fingerprint</h3>
+      <p>Shodan places <span class="ioc">151[.]240[.]151[.]223</span> at DEDIK-IO DEDIK SERVICES LIMITED (AS207043), with ports 22, 80 and 443 open and OpenSSH 10.2p1 on Ubuntu (last seen 29 October 2026). Its SSH host key fingerprint is <span class="ioc">c2:19:d2:5c:19:dd:86:75:ff:fe:2c:b5:a9:4d:b3:31</span>.</p>
+      <figure class="fig">
+        <button type="button" aria-label="Enlarge figure 1"><img src="img/01-shodan-seed.jpg" width="1280" height="900" loading="lazy" alt="Shodan host view of 151.240.151[.]223: DEDIK SERVICES, AS207043, ports 22, 80 and 443, and the OpenSSH host key fingerprint."></button>
+        <figcaption><b>Figure 1.</b> Shodan host view of 151.240.151[.]223: provider, open ports and SSH host key.</figcaption>
+      </figure>
+      <p>The login page is the strongest fingerprint. Servers and domains change often, but the panel kit is redeployed unchanged, so every instance serves the same page with the same SHA-256.</p>
+      <div class="fp">
+        <p class="case">SHA-256 · Romulus C2 login page</p>
+        <code id="h-login">89d65c3f0ed12be636d12d548e0ef17b3ad9699faca240871454b13090d60a31</code>
+        <div class="row"><span></span><button type="button" class="copy" data-copy="h-login" data-label="Copy hash">Copy hash</button></div>
+      </div>
+
+      <h3 id="s3"><span class="n">03</span>Panel infrastructure</h3>
+      <p>urlscan.io records 17 hosts that loaded the identical login page between 17 October and 11 November 2026: twelve IP addresses and five domains. Thirteen are hosted at DEDIK SERVICES, two at MillenialHost, and two domains sit behind Cloudflare.</p>
+      <figure class="fig">
+        <button type="button" aria-label="Enlarge figure 2"><img src="img/02-urlscan-results.jpg" width="1280" height="900" loading="lazy" alt="urlscan results for the login-page hash: /login pages on cocu[.]cc, towerrush[.]cam, 93.152.213[.]151, 23.94.145[.]229 and 91.92.43[.]242."></button>
+        <figcaption><b>Figure 2.</b> urlscan results for the login-page hash: /login pages on cocu[.]cc, towerrush[.]cam, 93.152.213[.]151, 23.94.145[.]229, 91.92.43[.]242 and others.</figcaption>
+      </figure>
+      <div class="scroll"><table>
+        <thead><tr><th>Host</th><th>Scans</th><th>First seen</th><th>Last seen</th><th>Resolved IP(s)</th><th>Hosting</th></tr></thead>
+        <tbody>
+<tr><td class="i">cocu[.]cc</td><td>10</td><td class="w">2026-10-19</td><td class="w">2026-11-11</td><td class="i">104[.]21[.]1[.]55<br>167[.]148[.]201[.]67<br>172[.]67[.]128[.]159<br>2606:4700:3033::6815:137</td><td>Cloudflare; MillenialHost</td></tr>
+<tr><td class="i">towerrush[.]cam</td><td>3</td><td class="w">2026-11-04</td><td class="w">2026-11-05</td><td class="i">91[.]92[.]43[.]239</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">93[.]152[.]213[.]151</td><td>7</td><td class="w">2026-10-18</td><td class="w">2026-11-03</td><td class="i">93[.]152[.]213[.]151</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">23[.]94[.]145[.]229</td><td>12</td><td class="w">2026-10-29</td><td class="w">2026-11-02</td><td class="i">23[.]94[.]145[.]229</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">91[.]92[.]43[.]242</td><td>2</td><td class="w">2026-10-18</td><td class="w">2026-10-31</td><td class="i">91[.]92[.]43[.]242</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">23[.]94[.]145[.]52</td><td>2</td><td class="w">2026-10-25</td><td class="w">2026-10-26</td><td class="i">23[.]94[.]145[.]52</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">167[.]148[.]201[.]191</td><td>6</td><td class="w">2026-10-19</td><td class="w">2026-10-26</td><td class="i">167[.]148[.]201[.]191</td><td>MillenialHost</td></tr>
+<tr><td class="i">23[.]94[.]145[.]146</td><td>1</td><td class="w">2026-10-25</td><td class="w">2026-10-25</td><td class="i">23[.]94[.]145[.]146</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">havelbeenpwned[.]net</td><td>4</td><td class="w">2026-10-21</td><td class="w">2026-10-24</td><td class="i">23[.]94[.]145[.]115</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">23[.]94[.]145[.]201</td><td>2</td><td class="w">2026-10-22</td><td class="w">2026-10-23</td><td class="i">23[.]94[.]145[.]201</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">23[.]94[.]145[.]8</td><td>1</td><td class="w">2026-10-23</td><td class="w">2026-10-23</td><td class="i">23[.]94[.]145[.]8</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">23[.]94[.]252[.]153</td><td>4</td><td class="w">2026-10-18</td><td class="w">2026-10-21</td><td class="i">23[.]94[.]252[.]153</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">cloubflare[.]top</td><td>19</td><td class="w">2026-10-19</td><td class="w">2026-10-21</td><td class="i">104[.]21[.]25[.]39<br>172[.]67[.]222[.]169</td><td>Cloudflare</td></tr>
+<tr><td class="i">85[.]239[.]144[.]170</td><td>2</td><td class="w">2026-10-20</td><td class="w">2026-10-20</td><td class="i">85[.]239[.]144[.]170</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">cloubflare[.]net</td><td>16</td><td class="w">2026-10-17</td><td class="w">2026-10-20</td><td class="i">167[.]148[.]201[.]191</td><td>MillenialHost</td></tr>
+<tr><td class="i">93[.]152[.]224[.]118</td><td>1</td><td class="w">2026-10-20</td><td class="w">2026-10-20</td><td class="i">93[.]152[.]224[.]118</td><td>DEDIK SERVICES</td></tr>
+<tr><td class="i">151[.]240[.]151[.]223</td><td>1</td><td class="w">2026-10-20</td><td class="w">2026-10-20</td><td class="i">151[.]240[.]151[.]223</td><td>DEDIK SERVICES</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Table 1. Hosts serving the Romulus login page, from urlscan.io scan history (30-day window, collected 16 November 2026).</p>
+
+      <h3 id="s4"><span class="n">04</span>cocu[.]cc: active after the takedown</h3>
+      <p><span class="ioc">cocu[.]cc</span> was registered on 19 October 2026 through NICENIC International Group and uses Cloudflare name servers. urlscan recorded it serving the Romulus login page from 19 October through 11 November, after the infrastructure was reported down.</p>
+      <p>Behind Cloudflare, the domain also resolved to <span class="ioc">167.148.201[.]67</span> at MillenialHost (AS135392), the same provider as <span class="ioc">167.148.201[.]191</span> and <span class="ioc">cloubflare[.]net</span>. The origin exposes ports 22, 80, 443 and 1337 and presents a self-signed certificate.</p>
+
+      <h3 id="s5"><span class="n">05</span>Host profile</h3>
+      <p>Most nodes expose ports 22, 80 and 443. Several carry self-signed certificates, and ports 1337, 2222, 8080 and 8443 appear on individual hosts.</p>
+      <div class="scroll"><table>
+        <thead><tr><th>IP</th><th>Open ports</th><th>Hostnames</th><th>Tags</th><th>SSH host key</th></tr></thead>
+        <tbody>
+<tr><td class="i">151[.]240[.]151[.]223</td><td>22, 80, 443</td><td class="i"><span class="d">—</span></td><td><span class="d">—</span></td><td class="i">c2:19:d2:5c:19:dd:86:75:ff:fe:2c:b5:a9:4d:b3:31</td></tr>
+<tr><td class="i">91[.]92[.]43[.]242</td><td>22, 80, 443, 8080, 8443</td><td class="i"><span class="d">—</span></td><td><span class="d">—</span></td><td class="i">cd:f6:1f:4f:b4:ef:34:4c:8a:d5:78:70:03:8b:ad:21</td></tr>
+<tr><td class="i">167[.]148[.]201[.]191</td><td>22, 80, 443</td><td class="i"><span class="d">—</span></td><td><span class="d">—</span></td><td class="i">f8:cc:ee:b1:fa:43:c9:fa:5a:c3:58:08:c3:89:a0:89</td></tr>
+<tr><td class="i">167[.]148[.]201[.]67<span class="d">cocu[.]cc origin</span></td><td>22, 80, 443, 1337</td><td class="i"><span class="d">—</span></td><td>self-signed</td><td class="i"><span class="d">—</span></td></tr>
+<tr><td class="i">93[.]152[.]213[.]151</td><td>22, 80, 443</td><td class="i"><span class="d">—</span></td><td>self-signed</td><td class="i"><span class="d">—</span></td></tr>
+<tr><td class="i">23[.]94[.]145[.]229</td><td>80, 443</td><td class="i">connectiux[.]com</td><td>eol-product, mptcp, pqc</td><td class="i"><span class="d">—</span></td></tr>
+<tr><td class="i">23[.]94[.]145[.]146</td><td>443, 2222</td><td class="i">connectiux[.]com</td><td>mptcp, eol-product, pqc</td><td class="i"><span class="d">—</span></td></tr>
+<tr><td class="i">23[.]94[.]145[.]52</td><td>443</td><td class="i">connectserverix[.]com</td><td>eol-product, pqc</td><td class="i"><span class="d">—</span></td></tr>
+<tr><td class="i">23[.]94[.]252[.]153</td><td>22, 8080</td><td class="i"><span class="d">—</span></td><td><span class="d">—</span></td><td class="i"><span class="d">—</span></td></tr>
+<tr><td class="i">23[.]94[.]145[.]8</td><td>no data</td><td class="i"><span class="d">—</span></td><td><span class="d">—</span></td><td class="i"><span class="d">—</span></td></tr>
+<tr><td class="i">85[.]239[.]144[.]170</td><td>no data</td><td class="i"><span class="d">—</span></td><td><span class="d">—</span></td><td class="i"><span class="d">—</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Table 2. Exposure of the panel hosts (Shodan InternetDB, SSH keys from Shodan host views).</p>
+      <p>SSH host keys differ on every server where they were collected. <span class="ioc">167.148.201[.]191</span> also runs a different OS build, OpenSSH 10.0p2 on Debian rather than 10.2p1 on Ubuntu. The servers are not cloned from a single image. Each is built separately, and the panel kit is what they share.</p>
+      <div class="figs">
+        <figure class="fig">
+          <button type="button" aria-label="Enlarge figure 3"><img src="img/03-shodan-91-92-43-242.jpg" width="1280" height="1400" loading="lazy" alt="Shodan host view of 91.92.43[.]242 at DEDIK SERVICES with ports 22, 80, 443, 8080 and 8443 and SSH fingerprint cd:f6:1f:4f."></button>
+          <figcaption><b>Figure 3.</b> 91.92.43[.]242, SSH key cd:f6:1f:4f&hellip;</figcaption>
+        </figure>
+        <figure class="fig">
+          <button type="button" aria-label="Enlarge figure 4"><img src="img/04-shodan-167-148-201-191.jpg" width="1280" height="1400" loading="lazy" alt="Shodan host view of 167.148.201[.]191 at MillenialHost with ports 22, 80 and 443, OpenSSH on Debian and SSH fingerprint f8:cc:ee:b1."></button>
+          <figcaption><b>Figure 4.</b> 167.148.201[.]191, SSH key f8:cc:ee:b1&hellip; on Debian.</figcaption>
+        </figure>
+      </div>
+      <p>Two domains appear as hostnames on cluster IPs. <span class="ioc">connectiux[.]com</span> is on 23.94.145[.]229 and 23.94.145[.]146, and <span class="ioc">connectserverix[.]com</span> is on 23.94.145[.]52. Both were registered through OwnRegistrar, Inc. (May and August 2026) and use the same pair of Cloudflare name servers.</p>
+
+      <h3 id="s6"><span class="n">06</span>A second fingerprint: the page title</h3>
+      <p>Every panel host carries the page title &ldquo;Romulus&rdquo;. Searching that title on the cluster&rsquo;s providers and on /login pages surfaces two more hosts.</p>
+      <div class="scroll"><table>
+        <thead><tr><th>Host</th><th>Hosting, registration</th><th>urlscan history</th><th>Ports</th></tr></thead>
+        <tbody>
+          <tr><td class="i">23[.]94[.]145[.]243</td><td>DEDIK SERVICES (AS207043), Buffalo, US. Same /24 as six panel hosts</td><td>5 scans, 3 to 4 Nov 2026, titled &ldquo;Romulus&rdquo;</td><td>22, 80, 2222</td></tr>
+          <tr><td class="i">microsoft-winupdate[.]com</td><td>Registered 5 Nov 2026 via Dominet (HK) Limited, Cloudflare name servers</td><td>4 scans on 9 Nov 2026, /login page titled &ldquo;Romulus&rdquo;</td><td><span class="d">Cloudflare</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Table 3. Hosts found by the page title.</p>
+
+      <h3 id="conclusion"><span class="n">Conclusion</span>An operation that kept building</h3>
+      <p>A single login-page hash from one reported panel exposes a cluster of at least 17 hosts serving Romulus Loader&rsquo;s C2 panel, concentrated at DEDIK SERVICES and MillenialHost. The servers are built individually, while the panel kit stays the same across all of them, which makes the page hash and title reliable ways to track this infrastructure.</p>
+      <p>Activity continued after public reporting. cocu[.]cc served the panel on 11 November, and microsoft-winupdate[.]com was registered on 5 November, alongside lookalike domains imitating Cloudflare and Have I Been Pwned.</p>
+
+      <h3 id="tool"><span class="n">Behind the hunt</span>Built in my own pivot tool</h3>
+      <p>This whole hunt ran in <strong>OSINT Pivot Launcher</strong>, a pivoting tool I built for infrastructure hunting. Paste one indicator and it walks the pivot questions, stacks the fingerprints into searches, and draws the case graph as the cluster grows. A team can run hunts together from one shared queue.</p>
+      <div class="teasers">
+        <figure class="fig tall">
+          <button type="button" aria-label="Enlarge figure 5"><img src="img/05-tool-pivot-graph.jpg" width="1500" height="1260" loading="lazy" alt="OSINT Pivot Launcher pivot graph for the Romulus Loader C2 case, details blurred."></button>
+          <figcaption><b>Figure 5.</b> The pivot graph: every link in the case, drawn as it grows.</figcaption>
+        </figure>
+        <figure class="fig">
+          <button type="button" aria-label="Enlarge figure 6"><img src="img/06-tool-team-hunts.jpg" width="1440" height="620" loading="lazy" alt="OSINT Pivot Launcher team hunts screen: paste an indicator and start a hunt, details blurred."></button>
+          <figcaption><b>Figure 6.</b> Team hunts: one indicator in, the whole hunt out.</figcaption>
+        </figure>
+        <figure class="fig">
+          <button type="button" aria-label="Enlarge figure 7"><img src="img/07-tool-pivot-steps.jpg" width="1398" height="610" loading="lazy" alt="OSINT Pivot Launcher pivot steps: who hosts it, what scanners see, what pointed to it, is it known bad, who else looks like this. Tool buttons blurred."></button>
+          <figcaption><b>Figure 7.</b> Pivot steps: the questions every indicator answers.</figcaption>
+        </figure>
+      </div>
+      <p class="ask">The tool isn&rsquo;t public yet. If you&rsquo;d like to see it run a hunt, <a href="https://www.linkedin.com/in/mahmoud-swelam" target="_blank" rel="noopener">message me on LinkedIn</a> or write to mahmoud.o.swelam@gmail.com.</p>
+
+      <h3 id="iocs"><span class="n">IOCs</span>Indicators of compromise</h3>
+      <div class="row"><p class="note">23 indicators, defanged.</p><button type="button" class="copy" data-copy="ioc-table" data-label="Copy all IOCs">Copy all IOCs</button></div>
+      <div class="scroll"><table id="ioc-table">
+        <thead><tr><th>Indicator</th><th>Type</th><th>Hosting</th><th>Context</th></tr></thead>
+        <tbody>
+<tr><td class="i">89d65c3f0ed12be636d12d548e0ef17b3ad9699faca240871454b13090d60a31</td><td>SHA-256</td><td><span class="d">—</span></td><td>Romulus C2 login page</td></tr>
+<tr><td class="i">151[.]240[.]151[.]223</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>C2 panel reported by Unit 42</td></tr>
+<tr><td class="i">93[.]152[.]213[.]151</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">93[.]152[.]224[.]118</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">91[.]92[.]43[.]242</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">85[.]239[.]144[.]170</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">23[.]94[.]252[.]153</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">23[.]94[.]145[.]229</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">23[.]94[.]145[.]201</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">23[.]94[.]145[.]146</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">23[.]94[.]145[.]52</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">23[.]94[.]145[.]8</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">167[.]148[.]201[.]191</td><td>IP</td><td>MillenialHost (AS135392)</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">167[.]148[.]201[.]67</td><td>IP</td><td>MillenialHost (AS135392)</td><td>Origin of cocu[.]cc behind Cloudflare</td></tr>
+<tr><td class="i">23[.]94[.]145[.]243</td><td>IP</td><td>DEDIK SERVICES (AS207043)</td><td>Page title “Romulus”</td></tr>
+<tr><td class="i">cocu[.]cc</td><td>Domain</td><td>Cloudflare</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">cloubflare[.]net</td><td>Domain</td><td>167.148.201[.]191</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">cloubflare[.]top</td><td>Domain</td><td>Cloudflare</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">havelbeenpwned[.]net</td><td>Domain</td><td>23.94.145[.]115</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">towerrush[.]cam</td><td>Domain</td><td>91.92.43[.]239</td><td>Served the Romulus login page</td></tr>
+<tr><td class="i">microsoft-winupdate[.]com</td><td>Domain</td><td>Cloudflare</td><td>Page title “Romulus” on a /login page</td></tr>
+<tr><td class="i">connectiux[.]com</td><td>Domain</td><td><span class="d">—</span></td><td>Hostname on 23.94.145[.]229 and 23.94.145[.]146</td></tr>
+<tr><td class="i">connectserverix[.]com</td><td>Domain</td><td><span class="d">—</span></td><td>Hostname on 23.94.145[.]52</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 id="appendix"><span class="n">Appendix</span>Indicator enrichment</h3>
+      <p>Hosting, exposure, scan history and threat-intelligence listings for every host and domain in this report.</p>
+      <details>
+        <summary>Open the full table <span>· 22 hosts and domains</span></summary>
+        <div class="scroll"><table class="wide">
+          <thead><tr><th>Indicator</th><th>Hosting, registration</th><th>Ports, certificates</th><th>urlscan history</th><th>Threat-intel listings</th></tr></thead>
+          <tbody>
+<tr><td class="i">151[.]240[.]151[.]223</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 151.240.151[.]0/24, Frankfurt am Main, DE</td><td>ports 22/80/443</td><td>urlscan: 14 scan(s), 2026-10-18 → 2026-11-01; names 151.240.151[.]223; IPs 151.240.151[.]223; titles “151.240.151[.]223”, “Romulus”</td><td>OTX: 6 pulse(s) (Hackers Use New ROMULUS ClickFix Platform to Deliver Malware; URLHaus data - 12-10-2026 (Part 2); URLHaus data - 01-11-2026 (Part 1)); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">93[.]152[.]213[.]151</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 93.152.213[.]0/24, Amsterdam, NL</td><td>ports 22/80/443; tags self-signed</td><td>urlscan: 27 scan(s), 2026-10-18 → 2026-11-03; names 93.152.213[.]151; IPs 93.152.213[.]151; titles “Romulus”</td><td>OTX: 2 pulse(s) (URLHaus data - 01-11-2026 (Part 1); URLHaus data - 22-10-2026 (Part 2)); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">93[.]152[.]224[.]118</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 93.152.224[.]0/24, Frankfurt am Main, DE</td><td>ports 22/80</td><td>urlscan: 2 scan(s), 2026-10-20 → 2026-11-09; names 93.152.224[.]118, 93.152.224[.]118.sslip.io; IPs 93.152.224[.]118; titles “NEURA — AI подписки”, “Romulus”</td><td>OTX: 3 pulse(s) (Hackers Use New ROMULUS ClickFix Platform to Deliver Malware; EbeeOct2026 Pt4; IOC - ROMULUS: Analysis of a New Multi-Payload ClickFix Deli); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">91[.]92[.]43[.]242</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 91.92.43[.]0/24, Frankfurt am Main, DE</td><td>ports 22/80/443/8080/8443</td><td>urlscan: 12 scan(s), 2026-10-18 → 2026-11-03; names 91.92.43[.]242; IPs 91.92.43[.]242; titles “Romulus”</td><td>OTX: 6 pulse(s) (Investigating the Infrastructure Behind DDoSia&#x27;s Attacks; IPQS Abusive IP List; URLHaus data - 01-11-2026 (Part 1)); families Bobik, DDoSia; GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">85[.]239[.]144[.]170</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 85.239.144[.]0/24, Frankfurt am Main, DE</td><td>Shodan InternetDB has no record (not scanned recently or offline)</td><td>urlscan: 2 scan(s), 2026-10-20 → 2026-10-20; names 85.239.144[.]170; IPs 85.239.144[.]170; titles “Romulus”</td><td>OTX: 4 pulse(s) (Ukraine&#x27;s State Data-Exchange System Targeted by Russian-Spe; EbeeOct2026 Pt5; Ukraine&#x27;s State Data-Exchange System Targeted by Russian-Spe); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">23[.]94[.]252[.]153</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 23.94.252[.]0/24, Buffalo, US</td><td>ports 22/8080</td><td>urlscan: 10 scan(s), 2026-10-18 → 2026-10-21; names 23.94.252[.]153; IPs 23.94.252[.]153; titles “Romulus”</td><td>OTX: 1 pulse(s) (URLHaus data - 14-10-2026 (Part 2)); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">23[.]94[.]145[.]229</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 23.94.145[.]0/24, Buffalo, US</td><td>ports 80/443; hostnames connectiux[.]com; tags eol-product, mptcp, pqc; 2 CVEs</td><td>urlscan: 16 scan(s), 2026-10-29 → 2026-11-03; names 23.94.145[.]229; IPs 23.94.145[.]229; titles “404 — Quanta Net”, “Romulus”</td><td>OTX: 2 pulse(s) (URLHaus data - 30-10-2026 (Part 3); URLHaus data - 20-08-2026 (Part 1)); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">23[.]94[.]145[.]201</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 23.94.145[.]0/24, Buffalo, US</td><td>ports 80/443/1337/5357; tags pqc, self-signed</td><td>urlscan: 5 scan(s), 2026-10-22 → 2026-10-23; names 23.94.145[.]201; IPs 23.94.145[.]201; titles “Romulus”</td><td>OTX: 1 pulse(s) (Twitter Feed - smica83 - 24-10-2026); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">23[.]94[.]145[.]146</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 23.94.145[.]0/24, Buffalo, US</td><td>ports 443/2222; hostnames connectiux[.]com; tags mptcp, eol-product, pqc; 2 CVEs</td><td>urlscan: 1 scan(s), 2026-10-25 → 2026-10-25; names 23.94.145[.]146; IPs 23.94.145[.]146; titles “Romulus”</td><td>OTX: 0 pulses; GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">23[.]94[.]145[.]52</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 23.94.145[.]0/24, Buffalo, US</td><td>ports 443; hostnames connectserverix[.]com; tags eol-product, pqc; 2 CVEs</td><td>urlscan: 3 scan(s), 2026-10-25 → 2026-10-26; names 23.94.145[.]52; IPs 23.94.145[.]52; titles “Romulus”, “chrome://newtab/”</td><td>OTX: 0 pulses; GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">23[.]94[.]145[.]8</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 23.94.145[.]0/24, Buffalo, US</td><td>Shodan InternetDB has no record (not scanned recently or offline)</td><td>urlscan: 2 scan(s), 2026-10-23 → 2026-10-23; names 23.94.145[.]8; IPs 23.94.145[.]8; titles “Romulus”</td><td>OTX: 0 pulses; GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">167[.]148[.]201[.]191</td><td>AS135392 MILLENIALHOSTLIMITED-AS-GB - MillenialHost Limited, prefix 167.148.201[.]0/24, US</td><td>ports 22/80/443</td><td>urlscan: 60 scan(s), 2026-10-17 → 2026-10-26; names 167.148.201[.]191, cloubflare[.]net; IPs 167.148.201[.]191; titles “Romulus”</td><td>OTX: 7 pulse(s) (DatasoftComnet-AntiSpam-Pulse1; URLHaus data - 16-10-2026 (Part 1); URLHaus data - 15-10-2026 (Part 2)); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">167[.]148[.]201[.]67</td><td>AS135392 MILLENIALHOSTLIMITED-AS-GB - MillenialHost Limited, prefix 167.148.201[.]0/24, US</td><td>ports 22/80/443/1337; tags self-signed</td><td>urlscan: 8 scan(s), 2026-10-20 → 2026-11-11; names 167.148.201[.]67, cocu[.]cc; IPs 167.148.201[.]67; titles “Romulus”</td><td>OTX: 2 pulse(s) (Malware Filter - Botnet List - 21-10-2026 (Part 3); Twitter Feed - smica83 - 20-10-2026); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">23[.]94[.]145[.]243</td><td>AS207043 DEDIK-IO DEDIK SERVICES LIMITED, prefix 23.94.145[.]0/24, Buffalo, US</td><td>ports 22/80/2222</td><td>urlscan: 5 scan(s), 2026-11-03 → 2026-11-04; names 23.94.145[.]243; IPs 23.94.145[.]243; titles “23.94.145[.]243”, “Romulus”</td><td>OTX: 2 pulse(s) (URLHaus data - 14-11-2026 (Part 2); Twitter Feed - smica83 - 05-11-2026); GreyNoise: IP not observed scanning the internet</td></tr>
+<tr><td class="i">cocu[.]cc</td><td>registered 2026-10-19 via NICENIC INTERNATIONAL GROUP CO., LIMITED, expires 2027-10-19; name servers bjorn.ns.cloudflare.com, connie.ns.cloudflare.com</td><td>75 certificate log entries, first 2019-09-26, latest 2024-07-02; issuers Go Daddy Secure Certificate Authority - G2, Let&#x27;s Encrypt Authority X3, R3</td><td>urlscan: 13 scan(s), 2026-10-19 → 2026-11-11; names cocu[.]cc; titles “Romulus”</td><td>OTX: 7 pulse(s) (Botnet_C2 | Nov 13, 2026 | Part 2/2; Botnet_C2 | Nov 12, 2026 | Part 1/2; Botnet_C2 | Nov 11, 2026 | Part 1/2)</td></tr>
+<tr><td class="i">cloubflare[.]net</td><td>registered 2026-10-14 via NICENIC INTERNATIONAL GROUP CO., LIMITED, expires 2027-10-14; name servers lee.ns.cloudflare.com, love.ns.cloudflare.com</td><td>11 certificate log entries, first 2024-12-17, latest 2026-10-14; issuers Encryption Everywhere DV TLS CA - G2, YE1</td><td>urlscan: 43 scan(s), 2026-10-17 → 2026-10-20; names cloubflare[.]net; IPs 167.148.201[.]191; titles “Romulus”</td><td>OTX: 7 pulse(s) (Malware_Distribution | Oct 22, 2026; Malware_Distribution | Oct 21, 2026; URLHaus data - 19-10-2026 (Part 1))</td></tr>
+<tr><td class="i">cloubflare[.]top</td><td>registered 2026-10-18 via Eranet International Limited, expires 2027-10-18; name servers jose.ns.cloudflare.com., melinda.ns.cloudflare.com.</td><td>no certificate in CT logs (crt.sh)</td><td>urlscan: 22 scan(s), 2026-10-19 → 2026-10-21; names cloubflare[.]top; IPs 104.21.25[.]39, 172.67.222[.]169; titles “Romulus”, “Suspected Malware | Cloudflare”</td><td>OTX: 3 pulse(s) (Malware_Distribution | Oct 22, 2026; Malware_Distribution | Oct 21, 2026; URLHaus data - 19-10-2026 (Part 1))</td></tr>
+<tr><td class="i">havelbeenpwned[.]net</td><td>registered 2026-02-24 via NICENIC INTERNATIONAL GROUP CO., LIMITED, expires 2027-02-24; name servers alex.ns.cloudflare.com, shubhi.ns.cloudflare.com</td><td>37 certificate log entries, first 2026-02-23, latest 2026-10-08; issuers Cloudflare TLS Issuing ECC CA 4, E7, E8</td><td>urlscan: 6 scan(s), 2026-10-21 → 2026-10-29; names havelbeenpwned[.]net; IPs 23.94.145[.]115; titles “Romulus”, “havelbeenpwned[.]net”</td><td>OTX: 8 pulse(s) (Twitter Feed - PadelLifeUK - 20-10-2026; Botnet_C2 | May 13, 2026; Botnet_C2 | May 12, 2026)</td></tr>
+<tr><td class="i">towerrush[.]cam</td><td>registered 2026-06-07 via Global Domain Group LLC, expires 2027-06-07; name servers lana.ns.cloudflare.com, melnicoff.ns.cloudflare.com</td><td>no certificate in CT logs (crt.sh)</td><td>urlscan: 3 scan(s), 2026-11-04 → 2026-11-05; names towerrush[.]cam; IPs 91.92.43[.]239; titles “Romulus”</td><td>OTX: 7 pulse(s) (Botnet_C2 | Nov 13, 2026 | Part 2/2; Botnet_C2 | Nov 12, 2026 | Part 1/2; Botnet_C2 | Nov 11, 2026 | Part 1/2)</td></tr>
+<tr><td class="i">microsoft-winupdate[.]com</td><td>registered 2026-11-05 via Dominet (HK) Limited, expires 2027-11-05; name servers dan.ns.cloudflare.com, mira.ns.cloudflare.com</td><td>no certificate in CT logs (crt.sh)</td><td>urlscan: 4 scan(s), 2026-11-09 → 2026-11-09; names microsoft-winupdate[.]com; IPs 104.21.16[.]1, 188.114.96[.]3, 188.114.97[.]3, 2a06:98c1:3120::3; titles “Romulus”</td><td>OTX: 1 pulse(s) (Twitter Feed - Malwarehunterr - 08-11-2026)</td></tr>
+<tr><td class="i">connectiux[.]com</td><td>registered 2026-05-10 via OwnRegistrar, Inc., expires 2027-05-10; name servers ignacio.ns.cloudflare.com, mina.ns.cloudflare.com</td><td>no certificate in CT logs (crt.sh)</td><td>urlscan: no scans in the anonymous 30-day window</td><td>OTX: 0 pulses</td></tr>
+<tr><td class="i">connectserverix[.]com</td><td>registered 2026-08-24 via OwnRegistrar, Inc., expires 2027-08-24; name servers ignacio.ns.cloudflare.com, mina.ns.cloudflare.com</td><td>no certificate in CT logs (crt.sh)</td><td>urlscan: no scans in the anonymous 30-day window</td><td>OTX: 0 pulses</td></tr>
+          </tbody>
+        </table></div>
+      </details>
+
+      <footer class="end">
+        <p>Initial lead: Unit 42 Timely Threat Intel, 31 October 2026. Research and analysis by Mahmoud Swelam.</p>
+        <p><a href="../../index.html">Back to the portfolio</a> · <a href="https://www.linkedin.com/in/mahmoud-swelam" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Medium</a></p>
+      </footer>
+    </article>
+  </section>
+</main>
+
+<div class="counter" aria-hidden="true"><span id="num">01</span><span id="name">Cold open</span></div>
+<div class="rail" aria-hidden="true"></div>
+<dialog class="lightbox" id="lightbox" aria-label="Enlarged figure"><img alt=""></dialog>
+
+<script>
+(() => {
+  const NAMES = ['Cold open', 'Initial lead', 'Fingerprint', 'Infrastructure', 'Activity', 'Host profile', 'Page title', 'Full cluster', 'Report'];
+  const PAPER = '#f2f2ee', DIM = '#8f8f89', RED = '#d8402f', RULE = '#3a3a37';
+  const MONO = 'ui-monospace, Menlo, Consolas, monospace', TYPE = "'Special Elite', ui-monospace, monospace";
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const numEl = document.getElementById('num'), nameEl = document.getElementById('name');
+  const sections = [...document.querySelectorAll('main > section')];
+  const rail = document.querySelector('.rail');
+  rail.innerHTML = sections.map(() => '<span></span>').join('');
+  const ticks = [...rail.children];
+  const heroName = document.querySelector('.hero h1');
+  const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const df = s => s.replace(/\.(?=[^.]*$)/, '[.]');   // defang the last dot
+
+  // Continuous section index: 0 at the cold open, 8 once the report is in view
+  function scrollIndex() {
+    const mid = scrollY + innerHeight * 0.5;
+    for (let i = 0; i < sections.length; i++) {
+      const top = sections[i].offsetTop, h = sections[i].offsetHeight;
+      if (mid < top + h) return i + Math.max(0, Math.min(1, (mid - top) / h)) - 0.5;
+    }
+    return sections.length - 1;
+  }
+  let s = scrollIndex(), sView = s, W = innerWidth, H = innerHeight, mobile = W <= 720, boil = 0;
+  addEventListener('scroll', () => { s = scrollIndex(); }, { passive: true });
+
+  function updateUI(v) {
+    const i = Math.max(0, Math.min(NAMES.length - 1, Math.round(v)));
+    numEl.textContent = String(i + 1).padStart(2, '0');
+    nameEl.textContent = NAMES[i];
+    ticks.forEach((t, k) => t.classList.toggle('on', k === i));
+    document.body.classList.toggle('reading', v > 7.45);
+    const lift = mobile ? 0 : smooth(0.04, 0.45, v);
+    heroName.style.transform = `translateY(${-lift * 10}vh)`; heroName.style.opacity = 1 - lift;
+  }
+
+  /* ---------------- 2D ink layer ---------------- */
+  const ink = document.getElementById('ink'), ix = ink.getContext('2d');
+  const loupe = document.getElementById('loupe'), lx = loupe.getContext('2d');
+  const DPR = Math.min(devicePixelRatio || 1, 2);
+  const stretch = v => { if ('fontStretch' in ix) ix.fontStretch = v; };
+
+  function n2(x, y, seed) {
+    return Math.sin(x * 0.045 + y * 0.031 + boil * 2.1 + seed) * 0.6 + Math.sin(x * 0.11 - y * 0.07 + boil * 3.3 + seed * 1.7) * 0.4;
+  }
+  // Polyline drawn as two wobbly pen strokes, revealed up to `prog`
+  function inkPath(ctx, pts, prog = 1, amp = 1.6, closed = false) {
+    if (prog <= 0) return;
+    const P = closed ? pts.concat([pts[0]]) : pts;
+    const dense = [];
+    for (let i = 0; i < P.length - 1; i++) {
+      const [x1, y1] = P[i], [x2, y2] = P[i + 1];
+      const n = Math.max(1, Math.ceil(Math.hypot(x2 - x1, y2 - y1) / 7));
+      for (let j = 0; j < n; j++) dense.push([lerp(x1, x2, j / n), lerp(y1, y2, j / n)]);
+    }
+    dense.push(P[P.length - 1]);
+    const end = Math.max(2, Math.floor(dense.length * Math.min(1, prog)));
+    [[0, 1.25], [4.1, 0.6]].forEach(([seed, w]) => {
+      ctx.beginPath(); ctx.lineWidth = w;
+      for (let i = 0; i < end; i++) {
+        const [x, y] = dense[i];
+        const px = x + n2(x, y, seed) * amp, py = y + n2(y, x, seed + 2) * amp;
+        i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+      }
+      ctx.stroke();
+    });
+  }
+  // Dashed thread: hostnames seen on an IP
+  function inkDash(ctx, [x1, y1], [x2, y2], prog, dash = 5, gap = 5) {
+    const L = Math.hypot(x2 - x1, y2 - y1), lim = L * Math.min(1, prog);
+    ctx.lineWidth = 1;
+    for (let d = 0; d < lim; d += dash + gap) {
+      const e = Math.min(d + dash, lim);
+      ctx.beginPath(); ctx.moveTo(lerp(x1, x2, d / L), lerp(y1, y2, d / L)); ctx.lineTo(lerp(x1, x2, e / L), lerp(y1, y2, e / L)); ctx.stroke();
+    }
+  }
+  const circlePts = (cx, cy, r, n = 40) => Array.from({ length: n }, (_, i) => [cx + Math.cos(i / n * 6.283) * r, cy + Math.sin(i / n * 6.283) * r]);
+  const ovalPts = (cx, cy, rx, ry, n = 40) => Array.from({ length: n }, (_, i) => [cx + Math.cos(i / n * 6.283) * rx, cy + Math.sin(i / n * 6.283) * ry]);
+  const rect = (x, y, w, h) => [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
+  const bez = (A, C, B, n = 26) => Array.from({ length: n + 1 }, (_, i) => { const t = i / n, u = 1 - t; return [u * u * A[0] + 2 * u * t * C[0] + t * t * B[0], u * u * A[1] + 2 * u * t * C[1] + t * t * B[1]]; });
+
+  // Deterministic byte source
+  const byteAt = (c, r) => (Math.imul((c * 73856093) ^ (r * 19349663), 2654435761) >>> 24) & 255;
+  const hx = b => b.toString(16).toUpperCase().padStart(2, '0');
+
+  function region() {
+    return mobile ? { x: W * 0.06, y: H * 0.09, w: W * 0.88, h: H * 0.42 }
+                  : { x: W * 0.47, y: H * 0.13, w: W * 0.47, h: H * 0.74 };
+  }
+
+  /* Cold open: the C2 login panel and the hash that identifies it */
+  const HASH = '89d65c3f0ed12be636d12d548e0ef17b3ad9699faca240871454b13090d60a31';
+  function drawPanel(a, p) {
+    const R = region(), w = Math.min(R.w * (mobile ? 0.92 : 0.82), 560), x0 = R.x + (mobile ? 0 : (R.w - w) / 2);
+    const bar = mobile ? 20 : 28, uh = mobile ? 18 : 24, h = w * (mobile ? 0.5 : 0.64), y0 = R.y + (mobile ? 0 : R.h * 0.04);
+    const S = i => smooth(i / 9, (i + 1.6) / 9, p);
+    ix.globalAlpha = a; ix.fillStyle = '#000'; ix.fillRect(x0, y0, w, h);
+    ix.strokeStyle = PAPER;
+    inkPath(ix, rect(x0, y0, w, h), S(0), 1.1, true);
+    inkPath(ix, [[x0, y0 + bar], [x0 + w, y0 + bar]], S(1), 0.8);
+    [0, 1, 2].forEach(i => inkPath(ix, circlePts(x0 + 14 + i * 13, y0 + bar / 2, mobile ? 3 : 3.5, 14), S(1), 0.4, true));
+    ix.globalAlpha = a * S(1); ix.fillStyle = PAPER; ix.font = `600 ${mobile ? 10 : 12}px Archivo, sans-serif`;
+    ix.fillText('Romulus', x0 + 58, y0 + bar / 2);
+    const ux = x0 + 10, uy = y0 + bar + 8;
+    ix.globalAlpha = a; inkPath(ix, rect(ux, uy, w - 20, uh), S(2), 0.6, true);
+    ix.globalAlpha = a * S(2); ix.fillStyle = DIM; ix.font = `${mobile ? 9 : 11}px ${MONO}`;
+    ix.fillText('hxxp://151.240.151[.]223/login', ux + 10, uy + uh / 2);
+    const cx = x0 + w / 2, fw = w * 0.5, fh = mobile ? 18 : 26, gap = mobile ? 6 : 13;
+    const body = h - bar - uh - 8, top = uy + uh + body * 0.2;
+    ix.globalAlpha = a * S(3); ix.fillStyle = PAPER; ix.font = `800 ${mobile ? 20 : 30}px Archivo, sans-serif`; stretch('condensed');
+    const tw = ix.measureText('Romulus').width; ix.fillText('Romulus', cx - tw / 2, top); stretch('normal');
+    ['username', 'password'].forEach((ph, i) => {
+      const fy = top + (mobile ? 16 : 28) + i * (fh + gap);
+      ix.globalAlpha = a; ix.strokeStyle = PAPER; inkPath(ix, rect(cx - fw / 2, fy, fw, fh), S(4 + i), 0.7, true);
+      ix.globalAlpha = a * S(4 + i); ix.fillStyle = DIM; ix.font = `${mobile ? 9 : 12}px Archivo, sans-serif`;
+      ix.fillText(ph, cx - fw / 2 + 10, fy + fh / 2);
+    });
+    const by = top + (mobile ? 16 : 28) + 2 * (fh + gap) + 2;
+    ix.globalAlpha = a; inkPath(ix, rect(cx - fw / 2, by, fw, fh), S(6), 0.9, true);
+    ix.globalAlpha = a * S(6); ix.fillStyle = PAPER; ix.font = `600 ${mobile ? 10 : 13}px Archivo, sans-serif`;
+    const bw = ix.measureText('Sign in').width; ix.fillText('Sign in', cx - bw / 2, by + fh / 2);
+
+    const hy = y0 + h + (mobile ? 14 : 30), lh = mobile ? 13 : 20;
+    ix.globalAlpha = a * S(7); ix.fillStyle = DIM; ix.font = `${mobile ? 9 : 11}px ${TYPE}`;
+    ix.fillText('SHA-256 OF THE LOGIN PAGE', x0, hy);
+    ix.font = `${mobile ? 9.5 : 13}px ${MONO}`; ix.fillStyle = PAPER; ix.globalAlpha = a;
+    const typed = Math.floor(64 * smooth(0.72, 0.95, p));
+    ix.fillText(HASH.slice(0, Math.min(32, typed)), x0, hy + lh);
+    ix.fillText(HASH.slice(32, Math.max(32, typed)), x0, hy + lh * 2);
+    const c8 = ix.measureText(HASH.slice(0, 8)).width, ring = smooth(0.92, 1, p);
+    ix.strokeStyle = RED; inkPath(ix, ovalPts(x0 + c8 / 2, hy + lh, c8 / 2 + 9, lh * 0.62, 36), ring, 1, true);
+    ix.globalAlpha = a * ring; ix.fillStyle = DIM; ix.font = `${mobile ? 8.5 : 10.5}px Archivo, sans-serif`;
+    ix.fillText('Illustration of the Romulus C2 login panel. Its SHA-256 identifies every instance.', x0, hy + lh * 3.1);
+    ix.globalAlpha = 1;
+  }
+
+  /* 01: the C2 written as a decimal number */
+  function drawDecode(a, p) {
+    const R = region(), x0 = R.x + (mobile ? 0 : R.w * 0.04);
+    let y = R.y + R.h * (mobile ? 0.04 : 0.16);
+    ix.globalAlpha = a; ix.fillStyle = DIM; ix.font = `${mobile ? 9 : 12}px ${TYPE}`;
+    ix.fillText('UNIT 42 · 31 OCT 2026', x0, y);
+    y += mobile ? 20 : 30;
+    ix.font = `${mobile ? 10 : 13}px ${MONO}`; ix.fillStyle = PAPER;
+    ix.fillText(mobile ? 'hxxp://2549127012/app/…' : 'hxxp://2549127012/app/222a8c21d35e/…Lite.msi', x0, y);
+    const pre = ix.measureText('hxxp://').width, num = ix.measureText('2549127012').width;
+    ix.strokeStyle = RED; inkPath(ix, [[x0 + pre, y + 10], [x0 + pre + num, y + 10]], smooth(0, 0.15, p), 0.8);
+
+    const big = mobile ? 40 : Math.min(84, Math.max(52, W * 0.05));
+    y += mobile ? 46 : big * 0.5 + 52;
+    ix.font = `800 ${big}px Archivo, sans-serif`; stretch('condensed');
+    const N = '2549127012', nW = ix.measureText(N).width;
+    ix.fillStyle = PAPER; ix.fillText(N.slice(0, Math.ceil(10 * smooth(0.04, 0.28, p))), x0, y); stretch('normal');
+    ix.globalAlpha = a * smooth(0.25, 0.35, p); ix.fillStyle = DIM; ix.font = `${mobile ? 10 : 13}px ${MONO}`;
+    ix.fillText('= 0x97F09764', x0 + nW + 14, y);
+
+    y += big * 0.5 + (mobile ? 30 : 50);
+    const B = [['97', '151'], ['F0', '240'], ['97', '151'], ['64', '100']], bw = mobile ? 52 : 78, gp = mobile ? 10 : 18, bh = mobile ? 28 : 36;
+    B.forEach(([hb, dec], i) => {
+      const e = smooth(0.3 + i * 0.06, 0.45 + i * 0.06, p), bx = x0 + i * (bw + gp);
+      ix.globalAlpha = a; ix.strokeStyle = PAPER; inkPath(ix, rect(bx, y - bh / 2, bw, bh), e, 0.8, true);
+      ix.globalAlpha = a * e; ix.fillStyle = PAPER; ix.font = `${mobile ? 13 : 17}px ${MONO}`;
+      const t = '0x' + hb, tw = ix.measureText(t).width; ix.fillText(t, bx + (bw - tw) / 2, y);
+      const d = smooth(0.45 + i * 0.05, 0.6 + i * 0.05, p);
+      ix.globalAlpha = a * d; ix.fillStyle = DIM; ix.font = `${mobile ? 11 : 14}px ${MONO}`;
+      const dw = ix.measureText(dec).width; ix.fillText(dec, bx + (bw - dw) / 2, y + bh / 2 + (mobile ? 14 : 18));
+    });
+
+    y += mobile ? 78 : 118;
+    const r = smooth(0.65, 0.85, p), ip = '151.240.151[.]100';
+    ix.globalAlpha = a * r; ix.fillStyle = PAPER; ix.font = `800 ${big * 0.72}px Archivo, sans-serif`; stretch('condensed');
+    ix.fillText(ip, x0, y); const iw = ix.measureText(ip).width; stretch('normal');
+    ix.globalAlpha = a; ix.strokeStyle = RED; inkPath(ix, [[x0, y + big * 0.42], [x0 + iw, y + big * 0.42]], r, 1.2);
+    ix.globalAlpha = a * smooth(0.85, 1, p); ix.fillStyle = DIM; ix.font = `${mobile ? 9 : 12}px ${TYPE}`;
+    ix.fillText('DECODED · SAME /24 AS THE PANEL', x0, y + big * 0.42 + (mobile ? 18 : 26));
+    ix.globalAlpha = 1;
+  }
+
+  /* 02 to 07: the infrastructure board. Rows are hosts, threads are observations. */
+  const ROWS = [
+    { g: 'DEDIK SERVICES · AS207043' },
+    { id: '151.240.151.223', seed: 1, key: 'c2:19:d2:5c' },
+    { id: '91.92.43.242', key: 'cd:f6:1f:4f' },
+    { id: '93.152.213.151' },
+    { id: '93.152.224.118' },
+    { id: '85.239.144.170' },
+    { id: 'towerrush.cam' },
+    { id: 'havelbeenpwned.net' },
+    { id: '23.94.145.201' },
+    { id: '23.94.145.229', host: 0 },
+    { id: '23.94.145.146', host: 0 },
+    { id: '23.94.145.52', host: 1 },
+    { id: '23.94.145.8' },
+    { id: '23.94.252.153' },
+    { g: 'MILLENIALHOST · AS135392' },
+    { id: '167.148.201.191', key: 'f8:cc:ee:b1' },
+    { id: 'cloubflare.net' },
+    { id: '167.148.201.67', origin: 1 },
+    { g: 'BEHIND CLOUDFLARE' },
+    { id: 'cocu.cc', cocu: 1 },
+    { id: 'cloubflare.top' },
+    { g: 'PAGE TITLE “ROMULUS”', title: 1 },
+    { id: '23.94.145.243', title: 1 },
+    { id: 'microsoft-winupdate.com', title: 1 }
+  ];
+  const HOSTNAMES = ['connectiux.com', 'connectserverix.com'];
+
+  function layout() {
+    const R = region(), units = ROWS.reduce((a, r) => a + (r.g ? 1.6 : 1), 0), rh = R.h / units;
+    const fs = mobile ? Math.max(7.5, Math.min(10, rh * 0.7)) : Math.max(9.5, Math.min(12.5, rh * 0.52));
+    const colX = R.x + R.w * (mobile ? 0.44 : W < 1200 ? 0.46 : 0.48);
+    let y = R.y;
+    const rows = ROWS.map(r => { const hh = r.g ? rh * 1.6 : rh, o = Object.assign({}, r, { y: y + hh * (r.g ? 0.62 : 0.5) }); y += hh; return o; });
+    const main = rows.filter(r => r.id && !r.title), tr = rows.filter(r => r.id && r.title);
+    const midY = (main[0].y + main[main.length - 1].y) / 2;
+    const cw = mobile ? 76 : 128, ch = mobile ? 30 : 44;
+    return { R, rows, rh, fs, colX, cw, ch,
+      seed: [R.x + 6, midY], hash: [R.x + R.w * (mobile ? 0.25 : 0.29), midY],
+      titleC: [R.x + R.w * (mobile ? 0.25 : 0.29), (tr[0].y + tr[tr.length - 1].y) / 2] };
+  }
+
+  function card(L, [x, y], head, val, p, a, edge) {
+    const { cw, ch, fs } = L, x0 = x - cw / 2, y0 = y - ch / 2;
+    ix.globalAlpha = a * Math.min(1, p * 3); ix.fillStyle = '#000'; ix.fillRect(x0, y0, cw, ch);
+    ix.globalAlpha = a; ix.strokeStyle = edge || PAPER; inkPath(ix, rect(x0, y0, cw, ch), p, 1, true);
+    ix.globalAlpha = a * smooth(0.4, 1, p);
+    ix.fillStyle = DIM; ix.font = `${fs - 2}px ${TYPE}`; ix.fillText(head, x0 + 8, y0 + ch * 0.3);
+    ix.fillStyle = PAPER; ix.font = `${fs}px ${MONO}`; ix.fillText(val, x0 + 8, y0 + ch * 0.68);
+  }
+
+  function drawBoard(alpha, sv) {
+    const L = layout(), { R, rows, fs, colX, seed, hash, titleC, cw, ch } = L;
+    const seedP = smooth(1.5, 1.85, sv), hashP = smooth(1.6, 1.95, sv), factsA = smooth(1.7, 1.95, sv) * (1 - smooth(2.45, 2.75, sv));
+    const fanP = smooth(2.35, 2.95, sv), cocuP = smooth(3.45, 3.95, sv), hl4 = cocuP * (1 - smooth(4.4, 4.7, sv));
+    const hostP = smooth(4.45, 4.9, sv), l5 = hostP * (1 - smooth(5.4, 5.7, sv));
+    const titleP = smooth(5.45, 5.95, sv), hl6 = titleP * (1 - smooth(6.35, 6.65, sv));
+    const sumP = smooth(6.4, 6.9, sv);
+    const focus = r => (1 - 0.72 * hl4 * !(r.cocu || r.origin)) * (1 - 0.72 * l5 * !(r.key || r.host !== undefined)) * (1 - 0.72 * hl6 * !r.title);
+
+    let k = 0, tk = 0;
+    rows.forEach(r => {
+      if (r.g) return;
+      if (r.title) { r.p = smooth(tk * 0.2, 0.6 + tk * 0.2, titleP); tk++; }
+      else if (r.origin) r.p = cocuP;
+      else { r.p = smooth(k * 0.035, 0.4 + k * 0.035, fanP); k++; }
+    });
+    rows.forEach((r, i) => { if (r.g) r.p = rows[i + 1].p; });
+    ix.lineCap = 'round'; ix.textBaseline = 'middle';
+
+    // threads: hash to the 17 hosts that served the identical page
+    const hx0 = hash[0] + cw / 2;
+    ix.strokeStyle = PAPER;
+    rows.forEach(r => {
+      if (!r.id || r.title || r.origin || r.p <= 0) return;
+      ix.globalAlpha = alpha * 0.5 * focus(r);
+      inkPath(ix, [[hx0, hash[1]], [colX - 7, r.y]], r.p, 0.9);
+    });
+    // threads: the page title to the panel hosts (faint) and to the two title matches
+    if (titleP > 0) {
+      const tx0 = titleC[0] + cw / 2;
+      rows.forEach(r => { if (!r.id || r.title) return; ix.globalAlpha = alpha * 0.16 * hl6; inkPath(ix, [[tx0, titleC[1]], [colX - 7, r.y]], titleP, 0.7); });
+      ix.strokeStyle = RED;
+      rows.forEach(r => { if (!r.title || !r.id) return; ix.globalAlpha = alpha * 0.75 * focus(r); inkPath(ix, [[tx0, titleC[1]], [colX - 7, r.y]], r.p, 0.9); });
+    }
+
+    // rows
+    rows.forEach(r => {
+      if (!(r.p > 0)) return;
+      const a = alpha * focus(r);
+      if (r.g) {
+        ix.globalAlpha = a * r.p; ix.fillStyle = DIM; ix.font = `${fs - 1}px ${TYPE}`;
+        ix.fillText(r.g, colX - 7, r.y);
+        ix.globalAlpha = a * 0.9; ix.strokeStyle = RULE; inkPath(ix, [[colX - 7, r.y + fs * 0.8], [R.x + R.w, r.y + fs * 0.8]], r.p, 0.4);
+        return;
+      }
+      ix.globalAlpha = a; ix.fillStyle = r.title ? RED : PAPER;
+      ix.beginPath(); ix.arc(colX, r.y, (mobile ? 2.2 : 3) * Math.min(1, r.p * 3), 0, 6.283); ix.fill();
+      const lab = df(r.id), n = Math.ceil(lab.length * Math.min(1, r.p * 1.4));
+      ix.font = `${fs}px ${MONO}`; ix.fillStyle = PAPER;
+      ix.fillText(lab.slice(0, n), colX + 9, r.y);
+      r.end = r.tagEnd = colX + 9 + ix.measureText(lab).width;
+      if (r.seed && !mobile) {
+        ix.font = `${fs - 2.5}px ${TYPE}`; ix.globalAlpha = a * smooth(0.7, 1, r.p); ix.fillStyle = DIM;
+        ix.fillText('SEED', r.end + 8, r.y);
+        r.tagEnd = r.end + 8 + ix.measureText('SEED').width;
+      }
+    });
+
+    // the reported panel and its fingerprint
+    if (seedP > 0) {
+      const a = alpha * (1 - 0.4 * smooth(2.4, 2.8, sv)) * (1 - 0.7 * Math.max(hl4, l5, hl6));
+      ix.globalAlpha = a; ix.fillStyle = PAPER; ix.beginPath(); ix.arc(seed[0], seed[1], 4 * seedP, 0, 6.283); ix.fill();
+      ix.strokeStyle = PAPER; inkPath(ix, circlePts(seed[0], seed[1], 9, 20), seedP, 0.6, true);
+      ix.globalAlpha = a * seedP; ix.font = `${fs}px ${MONO}`; ix.fillStyle = PAPER;
+      ix.fillText(df('151.240.151.223'), seed[0] - 6, seed[1] - ch / 2 - 10);
+      ix.fillStyle = DIM; ix.font = `${fs - 2}px ${TYPE}`; ix.fillText('REPORTED PANEL', seed[0] - 6, seed[1] - ch / 2 - 10 - fs * 1.5);
+      ix.globalAlpha = a; ix.strokeStyle = PAPER; inkPath(ix, [[seed[0] + 9, seed[1]], [hash[0] - cw / 2, hash[1]]], hashP, 0.9);
+      if (hashP > 0) card(L, hash, mobile ? 'SHA-256' : 'SHA-256 · /LOGIN', HASH.slice(0, 8) + '…', hashP, a, RED);
+      if (factsA > 0 && !mobile) {
+        ix.globalAlpha = alpha * factsA; ix.fillStyle = DIM; ix.font = `${fs - 1}px ${MONO}`;
+        ['AS207043 · DEDIK SERVICES', 'ports 22 · 80 · 443', 'ssh c2:19:d2:5c…'].forEach((t, i) => ix.fillText(t, seed[0] - 6, seed[1] + ch / 2 + 18 + i * fs * 1.45));
+      }
+    }
+
+    // 04: cocu.cc and its origin behind Cloudflare
+    const cocu = rows.find(r => r.cocu), org = rows.find(r => r.origin);
+    if (cocuP > 0 && cocu.tagEnd && org.tagEnd) {
+      const x1 = cocu.tagEnd + 10, x2 = org.tagEnd + 10, bx = Math.max(x1, x2) + (mobile ? 30 : 60), my = (cocu.y + org.y) / 2;
+      ix.globalAlpha = alpha * (0.35 + 0.65 * hl4); ix.strokeStyle = RED;
+      inkPath(ix, bez([x1, cocu.y], [bx, my], [x2, org.y]), cocuP, 0.9);
+      ix.font = `${fs - 1.5}px ${TYPE}`;
+      const t1 = 'ORIGIN', t2 = 'SEEN 2026-11-11', tw = Math.max(ix.measureText(t1).width, ix.measureText(t2).width);
+      const ax = Math.min(bx - 20, W - 16 - tw);
+      ix.globalAlpha = alpha * hl4; ix.fillStyle = '#000'; ix.fillRect(ax - 4, my - fs * 1.5, tw + 8, fs * 3);
+      ix.fillStyle = DIM; ix.fillText(t1, ax, my - fs * 0.7); ix.fillStyle = RED; ix.fillText(t2, ax, my + fs * 0.7);
+    }
+
+    // 05: SSH keys (this step only) and hostnames (kept); desktop only, a phone has no room beside the rows
+    if (hostP > 0 && !mobile) {
+      ix.font = `${fs - 1}px ${MONO}`; ix.fillStyle = DIM; ix.globalAlpha = alpha * l5;
+      rows.forEach(r => { if (r.key && r.tagEnd) ix.fillText(`ssh ${r.key}…`, r.tagEnd + 14, r.y); });
+      const ha = alpha * hostP * (1 - 0.7 * hl6);
+      HOSTNAMES.forEach((h, i) => {
+        const rs = rows.filter(r => r.host === i && r.tagEnd); if (!rs.length) return;
+        const nx = Math.max(...rs.map(r => r.tagEnd)) + 34, ny = rs.reduce((a, r) => a + r.y, 0) / rs.length;
+        ix.globalAlpha = ha; ix.strokeStyle = PAPER;
+        rs.forEach(r => inkDash(ix, [r.tagEnd + 8, r.y], [nx - 5, ny], hostP));
+        ix.fillStyle = PAPER; ix.beginPath(); ix.arc(nx, ny, 2.5, 0, 6.283); ix.fill();
+        ix.font = `${fs - 1}px ${MONO}`; ix.fillText(df(h), nx + 8, ny);
+      });
+    }
+
+    // 06: the second fingerprint
+    if (titleP > 0) card(L, titleC, 'PAGE TITLE', '“Romulus”', titleP, alpha, RED);
+
+    // 07: the count
+    if (sumP > 0) {
+      const sx = R.x, sy = mobile ? seed[1] + R.h * 0.16 : R.y + R.h * 0.6, big = mobile ? 30 : 58;
+      ix.globalAlpha = alpha * sumP; ix.textBaseline = 'middle';
+      ix.fillStyle = PAPER; ix.font = `800 ${big}px Archivo, sans-serif`; stretch('condensed');
+      ix.fillText('23', sx, sy); const nw = ix.measureText('23').width; stretch('normal');
+      ix.fillStyle = RED; ix.font = `${mobile ? 8 : 11}px ${TYPE}`; ix.fillText('INDICATORS', sx + nw + 10, sy - big * 0.12);
+      ix.fillStyle = DIM; ix.font = `${mobile ? 7.5 : fs - 1}px ${MONO}`;
+      ['17 panel hosts · 1 origin', '2 title matches · 2 hostnames', '1 login-page hash'].forEach((t, i) => ix.fillText(t, sx, sy + big * 0.62 + i * (mobile ? 11 : fs * 1.5)));
+      ix.strokeStyle = RED; inkPath(ix, [[sx, sy + big * 0.42], [sx + nw, sy + big * 0.42]], sumP, 1);
+    }
+    ix.globalAlpha = 1;
+  }
+
+  let blank = false;
+  function draw2D(t) {
+    const sv = sView;
+    if (sv > 7.6) {
+      if (!blank) { ix.setTransform(1, 0, 0, 1, 0, 0); ix.clearRect(0, 0, ink.width, ink.height); blank = true; }
+      return;
+    }
+    blank = false;
+    ix.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ix.clearRect(0, 0, W, H);
+    ix.lineCap = 'round'; ix.textBaseline = 'middle';
+    const heroA = 1 - smooth(0.3, 0.6, sv);
+    if (heroA > 0) drawPanel(heroA, reduced ? 1 : smooth(0.1, 2.6, t));
+    const decA = smooth(0.45, 0.8, sv) * (1 - smooth(1.35, 1.6, sv));
+    if (decA > 0) drawDecode(decA, reduced ? 1 : smooth(0.55, 1.0, sv));
+    const bA = smooth(1.4, 1.75, sv) * (1 - smooth(7.25, 7.5, sv));
+    if (bA > 0) drawBoard(bA, sv);
+  }
+
+  // Loupe: shows raw bytes under the drawing, and steps aside over links, buttons and text
+  const UI = 'a, button, summary, input, label, header, h1, h2, h3, h4, p, li, td, th, figure, code, nav, dialog';
+  const pointer = { x: -999, y: -999, on: false, last: 0, overUI: false };
+  const overUI = el => !!(el instanceof Element && el.closest(UI));
+  const track = e => { pointer.x = e.clientX; pointer.y = e.clientY; pointer.on = true; pointer.last = performance.now(); pointer.overUI = overUI(e.target); };
+  addEventListener('pointermove', track, { passive: true });
+  addEventListener('pointerdown', track, { passive: true });
+  addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') pointer.on = false; });
+  document.addEventListener('pointerleave', () => { pointer.on = false; });
+  addEventListener('scroll', () => { if (pointer.on) pointer.overUI = overUI(document.elementFromPoint(pointer.x, pointer.y)); }, { passive: true });
+  let loupeA = 0;
+
+  function drawLoupe() {
+    lx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    lx.clearRect(0, 0, W, H);
+    const want = pointer.on && !pointer.overUI && performance.now() - pointer.last <= 2500 ? 1 : 0;
+    loupeA += (want - loupeA) * (reduced ? 1 : 0.3);
+    if (loupeA < 0.02) return;
+    loupe.style.opacity = loupeA;
+    const r = mobile ? 58 : 74, { x, y } = pointer, cw = 22, ch = 16;
+    lx.save();
+    lx.beginPath(); lx.arc(x, y, r, 0, 6.283); lx.fillStyle = '#000'; lx.fill(); lx.clip();
+    lx.font = '11px ui-monospace, Menlo, monospace'; lx.textBaseline = 'middle';
+    const c0 = Math.floor((x - r) / cw), c1 = Math.ceil((x + r) / cw), r0 = Math.floor((y - r) / ch), r1 = Math.ceil((y + r) / ch);
+    const rowShift = Math.floor(scrollY / ch);
+    for (let c = c0; c <= c1; c++) for (let q = r0; q <= r1; q++) {
+      const d = Math.hypot(c * cw + cw / 2 - x, q * ch + ch / 2 - y) / r;
+      lx.globalAlpha = Math.max(0, 1 - d * 0.9);
+      lx.fillStyle = d < 0.45 ? PAPER : DIM;
+      lx.fillText(hx(byteAt(c, q + rowShift)), c * cw + 3, q * ch + ch / 2);
+    }
+    lx.restore();
+    lx.strokeStyle = PAPER; lx.globalAlpha = 1;
+    inkPath(lx, circlePts(x, y, r, 48), 1, 1.2, true);
+    const h0 = [x + r * 0.73, y + r * 0.73], h1 = [x + r * 1.3, y + r * 1.3], o = 5 / Math.SQRT2;
+    const handle = [[h0[0] - o, h0[1] + o], [h1[0] - o, h1[1] + o], [h1[0] + o, h1[1] - o], [h0[0] + o, h0[1] - o]];
+    lx.fillStyle = '#000'; lx.beginPath(); handle.forEach(([hx_, hy_], i) => i ? lx.lineTo(hx_, hy_) : lx.moveTo(hx_, hy_)); lx.fill();
+    inkPath(lx, handle, 1, 1, true);
+  }
+
+  function resize() {
+    W = innerWidth; H = innerHeight; mobile = W <= 720;
+    [ink, loupe].forEach(c => { c.width = W * DPR; c.height = H * DPR; });
+    blank = false;
+  }
+  addEventListener('resize', resize); resize();
+
+  const grain = document.getElementById('grain');
+  (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 160;
+    const g = c.getContext('2d'), im = g.createImageData(160, 160);
+    for (let i = 0; i < im.data.length; i += 4) { const v = Math.random(); im.data[i] = im.data[i + 1] = im.data[i + 2] = 255; im.data[i + 3] = v > 0.82 ? (v - 0.82) * 1400 : 0; }
+    g.putImageData(im, 0, 0); grain.style.backgroundImage = `url(${c.toDataURL()})`;
+  })();
+  let lastBoil = -1;
+
+  const t0 = performance.now();
+  let tPrev = 0;
+  function frame() {
+    const t = (performance.now() - t0) / 1000, dt = Math.min(0.05, t - tPrev); tPrev = t;
+    boil = reduced ? 0 : Math.floor(t * 8) / 8;   // lines redraw ~8 times a second, like hand-drawn animation
+    sView = reduced ? s : sView + (s - sView) * (1 - Math.exp(-dt * 4.2));
+    updateUI(sView);
+    if (boil !== lastBoil) { lastBoil = boil; grain.style.backgroundPosition = `${byteAt(boil * 8, 1) % 160}px ${byteAt(boil * 8, 2) % 160}px`; }
+    draw2D(t);
+    drawLoupe();
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  /* ---------------- The report: copy buttons, figures, contents ---------------- */
+  const iocText = () => [...document.querySelectorAll('#ioc-table tbody tr')]
+    .map(tr => [...tr.cells].map(td => td.textContent.trim()).join('\t')).join('\n');
+  document.querySelectorAll('button.copy').forEach(b => b.addEventListener('click', () => {
+    const src = document.getElementById(b.dataset.copy), text = src.id === 'ioc-table' ? iocText() : src.textContent.trim();
+    const show = msg => { b.textContent = msg; setTimeout(() => { b.textContent = b.dataset.label; }, 1800); };
+    const select = () => { const r = document.createRange(); r.selectNodeContents(src); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); show('Selected, press Ctrl+C'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => show('Copied'), select);
+    else select();
+  }));
+
+  const lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('.fig button').forEach(b => b.addEventListener('click', () => {
+    const im = b.querySelector('img'); lbImg.src = im.currentSrc || im.src; lbImg.alt = im.alt;
+    if (lb.showModal) lb.showModal(); else window.open(im.src, '_blank');
+  }));
+  lb.addEventListener('click', () => lb.close());
+
+  const tocLinks = [...document.querySelectorAll('.toc a')];
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      tocLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
+    }), { rootMargin: '-20% 0px -70% 0px' });
+    document.querySelectorAll('.doc h3[id]').forEach(h => io.observe(h));
+  }
+})();
+</script>
+</body>
+</html>
