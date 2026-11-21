@@ -3,14 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Are You Man Enough? | Mahmoud Swelam</title>
-<meta name="description" content="Are You Man Enough? A sketchbook spread in ink and marker, redrawn as a digital illustration and animated, by Mahmoud Swelam.">
+<title>Art | Mahmoud Swelam</title>
+<meta name="description" content="A locked page on Mahmoud Swelam's portfolio.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Are You Man Enough?">
-<meta property="og:description" content="A sketchbook spread in ink and marker, redrawn as a digital illustration and animated.">
+<meta property="og:title" content="Art">
+<meta property="og:description" content="A locked page on Mahmoud Swelam's portfolio.">
 <meta property="og:url" content="https://cocopollo.github.io/mahmoudswelam/art/">
-<meta property="og:image" content="https://cocopollo.github.io/mahmoudswelam/art/img/og.jpg">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <link rel="icon" href="../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,6 +88,19 @@
   @media (max-width:720px) { .menu { position:static; margin-left:14px; } header nav .menu-panel { left:18px; right:18px; top:calc(100% - 4px); min-width:0; } }
   @media (max-width:480px) { .site-nav > a[href*="medium.com"] { display:none; } }
   @media (max-width:400px) { .menu { margin-left:11px; } }
+
+  /* the lock */
+  .gate { min-height:62vh; display:flex; flex-direction:column; justify-content:center; max-width:30rem; }
+  .gate p { font-size:1.05rem; line-height:1.55; margin:0 0 1.6rem; color:var(--dim); }
+  .gate form { display:grid; gap:.6rem; }
+  .gate .case { margin:0; }
+  .gate-row { display:flex; gap:.6rem; }
+  .gate input { flex:1; min-width:0; font:inherit; font-size:1.05rem; color:var(--paper); background:#000; border:1px solid var(--rule); border-bottom-color:var(--paper); padding:.7rem .8rem; letter-spacing:.2em; }
+  .gate input:focus-visible { outline:1px solid var(--paper); outline-offset:3px; }
+  .gate button { font-family:var(--type); font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:#000; background:var(--paper); border:0; padding:0 1.2rem; cursor:pointer; }
+  .gate button:hover { background:var(--red); color:var(--paper); }
+  .gate-msg { min-height:1.4em; margin:0 !important; font-size:.92rem !important; }
+  .gate-msg.bad { color:var(--red) !important; }
 </style>
 </head>
 <body>
@@ -100,44 +112,19 @@
   <nav class="site-nav" aria-label="Site"><details class="menu"><summary>Research</summary><div class="menu-panel"><p>Reports</p><a href="../Reports/romulus-loader-c2/index.html">Hunting Romulus Loader C2</a><a href="../Reports/StarkTech%20Incident%20Report%201dab727b1373804eb103cf7d2c5c8702.html">StarkTech incident report</a><p>Field notes</p><a href="../war-ground/index.html">War Ground</a></div></details><details class="menu"><summary>Learning</summary><div class="menu-panel"><a href="../detection-engineering/index.html">Detection engineering guide</a><a href="../labs/index.html">DFIR labs</a></div></details><a href="index.html" aria-current="page">Art</a><a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog</a><a href="../index.html#contact">Contact</a></nav>
 </header>
 
-<main>
-  <section class="intro">
-    <div>
-      <p class="case">Sketchbook · Digital · Animated</p>
-      <h1>Are you man enough<span>?</span></h1>
-    </div>
-    <div>
-      <p>A two-page spread from my sketchbook, redrawn as a digital illustration and brought to life. The scope sits right on the fold, so the hunter&rsquo;s line runs through both pages and stops at the stag&rsquo;s eye.</p>
-      <p class="sub">Click a detail, or the still below, to see it full size.</p>
-    </div>
+<main id="vault-main">
+  <section class="gate">
+    <p class="case">Case file · Restricted</p>
+    <h1>Locked</h1>
+    <p>This page is password protected.</p>
+    <form id="gate-form" autocomplete="off">
+      <label for="gate-pass" class="case">Password</label>
+      <div class="gate-row"><input id="gate-pass" type="password" autocomplete="current-password" required><button type="submit">Open</button></div>
+      <p id="gate-msg" class="gate-msg" role="status" aria-live="polite"></p>
+    </form>
   </section>
-
-  <figure class="spread">
-    <div class="tag">Exhibit A<span>Animated · 10 s loop</span></div>
-    <video id="film" autoplay muted loop playsinline preload="metadata" poster="img/poster.jpg" width="1440" height="1058" aria-label="Animation: the words Are you man enough bleed in like ink, a stag is brushed in, a rifle scope is inked on and locks onto the stag's eye, then a star and a question mark land.">
-      <source src="img/are-you-man-enough.mp4" type="video/mp4">
-    </video>
-    <figcaption><span><b>Are you man enough?</b> Ink and marker on paper, redrawn digitally and animated.</span><button type="button" class="still" data-full="img/still.jpg">View the still illustration</button></figcaption>
-  </figure>
-
-  <section class="details" aria-labelledby="details-h">
-    <p class="case">Up close</p>
-    <h2 id="details-h">Details</h2>
-    <div class="grid">
-      <figure><button type="button" data-full="img/detail-scope.jpg" aria-label="Open the scope detail"><img src="img/detail-scope.jpg" width="900" height="900" loading="lazy" alt="Detail: the rifle scope across the fold, its crosshair ending at the stag's eye."></button><figcaption>The scope, drawn across the fold.</figcaption></figure>
-      <figure><button type="button" data-full="img/detail-stag.jpg" aria-label="Open the stag detail"><img src="img/detail-stag.jpg" width="900" height="663" loading="lazy" alt="Detail: the stag's head with a black star and a row of small orange stars."></button><figcaption>The stag, with a row of stars.</figcaption></figure>
-      <figure><button type="button" data-full="img/detail-lettering.jpg" aria-label="Open the lettering detail"><img src="img/detail-lettering.jpg" width="900" height="720" loading="lazy" alt="Detail: the hand-painted red letters ARE YOU."></button><figcaption>The lettering, painted by hand.</figcaption></figure>
-    </div>
-  </section>
-
-  <footer>
-    <span>Mahmoud Swelam · Art</span>
-    <a href="../index.html">Back to the portfolio</a>
-    <a href="../index.html#contact">Contact</a>
-  </footer>
 </main>
 
-<dialog class="lightbox" id="lightbox" aria-label="Full size image"><img alt=""></dialog>
 
 <script>
 (() => {
@@ -147,17 +134,52 @@
   for (let i = 0; i < im.data.length; i += 4) { const v = Math.random(); im.data[i] = im.data[i + 1] = im.data[i + 2] = 255; im.data[i + 3] = v > 0.82 ? (v - 0.82) * 1400 : 0; }
   g.putImageData(im, 0, 0); grain.style.backgroundImage = `url(${c.toDataURL()})`;
 
-  // the film loops on its own; with reduced motion it waits for the viewer to press play
-  const film = document.getElementById('film');
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { film.removeAttribute('autoplay'); film.pause(); film.controls = true; }
+})();
+</script>
+<script id="vault" type="application/octet-stream">bog+gmOAOt1G2uybaeY4lpkk0z6ENEYj59nx8phLYH4Yt3cUXm/BXrsSroO6eiqhr3gUptKsIuxKztof/dGMrGi+6FOaoN1JJpuuH6TFO0LDFR463deXVIUUalblRqoUkOuXKdaJtwAS9nZiEvyYaHbzNTXGPCh1C5tPjq1lQmHBBTApGh0Dc9WoroxpFRiXsyEs+Bs/MQRcFQj4uSwe2isIFebIo4+aYPtUKwibj9RAbCpGJDXOtk96XSeWZnR8UYWyNZ3nIu0zkmBQGp8SWPjdh9G10QnBFGzlfvj10OOKjhj522gcPWZAVV7jK6FxlrdwAdFHiXpuVBArtKHHDjg/LCTtpF8NNp29aYSNyYZY4U6TIGVoDdwMVxlR94CTdHBME0p/mDyoRoF3/Giny1obg1M7XD+UVAVrZhYzF6/iU6yP0NShRc+C7ZuPkNNX0rEFlGK+IOVbXQonLEM1lyesO4S1ZCdoVOH/5E8NCtHkJK/o1BL7XKzFxGxnjkeZUN/f0X4xCOuLu/cYC9Jk/baWbIiPUUpdBGONO6Jj1ORI+2FIQpnjnnzvSi+gO5gUORb3kd3VBsuF/NIt9lAMgt4aswcQKkyzzI7FiMnhpC6jI1FLdvqPo1CI4WH/hrUiadxbeBjzxR2M4swLKvJlXNdCBU7SPPE7kRTR/CybkAkY5iuBsPCNfQPNTxwxAzPvtW+M6qGOkEsj8zZC//5luRE/ZKOf32lenHlOq7JYEHASN74qsBqFkiLGkYuHtzIGcL3IRyvhyI3EKqP2y5G7yOzn8VtUEJSAnEr5pCDRDt8HoxUd39OB2CafFwepylfb2HSQZqGfIEdKmFVkOQ0rRQMoiMvoeLIQjRYppIfxP6DTf+NDxb+v3FEJslEdfLk5V7aVP4oN6uB1B1Yz9+di3ygit/WFbaiT8fKSgR8bS4+XMuF3LDHB6/ewEMhAzKsmlqOzxBQW9YvsKT6cegP/IVmyMhfp/45YRIL74ZzC8wgZZ8HWBJzHxxpuwv0LPaBjFFGiXd2nAQnmVgfMpHRC8p3gdBEdJfIlpcXIViZMXmmsbAmg9JMR8zmpTWHBKR0CknG9En39tIKkbiAVPfNy+ditAN0bTTOkGv0wDTa3BwZSRl+QrgAXZkzLz6v0brQu+B6CcEe4L+LyF0eGRfkHEStBSTENKu9tGx5BPRLiREUcKvw7QRfWWE2T/7bxMllo56ZGOJCFVAc2FmVtieDqRGlm0yhH0I5oaABMLKyzA/JreG04isObg55KwhcVwuj044PfF/k7VIWPvVwZm/dcY+u2B2G0lclF5/YqJ1PNaFSzQHryMvVU0Z+rRgznPoxwS7dnO5nHCg8SR50ohmPqAFu1ETP/RrjN5DCkhAvL0pY7Rf9BwhR4XcISUDs/WEELuSf2pk+rrRgoFzpNSJQK/kcPk8uk5fqSZiCea7UXpfxnrMsSw9FYg7WXMN0AqTDZfw1yf+iFQYEaxTmrjD29OtA3EPrgmew59hbt385DV1gaO817utdAqNGJDwP69MouRxnTvnqncD822+Lfa31kffqdBpgIWSiIqwzl9Byo4hNPn9eg002ySozxjM7YKntf9N7NMkQmycSB2LqLfsliC070Dq47yj+Myy6zqmsNoPPj9FOn/13HBop7GwOPPe2Q2NtJPca8zZwDXiR8F8i7svKEnGlconT1P1PBxBlc6IvuF1+m9VMMq3zAtjv3oHWKJ3bEZE0M57XQjZos/gOnpWD16TcaZahzSgOz02JaOG4Wr8Ig+mxlIuUq2GWCTu80GTvFfIk0O+PVt67qyPc9VzirBxUkYCDSTkTzUx2/QQ0SF6hIZJNzr52UdcKCTAwNh63BzPyGVprV9mGDyvBldHK8sBNmTLa9+bgdbr+OaQiysjMixS2vEbuKamhlfhYoWoIReEbuZ4Lq9p9yJjlQizfwfJCcot1Vd9XW67PauDunpYATErvrMv5hgCt/eAb6CPJmSO39Oj0AcbJMuzMBx1u24xTrwtnWorW1q7MIK/9/0khfST1oivCduQsDUMZvz/6WajiESPxOl9N3SCyI7DyGAi7wNULJg8I5210Wce5L0QUQLrqxdoIOVBb7stJuHYACGtf3csYQPN/AZiQghiLpnVVyonpNjS8fcu8QsZlwFkq3E5WIiyjbI5Nn407nOs6u5/WOc0DlWuyd+LLVCqlA6f9vTIxkB+ZEwSz1CRTmds92azPYZb2BW/Zu6BwUDRbZLJ7ZYfpVpzpuwkcP47uwZUfIPTB8CjLCjQfeCM/37jFEqkHaknFI4NEffUfKdk8IPbdw8kbFdDEM6/hFI5gsTgrJ5NtxnBhAIGPz9G8lUjwGXDNG8FBPMt0+u5LiISzkhusAeVIvm3f6+0fZr9YrUIfpHE1b41oXbJ+FXtj9kHgaaT1UUSJqLMqCj0WQXoHaI28HLcNodxdxL0Tnaxar2z3hURrV7aDtAM/WyoYK05auy9YMzlXCdsJOkNIDOPv8vdLCLXfiMeotv/qwZBhlemoeAgFGEfkjNyBc1958BZlNwUSGVIgd6WJjd+LC/DkKr0f9nKV8u8rGzaLAH9jiRMKnZQvTx+IFxxZELOQqlVaks/lH21n7Jc0wvrm4DR4g4B61gFfzbbvnIAu+8u2MX0IjQbM93kWOTMk9EmtQEr07J3dr4vGPRj5Rlvak72C4d3bM+t3TO7Wa9R4Bi35zbj3bPq8r8C+ReXw6PD+diu7PVYIFNCzoYLPOsQO7BOM+m2FYPRzsEh5OL69OVYjtTfsbTEIBNqDHKSMCb2Bjey9IUoh80Fyzdc+Qhd7RVlDz9Y9nRNhjlNrTGhJmTVqq343W5cIz6FymaJ45yw6aBraE0X3tqXaH7i3Br7x8xYor30exBTE4yW4OCGayiuXqedx9Gjzi5JDTF9woZ2a1VtLpJhlde1mdZhmFde6r9aWQ3T0SG+ZEFjdcWrhABjQ0I1QTTkVmcZncypIO6MhrD6CwXs1pYh/k8uCdKxu1w7vXAIIuJ5sPPlt9hS2OiSaC+nY2u32ddDBDeAF74SxOpU2MfOeuhu+fY6h6bIjYDVXIK6no2eh7WV30Tg5l+0xuzpYZej0IozrfLP+CK07l2KkafyfScx0YNpt+abGKn2vnGjXkHsr5k+iKnZJqYMZNXmDYQ9q/5hqk3lkNpHrSPRUfkX/J0sArtbh6b2fPcuhTZtigpldpwvnthacnsX9r2Not3M7e0zYO6zlSjknKa3htRLMFRDfzbx8xIatLXzI3c6iB6ZwYyYBt0J/wXMkxlzzUPJj2t7zKMrg5GmTpQg4ebCVfEmSDt3oN4eRlO0sIIkc2uNYo+mPljpWL/N21Aqf0TAtx/ibfd6c3VQYmbLQkyS/vXo0pzFaXazrwunIgUHcPd6v15HN/ob4lmIzpx/Vq+FiLIyUphfspYr1dL/XQm/fZmU1MEytZNj+olzppqUW6LyIAdr2/JFzBo80WMAY2c5ajQNiwvhrRfflHrfjQb+Rg1iF+osYZvzpLhb3iBv57xBeRsrbXo4SOWP+rxC41RDiVgJGEV3p3pJG5sC6v27+tf6RmoxYRswVzCyuHj/0cUDGukRECQBgvmDhBH+3gyXl0giZ7QHAu1Z+PObKCiklUqZvvcDTIGGRsDuj68ECC+qro/YpYDxchudNvUUI/rITSGOOlid6gMRfMqrfg549nDT/UFIY/TTL/bRBGB/rejtNR0bSkCEFXNkRRS3P4FwKVgYHHjjPJOtcj5DrLpv3zCpDSfey410szjkcJ7Ly2lWfNT85YWpm4djy0euaYjB1+oGPLXkKBP1n3PPPwUPZhqforuws12VIoopxM2V2VyBU2XpLLcEg4XNveqOvSlpou4YX2UJxPvQuJuCLLRrYe30qqXR/w0wSz3MY33UVq/ni7gM4fDyLt7FmUTM9VmxMyce3FgCq3G+cXSXa8s57NXfzCMwpQvv/tUnipdi4vfxmP88spJ5krZhIJyHbkkYWe9hPaUJlf5xCoc+0Mpf4NesQj2tT/mvwBeu+hIMd7kIYCYWOPQbNIIdMxJ55ysxd5MzXwK4Ls23C3g7UgPMslajMB+IBbH1y01dQWSaIOdQZxQdLiHxXODOAtYJHGVtXqFUa6ADVR0+IkUidx8Jbln0gKtvyVVCGghPw8Ntp2iMnng1/sjWAY9sdjgkbSXf1SvpNpOIfiL0hdM4eo/oBUgX6gRGLwVJw/2SGoiEvJvOVfGyKBdZGcQx7qOMZLLFfzeZU0gPd4K2bbItmJvFOT+rPGlH0BZPW+7HCn1lE=</script>
+<script>
+(() => {
+  // decrypt the page in the browser; a wrong password fails the AES-GCM check
+  const ITER = 600000, raw = Uint8Array.from(atob(document.getElementById('vault').textContent.trim()), c => c.charCodeAt(0));
+  const form = document.getElementById('gate-form'), input = document.getElementById('gate-pass'), msg = document.getElementById('gate-msg');
+  const open = async pass => {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: raw.slice(0, 16), iterations: ITER, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const sealed = raw.slice(16);
+    const data = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: sealed.slice(0, 12) }, key, sealed.slice(12))));
+    const urls = {};
+    await Promise.all(Object.entries(data.assets).map(async ([path, [file, type]]) => {
+      const buf = new Uint8Array(await (await fetch(file)).arrayBuffer());
+      const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, key, buf.slice(12));
+      urls[path] = URL.createObjectURL(new Blob([plain], { type }));
+    }));
+    let main = data.main, dialog = data.dialog;
+    for (const [path, url] of Object.entries(urls)) { main = main.split('"' + path + '"').join('"' + url + '"'); dialog = dialog.split('"' + path + '"').join('"' + url + '"'); }
+    document.getElementById('vault-main').innerHTML = main;
+    document.body.insertAdjacentHTML('beforeend', dialog);
+    start();
+  };
+  const tryOpen = async (pass, quiet) => {
+    msg.className = 'gate-msg'; if (!quiet) msg.textContent = 'Opening\u2026';
+    try { await open(pass); try { sessionStorage.setItem('art-pass', pass); } catch {} }
+    catch { if (!quiet) { msg.className = 'gate-msg bad'; msg.textContent = 'Wrong password. Try again.'; input.select(); } }
+  };
+  form.addEventListener('submit', e => { e.preventDefault(); tryOpen(input.value, false); });
+  let saved = null; try { saved = sessionStorage.getItem('art-pass'); } catch {}
+  if (saved) tryOpen(saved, true); else input.focus();
 
-  // lightbox
-  const lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
-  document.querySelectorAll('button[data-full]').forEach(b => b.addEventListener('click', () => {
-    const im = b.querySelector('img'); lbImg.src = b.dataset.full; lbImg.alt = im ? im.alt : 'The still digital illustration';
-    if (lb.showModal) lb.showModal(); else window.open(b.dataset.full, '_blank');
-  }));
-  lb.addEventListener('click', () => lb.close());
+  // what the page does once it is open: the film and the lightbox
+  function start() {
+    const film = document.getElementById('film');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { film.removeAttribute('autoplay'); film.pause(); film.controls = true; }
+    else film.play().catch(() => {});
+    const lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+    document.querySelectorAll('button[data-full]').forEach(b => b.addEventListener('click', () => {
+      const im = b.querySelector('img'); lbImg.src = b.dataset.full; lbImg.alt = im ? im.alt : 'The still digital illustration';
+      if (lb.showModal) lb.showModal(); else window.open(b.dataset.full, '_blank');
+    }));
+    lb.addEventListener('click', () => lb.close());
+  }
 })();
 </script>
 <script>
