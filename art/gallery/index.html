@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Art | Mahmoud Swelam</title>
+<meta name="description" content="A locked page on Mahmoud Swelam's portfolio.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Art">
+<meta property="og:description" content="A locked page on Mahmoud Swelam's portfolio.">
+<meta property="og:url" content="https://cocopollo.github.io/mahmoudswelam/art/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root { --black:#000; --paper:#f2f2ee; --dim:#8f8f89; --rule:#3a3a37; --red:#d8402f; --display:Archivo, system-ui, sans-serif; --type:'Special Elite', ui-monospace, monospace; }
+  html { background:var(--black); color:var(--paper); font-family:Archivo, system-ui, sans-serif; color-scheme:dark; }
+  body { margin:0; background:var(--black); }
+  .film { position:fixed; inset:0; z-index:2; pointer-events:none; }
+  #grain { opacity:.11; mix-blend-mode:screen; }
+  #vignette { background:radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,.65) 100%); }
+
+  header { position:sticky; top:0; z-index:4; display:flex; justify-content:space-between; align-items:baseline; padding:22px 28px; font-size:.9rem; background:linear-gradient(#000 70%, transparent); }
+  header strong a { color:var(--paper); font-stretch:80%; font-weight:700; text-decoration:none; }
+  header nav a { color:var(--paper); text-decoration:none; margin-left:24px; white-space:nowrap; display:inline-block; }
+  header nav { text-align:right; }
+  header nav a:hover, header nav a[aria-current] { text-decoration:underline; text-underline-offset:4px; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline:1px solid var(--paper); outline-offset:4px; }
+
+  main { position:relative; z-index:3; padding:10vh 28px 16vh; display:grid; gap:4.5rem; }
+  .case { font-family:var(--type); font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin:0 0 1rem; }
+  .intro { display:grid; grid-template-columns:minmax(0, 1.3fr) minmax(0, 1fr); gap:2rem 4rem; align-items:end; }
+  h1 { font-family:var(--display); font-size:clamp(3.2rem, 8.4vw, 8rem); font-stretch:62%; font-weight:800; line-height:.86; margin:0; text-wrap:balance; }
+  h1 span { color:var(--red); }
+  .intro p { font-size:1.05rem; line-height:1.55; max-width:36ch; margin:0 0 .8rem; }
+  .intro p.sub { color:var(--dim); }
+  .intro p.motto { font-family:var(--display); font-size:clamp(1.7rem, 2.8vw, 2.4rem); font-stretch:70%; font-weight:700; line-height:1.05; max-width:16ch; margin-bottom:1rem; text-wrap:balance; }
+  .intro p.motto span { color:var(--red); }
+  /* smooth: everything rises in gently, the film fades up once it is ready */
+  @keyframes rise { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+  .gate, .intro, .spread, .details, main > footer { animation:rise 1.1s cubic-bezier(.2,.7,.2,1) both; }
+  .spread { animation-delay:.15s; } .details { animation-delay:.3s; } main > footer { animation-delay:.4s; }
+  .spread video { opacity:0; transition:opacity 1.2s ease; } .spread video.on { opacity:1; }
+  dialog.lightbox[open] { animation:rise .45s cubic-bezier(.2,.7,.2,1) both; }
+
+  /* the spread, framed as an exhibit, with a loupe that reads the paint up close */
+  figure { margin:0; }
+  .spread { position:relative; }
+  .spread video { display:block; width:100%; height:auto; background:#000; }   /* the art's paper is black, so it sits in the page */
+  button.still { font:inherit; color:var(--paper); background:none; border:0; border-bottom:1px solid var(--rule); padding:0 0 2px; cursor:zoom-in; }
+  button.still:hover { border-color:var(--paper); }
+  .tag { position:absolute; left:-10px; top:-18px; transform:rotate(-2.5deg); background:#000; border:1px solid var(--paper); padding:.5rem .9rem .45rem; font-family:var(--type); font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; z-index:2; }
+  .tag span { display:block; color:var(--dim); font-size:.66rem; margin-top:.15rem; }
+  figcaption { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.6rem 2rem; margin-top:1rem; color:var(--dim); font-size:.9rem; line-height:1.5; }
+  figcaption b { color:var(--paper); font-weight:600; }
+
+  .details h2 { font-family:var(--display); font-size:clamp(2rem, 4.4vw, 3.4rem); font-stretch:66%; font-weight:750; line-height:.92; margin:0 0 1.6rem; }
+  .grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:3rem 4.5rem; max-width:62rem; margin:0 auto; }
+  .grid figure:nth-child(2) { transform:translateY(3.2rem); }   /* staggered, like lenses laid on a table */
+  .grid figure { text-align:center; }
+  .grid button { display:block; width:100%; padding:0; border:0; background:none; cursor:zoom-in; overflow:hidden; aspect-ratio:1; border-radius:50%;
+    -webkit-mask-image:radial-gradient(circle, #000 58%, transparent 71%); mask-image:radial-gradient(circle, #000 58%, transparent 71%); }
+  .grid img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .6s ease; }
+  .grid button:hover img, .grid button:focus-visible img { transform:scale(1.06); }
+  .grid figcaption { margin-top:.2rem; font-size:.86rem; justify-content:center; }
+
+  footer { border-top:1px solid var(--rule); padding-top:1.2rem; display:flex; flex-wrap:wrap; gap:.6rem 1.6rem; color:var(--dim); font-size:.92rem; }
+  footer a { color:var(--paper); }
+
+  dialog.lightbox { border:0; padding:0; background:transparent; max-width:96vw; max-height:94vh; cursor:zoom-out; }
+  dialog.lightbox::backdrop { background:rgba(0,0,0,.94); }
+  dialog.lightbox img { display:block; max-width:96vw; max-height:92vh; height:auto; }
+
+  @media (max-width:860px) { .intro { grid-template-columns:minmax(0, 1fr); } }
+  @media (max-width:720px) {
+    header { padding:16px 18px; }
+    header nav a { margin-left:14px; }
+    main { padding:6vh 18px 12vh; gap:3.2rem; }
+    .grid { grid-template-columns:minmax(0, 1fr); max-width:20rem; gap:2rem; }
+    .grid figure:nth-child(2) { transform:none; }
+    .tag { left:-4px; top:-14px; }
+  }
+  @media (max-width:400px) { header strong { font-size:.82rem; } header nav a { margin-left:11px; } }
+  @media (prefers-reduced-motion:reduce) { .grid img { transition:none; } .gate, .intro, .spread, .details, main > footer, dialog.lightbox[open] { animation:none; } .spread video { opacity:1; transition:none; } }
+
+  /* Site menu: Research and Learning open as small panels */
+  .menu { position:relative; display:inline-block; margin:0 0 0 24px; border:0; }
+  .menu summary { list-style:none; cursor:pointer; white-space:nowrap; padding:0; font:inherit; }
+  .menu summary::-webkit-details-marker { display:none; }
+  .menu summary::after { content:"\25BE"; font-size:.72em; margin-left:.35em; opacity:.7; }
+  .menu summary:hover, .menu[open] summary, .menu.on summary { text-decoration:underline; text-underline-offset:4px; }
+  .menu summary:focus-visible { outline:1px solid currentColor; outline-offset:4px; }
+  header nav .menu-panel { position:absolute; right:0; top:calc(100% + 14px); min-width:15rem; padding:.45rem 0; background:#000; border:1px solid #3a3a37; box-shadow:0 14px 34px rgba(0,0,0,.7); text-align:left; z-index:10; }
+  header nav .menu-panel a { display:block; margin:0; padding:.48rem 1rem; white-space:nowrap; text-decoration:none; }
+  header nav .menu-panel a:hover, header nav .menu-panel a[aria-current] { text-decoration:underline; text-underline-offset:4px; }
+  .menu-panel p { margin:.55rem 1rem .15rem; font-family:'Special Elite', ui-monospace, monospace; font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:#8f8f89; }
+  /* on a phone the panel hangs from the whole header, and Blog stays in the contact list */
+  @media (max-width:720px) { .menu { position:static; margin-left:14px; } header nav .menu-panel { left:18px; right:18px; top:calc(100% - 4px); min-width:0; } }
+  @media (max-width:480px) { .site-nav > a[href*="medium.com"] { display:none; } }
+  @media (max-width:400px) { .menu { margin-left:11px; } }
+
+  /* the lock */
+  .gate { min-height:62vh; display:flex; flex-direction:column; justify-content:center; max-width:30rem; }
+  .gate p { font-size:1.05rem; line-height:1.55; margin:0 0 1.6rem; color:var(--dim); }
+  .gate form { display:grid; gap:.6rem; }
+  .gate .case { margin:0; }
+  .gate-row { display:flex; gap:.6rem; }
+  .gate input { flex:1; min-width:0; font:inherit; font-size:1.05rem; color:var(--paper); background:#000; border:1px solid var(--rule); border-bottom-color:var(--paper); padding:.7rem .8rem; letter-spacing:.2em; }
+  .gate input:focus-visible { outline:1px solid var(--paper); outline-offset:3px; }
+  .gate button { font-family:var(--type); font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:#000; background:var(--paper); border:0; padding:0 1.2rem; cursor:pointer; }
+  .gate button:hover { background:var(--red); color:var(--paper); }
+  .gate-msg { min-height:1.4em; margin:0 !important; font-size:.92rem !important; }
+  .gate-msg.bad { color:var(--red) !important; }
+</style>
+</head>
+<body>
+<div id="grain" class="film" aria-hidden="true"></div>
+<div id="vignette" class="film" aria-hidden="true"></div>
+
+<header>
+  <strong><a href="../../index.html" aria-label="Mahmoud Swelam, back to the portfolio">Mahmoud Swelam</a></strong>
+  <nav class="site-nav" aria-label="Site"><details class="menu"><summary>Research</summary><div class="menu-panel"><p>Reports</p><a href="../../Reports/romulus-loader-c2/index.html">Hunting Romulus Loader C2</a><a href="../../Reports/StarkTech%20Incident%20Report%201dab727b1373804eb103cf7d2c5c8702.html">StarkTech incident report</a><p>Field notes</p><a href="../../war-ground/index.html">War Ground</a></div></details><details class="menu"><summary>Learning</summary><div class="menu-panel"><a href="../../detection-engineering/index.html">Detection engineering guide</a><a href="../../labs/index.html">DFIR labs</a><a href="/mahmoudswelam/learning/windows-intrusion-forensics/">Windows intrusion forensics</a></div></details><a href="index.html" aria-current="page">Art</a><a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog</a><a href="../../index.html#contact">Contact</a></nav>
+</header>
+
+<main id="vault-main">
+  <section class="gate">
+    <p class="case">Case file · Restricted</p>
+    <h1>Locked</h1>
+    <p>This page is password protected.</p>
+    <form id="gate-form" autocomplete="off">
+      <label for="gate-pass" class="case">Password</label>
+      <div class="gate-row"><input id="gate-pass" type="password" autocomplete="current-password" required><button type="submit">Open</button></div>
+      <p id="gate-msg" class="gate-msg" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+</main>
+
+
+<script>
+(() => {
+  // film grain, as on the rest of the site
+  const grain = document.getElementById('grain'), c = document.createElement('canvas'); c.width = c.height = 160;
+  const g = c.getContext('2d'), im = g.createImageData(160, 160);
+  for (let i = 0; i < im.data.length; i += 4) { const v = Math.random(); im.data[i] = im.data[i + 1] = im.data[i + 2] = 255; im.data[i + 3] = v > 0.82 ? (v - 0.82) * 1400 : 0; }
+  g.putImageData(im, 0, 0); grain.style.backgroundImage = `url(${c.toDataURL()})`;
+
+})();
+</script>
+<script id="vault" type="application/octet-stream">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</script>
+<script>
+(() => {
+  // decrypt the page in the browser; a wrong password fails the AES-GCM check
+  const ITER = 600000, raw = Uint8Array.from(atob(document.getElementById('vault').textContent.trim()), c => c.charCodeAt(0));
+  const form = document.getElementById('gate-form'), input = document.getElementById('gate-pass'), msg = document.getElementById('gate-msg');
+  const open = async pass => {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: raw.slice(0, 16), iterations: ITER, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const sealed = raw.slice(16);
+    const data = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: sealed.slice(0, 12) }, key, sealed.slice(12))));
+    const urls = {};
+    await Promise.all(Object.entries(data.assets).map(async ([path, [file, type]]) => {
+      const buf = new Uint8Array(await (await fetch(file)).arrayBuffer());
+      const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, key, buf.slice(12));
+      urls[path] = URL.createObjectURL(new Blob([plain], { type }));
+    }));
+    let main = data.main, dialog = data.dialog;
+    for (const [path, url] of Object.entries(urls)) { main = main.split('"' + path + '"').join('"' + url + '"'); dialog = dialog.split('"' + path + '"').join('"' + url + '"'); }
+    document.getElementById('vault-main').innerHTML = main;
+    document.body.insertAdjacentHTML('beforeend', dialog);
+    start();
+  };
+  const tryOpen = async (pass, quiet) => {
+    msg.className = 'gate-msg'; if (!quiet) msg.textContent = 'Opening\u2026';
+    try { await open(pass); try { sessionStorage.setItem('art-pass', pass); } catch {} }
+    catch { if (!quiet) { msg.className = 'gate-msg bad'; msg.textContent = 'Wrong password. Try again.'; input.select(); } }
+  };
+  form.addEventListener('submit', e => { e.preventDefault(); tryOpen(input.value, false); });
+  let saved = null; try { saved = sessionStorage.getItem('art-pass'); } catch {}
+  if (saved) tryOpen(saved, true); else input.focus();
+
+  // what the page does once it is open: the film and the lightbox
+  function start() {
+    const film = document.getElementById('film');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { film.removeAttribute('autoplay'); film.pause(); film.controls = true; }
+    else film.play().catch(() => {});
+    const show = () => film.classList.add('on');
+    film.addEventListener('loadeddata', show, { once: true }); if (film.readyState >= 2) show(); setTimeout(show, 1500);
+    const lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+    document.querySelectorAll('button[data-full]').forEach(b => b.addEventListener('click', () => {
+      const im = b.querySelector('img'); lbImg.src = b.dataset.full; lbImg.alt = im ? im.alt : 'The still digital illustration';
+      if (lb.showModal) lb.showModal(); else window.open(b.dataset.full, '_blank');
+    }));
+    lb.addEventListener('click', () => lb.close());
+  }
+})();
+</script>
+<script>
+(() => {
+  // one menu open at a time; a tap outside or Escape closes it
+  const menus = [...document.querySelectorAll('.site-nav .menu')];
+  menus.forEach(m => m.addEventListener('toggle', () => { if (m.open) menus.forEach(o => { if (o !== m) o.open = false; }); }));
+  document.addEventListener('click', e => menus.forEach(m => { if (!m.contains(e.target)) m.open = false; }));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') menus.forEach(m => { m.open = false; }); });
+})();
+</script>
+</body>
+</html>
