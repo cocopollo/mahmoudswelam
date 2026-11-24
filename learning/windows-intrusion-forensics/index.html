@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Windows Intrusion Forensics | Mahmoud Swelam</title>
+<meta name="description" content="A complete teaching deck for advanced incident response and digital forensics — five technique modules, field references, one case study, and a lab set.">
+<link rel="icon" href="../../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root{ --black:#000; --paper:#f2f2ee; --dim:#8f8f89; --rule:#3a3a37; --red:#d8402f;
+    --display:Archivo, system-ui, sans-serif; --type:'Special Elite', ui-monospace, monospace; color-scheme:dark; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--black);color:var(--paper);font-family:var(--display)}
+  a{color:var(--paper)}
+  a:focus-visible,button:focus-visible,summary:focus-visible{outline:1px solid var(--paper);outline-offset:4px}
+
+  header.top{position:sticky;top:0;z-index:4;display:flex;justify-content:space-between;align-items:baseline;padding:20px 28px;font-size:.9rem;background:#000;border-bottom:1px solid var(--rule)}
+  header.top strong a{font-stretch:80%;font-weight:700;text-decoration:none}
+  header.top nav{text-align:right}
+  header.top nav a{text-decoration:none;margin-left:24px;white-space:nowrap;display:inline-block}
+  header.top nav a:hover,header.top nav a[aria-current]{text-decoration:underline;text-underline-offset:4px}
+  .menu{position:relative;display:inline-block;margin:0 0 0 24px;border:0}
+  .menu summary{list-style:none;cursor:pointer;white-space:nowrap;padding:0;font:inherit}
+  .menu summary::-webkit-details-marker{display:none}
+  .menu summary::after{content:"\25BE";font-size:.72em;margin-left:.35em;opacity:.7}
+  .menu summary:hover,.menu[open] summary{text-decoration:underline;text-underline-offset:4px}
+  header nav .menu-panel{position:absolute;right:0;top:calc(100% + 14px);min-width:15rem;padding:.45rem 0;background:#000;border:1px solid #3a3a37;box-shadow:0 14px 34px rgba(0,0,0,.7);text-align:left;z-index:10}
+  header nav .menu-panel a{display:block;margin:0;padding:.48rem 1rem;white-space:nowrap;text-decoration:none}
+  header nav .menu-panel a:hover,header nav .menu-panel a[aria-current]{text-decoration:underline;text-underline-offset:4px}
+  .menu-panel p{margin:.55rem 1rem .15rem;font-family:var(--type);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:#8f8f89}
+  @media (max-width:720px){.menu{position:static;margin-left:14px}header nav .menu-panel{left:18px;right:18px;top:calc(100% - 4px);min-width:0}header.top{padding:16px 18px}header.top nav a{margin-left:14px}}
+  @media (max-width:480px){.site-nav > a[href*="medium.com"]{display:none}}
+
+  main{max-width:1060px;margin:0 auto;padding:clamp(22px,4vw,46px) max(18px,env(safe-area-inset-left,0px)) 60px}
+  .eyebrow{font-family:var(--type);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:0 0 .8rem}
+  h1{font-stretch:92%;font-weight:800;font-size:clamp(2rem,5.5vw,3.3rem);line-height:1.02;margin:0 0 .6rem;text-wrap:balance}
+  h1 span{color:var(--red)}
+  .lede{color:var(--dim);font-size:1.05rem;line-height:1.6;max-width:62ch;margin:0 0 1.1rem}
+  .facts{display:flex;flex-wrap:wrap;gap:.5rem .6rem;margin:0 0 1.8rem;font-family:var(--type);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+  .facts span{border:1px solid var(--rule);padding:.3rem .6rem;color:var(--dim)}
+
+  /* deck viewer */
+  .deck{border:1px solid var(--rule);background:#0b0b0a}
+  .stage{position:relative;width:100%;aspect-ratio:16/9;background:#050505;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .stage canvas{max-width:100%;max-height:100%;display:block}
+  .load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--type);font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);gap:.6rem}
+  .load .d{width:7px;height:7px;border-radius:50%;background:var(--red);animation:bl 1s steps(1) infinite}
+  @keyframes bl{50%{opacity:.2}}
+  .prog{height:2px;background:var(--rule)}
+  .prog > i{display:block;height:100%;width:0;background:var(--red);transition:width .25s}
+  .bar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.7rem .9rem;border-top:1px solid var(--rule);font-family:var(--type);font-size:.78rem}
+  .bar button{font-family:var(--type);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--paper);background:transparent;border:1px solid var(--rule);padding:.42rem .9rem;cursor:pointer;transition:.15s}
+  .bar button:hover:not(:disabled){border-color:var(--paper)}
+  .bar button:disabled{opacity:.35;cursor:not-allowed}
+  .count{color:var(--dim);letter-spacing:.12em;min-width:5.5rem}
+  .count b{color:var(--paper);font-variant-numeric:tabular-nums}
+  .spacer{flex:1}
+  .bar .ghost{color:var(--dim);border-color:transparent}
+  .bar .ghost:hover{color:var(--paper);border-color:var(--rule)}
+  .hintline{font-family:var(--type);font-size:.68rem;letter-spacing:.08em;color:var(--dim);margin:.7rem 0 0}
+  .hintline a{color:var(--paper)}
+
+  footer{max-width:1060px;margin:0 auto;padding:1.4rem 18px 3rem;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:.6rem 1.6rem;color:var(--dim);font-size:.92rem}
+  footer a{color:var(--paper)}
+  @media (prefers-reduced-motion:reduce){.load .d{animation:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <strong><a href="../../index.html">Mahmoud Swelam</a></strong>
+  <nav class="site-nav" aria-label="Site"><details class="menu"><summary>Research</summary><div class="menu-panel"><p>Reports</p><a href="../../Reports/romulus-loader-c2/index.html">Hunting Romulus Loader C2</a><a href="../../Reports/StarkTech%20Incident%20Report%201dab727b1373804eb103cf7d2c5c8702.html">StarkTech incident report</a><p>Field notes</p><a href="../../war-ground/index.html">War Ground</a></div></details><details class="menu" open><summary>Learning</summary><div class="menu-panel"><a href="../../detection-engineering/index.html">Detection engineering guide</a><a href="../../labs/index.html">DFIR labs</a><a href="/mahmoudswelam/learning/windows-intrusion-forensics/" aria-current="page">Windows intrusion forensics</a></div></details><a href="../../art/index.html">Art</a><a href="https://medium.com/@mahmoud.o.swelam" target="_blank" rel="noopener">Blog</a><a href="../../index.html#contact">Contact</a></nav>
+</header>
+
+<main>
+  <p class="eyebrow">Learning — Advanced DFIR</p>
+  <h1>Windows Intrusion <span>Forensics</span></h1>
+  <p class="lede">A complete teaching deck for advanced incident response and digital forensics: how an intrusion is scoped, what each Windows artifact proves, how memory and timelines are read, and how anti-forensics is detected — then run end to end against one real, fully documented intrusion.</p>
+  <div class="facts"><span>5 technique modules</span><span>field references</span><span>1 case study</span><span>lab set</span><span>125 slides</span></div>
+
+  <div class="deck">
+    <div class="stage" id="stage">
+      <canvas id="cv" aria-label="Deck slide"></canvas>
+      <div class="load" id="load"><span class="d"></span><span>loading deck …</span></div>
+    </div>
+    <div class="prog"><i id="progbar"></i></div>
+    <div class="bar">
+      <button id="prev" type="button" aria-label="Previous slide">‹ Prev</button>
+      <span class="count"><b id="cur">1</b> / <span id="tot">—</span></span>
+      <button id="next" type="button" aria-label="Next slide">Next ›</button>
+      <span class="spacer"></span>
+      <button id="fs" class="ghost" type="button">⤢ Fullscreen</button>
+    </div>
+  </div>
+  <p class="hintline">Use ← / → (or space) to move through the deck. <a href="../windows-intrusion-forensics.pdf">Download the deck (PDF)</a></p>
+</main>
+
+<footer><a href="../../index.html">Back to the main page</a><a href="/mahmoudswelam/learning/windows-intrusion-forensics.pdf">PDF version</a></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var lib=window.pdfjsLib;
+  var stage=document.getElementById("stage"),cv=document.getElementById("cv"),ctx=cv.getContext("2d"),
+      load=document.getElementById("load"),prev=document.getElementById("prev"),next=document.getElementById("next"),
+      fs=document.getElementById("fs"),curEl=document.getElementById("cur"),totEl=document.getElementById("tot"),
+      progbar=document.getElementById("progbar");
+  if(!lib){ load.innerHTML='<span>viewer failed to load — use the PDF link below.</span>'; return; }
+  lib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  var doc=null,total=0,page=1,rendering=false,queued=null;
+  function clamp(n){ return Math.max(1,Math.min(total||1,n)); }
+  function updateUI(){
+    curEl.textContent=page; prev.disabled=page<=1; next.disabled=page>=total;
+    progbar.style.width=(total?(page/total*100):0)+"%";
+    try{ history.replaceState(null,"","#"+page); }catch(e){}
+  }
+  function render(n){
+    if(!doc) return; rendering=true;
+    doc.getPage(n).then(function(pg){
+      var dpr=Math.min(2,window.devicePixelRatio||1);
+      var vp0=pg.getViewport({scale:1});
+      var cw=stage.clientWidth, ch=stage.clientHeight;
+      var scale=Math.min(cw/vp0.width, ch/vp0.height);
+      var vp=pg.getViewport({scale:scale*dpr});
+      cv.width=Math.floor(vp.width); cv.height=Math.floor(vp.height);
+      cv.style.width=Math.floor(vp.width/dpr)+"px"; cv.style.height=Math.floor(vp.height/dpr)+"px";
+      var task=pg.render({canvasContext:ctx,viewport:vp});
+      task.promise.then(function(){
+        rendering=false; load.hidden=true;
+        if(queued!==null){ var q=queued; queued=null; if(q!==n) render(q); }
+      }).catch(function(){ rendering=false; });
+    });
+    updateUI();
+  }
+  function go(n){ n=clamp(n); if(n===page && doc) { return; } page=n; if(rendering) queued=n; else render(n); updateUI(); }
+  function step(d){ go(page+d); }
+
+  prev.addEventListener("click",function(){ step(-1); });
+  next.addEventListener("click",function(){ step(1); });
+  document.addEventListener("keydown",function(e){
+    if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){ step(1); e.preventDefault(); }
+    else if(e.key==="ArrowLeft"||e.key==="PageUp"){ step(-1); e.preventDefault(); }
+    else if(e.key==="Home"){ go(1); } else if(e.key==="End"){ go(total); }
+  });
+  fs.addEventListener("click",function(){
+    if(document.fullscreenElement){ document.exitFullscreen&&document.exitFullscreen(); }
+    else if(stage.requestFullscreen){ stage.requestFullscreen().catch(function(){}); }
+  });
+  var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(doc) render(page); },160); });
+  document.addEventListener("fullscreenchange",function(){ if(doc) setTimeout(function(){ render(page); },60); });
+
+  lib.getDocument({url:"../windows-intrusion-forensics.pdf",disableAutoFetch:true,disableStream:true}).promise.then(function(d){
+    doc=d; total=d.numPages; totEl.textContent=total;
+    var h=parseInt((location.hash||"").replace("#",""),10); if(h>=1&&h<=total) page=h;
+    render(page);
+  }).catch(function(err){
+    load.innerHTML='<span>could not load the deck — open the <a href="../windows-intrusion-forensics.pdf" style="color:var(--paper)">PDF</a>.</span>';
+  });
+})();
+</script>
+</body>
+</html>
